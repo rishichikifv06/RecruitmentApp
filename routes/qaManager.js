@@ -44,7 +44,7 @@ router.get("/", (req, res) => {
     var req = new sql.Request(conn);
  
     // Call mssql's query method passing in params
-    req.query("SELECT TOP 5 * FROM QueandAns")
+    req.query("SELECT TOP 10 * FROM QueandAns")
     .then(function (recordset) {
       console.log(recordset);
       res.send(recordset);
