@@ -18,7 +18,7 @@ var authRouter = require('./routes/auth');
 var qaManagerRouter = require('./routes/qaManager');
 var assessManagerRouter = require('./routes/assessmentManager');
 var profileManagerRouter = require('./routes/profileManager');
-var dbRouter = require('./db');
+var quesManagerRouter = require('./routes/questionsManager');
 
 // initialize express
 var app = express();
@@ -53,7 +53,7 @@ app.use('/qaManager', qaManagerRouter);
 app.use('/assessManager', assessManagerRouter );
 app.use('/profileManager', profileManagerRouter);
 //app.use(dbRouter);
-
+app.use('quesManager', quesManagerRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

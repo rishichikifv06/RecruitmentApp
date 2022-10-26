@@ -1,12 +1,16 @@
 var express = require("express");
 var router = express.Router();
+var details = require("../db");
+var sql = require("mssql");
+//const { Connection, Request } = require("tedious");
+
 
 var data = [
-    {
-        question: "qustion1",
-        answer: "answer1"
-    }
-]
+  {
+    question: "qustion1",
+    answer: "answer1",
+  },
+];
 
 function authUser(req, res, next) {
   if (req.user == null) {
@@ -26,46 +30,42 @@ function authRole(role) {
   };
 }
 
-
 router.get("/", (req, res) => {
-  res.status(200).send("Home Page of qaManager");
-});
-
-//Questions
-router.get("/questions", (req, res) => {
-    res.status(200).send("Home Page of Questions");
+ // res.send("Home Page of qaManager");
+ function getData() {
+  // Create connection instance
+  var conn = new sql.ConnectionPool(details.config);
+ 
+  conn.connect()
+  // Successfull connection
+  .then(function () {
+ 
+    // Create request instance, passing in connection instance
+    var req = new sql.Request(conn);
+ 
+    // Call mssql's query method passing in params
+    req.query("SELECT TOP 5 * FROM QueandAns")
+    .then(function (recordset) {
+      console.log(recordset);
+      res.send(recordset);
+      conn.close();
+    })
+    // Handle sql statement execution errors
+    .catch(function (err) {
+      console.log(err);
+      conn.close();
+    })
+ 
+  })
+  // Handle connection errors
+  .catch(function (err) {
+    console.log(err);
+    conn.close();
   });
-  
-
-router.put("/questions", (req, res) => {
-    res.status(200).send("Questions Created");
+ }
+ 
+ getData();
 });
 
-router.post("/questions", (req, res) => {
-    res.status(200).send("Questions Updated");
-});
-
-router.delete("/questions", (req, res) => {
-    res.status(200).send("Questions Deleted");
-});
-
-
-//Answers
-router.get("/answers", (req, res) => {
-    res.status(200).send("Home Page of Answers");
-  });
-  
-
-router.put("/answers", (req, res) => {
-    res.status(200).send("answers Created");
-});
-
-router.post("/answers", (req, res) => {
-    res.status(200).send("answers Updated");
-});
-
-router.delete("/answers", (req, res) => {
-    res.status(200).send("answers Deleted");
-});
 
 module.exports = router;
