@@ -86,37 +86,37 @@ const config = {
 //   connection.execSql(request);
 // }
 
-function getData() {
-    // Create connection instance
-    var conn = new sql.ConnectionPool(config);
+// function getData() {
+//     // Create connection instance
+//     var conn = new sql.ConnectionPool(config);
    
-    conn.connect()
-    // Successfull connection
-    .then(function () {
+//     conn.connect()
+//     // Successfull connection
+//     .then(function () {
    
-      // Create request instance, passing in connection instance
-      var req = new sql.Request(conn);
+//       // Create request instance, passing in connection instance
+//       var req = new sql.Request(conn);
    
-      // Call mssql's query method passing in params
-      req.query("SELECT TOP 5 * FROM QueandAns")
-      .then(function (recordset) {
-        console.log(recordset);
-        conn.close();
-      })
-      // Handle sql statement execution errors
-      .catch(function (err) {
-        console.log(err);
-        conn.close();
-      })
+//       // Call mssql's query method passing in params
+//       req.query("SELECT TOP 5 * FROM QueandAns")
+//       .then(function (recordset) {
+//         console.log(recordset);
+//         conn.close();
+//       })
+//       // Handle sql statement execution errors
+//       .catch(function (err) {
+//         console.log(err);
+//         conn.close();
+//       })
    
-    })
-    // Handle connection errors
-    .catch(function (err) {
-      console.log(err);
-      conn.close();
-    });
-   }
+//     })
+//     // Handle connection errors
+//     .catch(function (err) {
+//       console.log(err);
+//       conn.close();
+//     });
+//    }
    
    
-   getData();
+//    getData();
 module.exports.config = config;
