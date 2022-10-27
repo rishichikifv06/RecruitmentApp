@@ -2,9 +2,11 @@ var express = require("express");
 var router = express.Router();
 var details = require("../db");
 var sql = require("mssql");
+var cors = require('cors');
+var app = express();
 //const { Connection, Request } = require("tedious");
 
-
+app.use(cors)
 var data = [
   {
     question: "qustion1",
