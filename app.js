@@ -11,6 +11,7 @@ var session = require('express-session');
 var createError = require('http-errors');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var cors = require('cors');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -19,9 +20,13 @@ var qaManagerRouter = require('./routes/qaManager');
 var assessManagerRouter = require('./routes/assessmentManager');
 var profileManagerRouter = require('./routes/profileManager');
 var quesManagerRouter = require('./routes/questionsManager');
+var ansManagerRouter = require('./routes/answersManager');
+
 
 // initialize express
 var app = express();
+
+app.use(cors);
 
 /**
  * Using express-session middleware for persistent user session. Be sure to
@@ -52,8 +57,10 @@ app.use('/auth', authRouter);
 app.use('/qaManager', qaManagerRouter);
 app.use('/assessManager', assessManagerRouter );
 app.use('/profileManager', profileManagerRouter);
+app.use('/quesManager', quesManagerRouter);
+app.use('/ansManager', ansManagerRouter);
 //app.use(dbRouter);
-app.use('quesManager', quesManagerRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

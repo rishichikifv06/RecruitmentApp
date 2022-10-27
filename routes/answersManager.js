@@ -9,7 +9,7 @@ router.get("/", (req, res) => {
     const skillId = req.query.skillId;
     const queId = req.query.queId;
    
-  //res.status(200).send("Home page of Questions Manager");
+  //res.status(200).send("Home page of Answers Manager");
   function getData() {
     // Create connection instance
     var conn = new sql.ConnectionPool(details.config);
@@ -22,7 +22,7 @@ router.get("/", (req, res) => {
       var req = new sql.Request(conn);
    
       // Call mssql's query method passing in params
-      req.query(`SELECT Question FROM quest WHERE complexity='${complexity}' AND skillId = ${skillId} AND queId = ${queId}`)
+      req.query(`SELECT Answer FROM Answers WHERE `)
       .then(function (recordset) {
         console.log(recordset);
         res.send(recordset);
