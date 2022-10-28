@@ -7,10 +7,18 @@ var bodyParser = require('body-parser')
 var jsonParser = bodyParser.json()
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
+function isAuthenticated(req, res, next) {
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/auth/signin'); // redirect to sign-in route
+    }
+  
+    next();
+  };
+
 router.get("/", (req, res) => {
   const complexity = req.query.complexity;
   const skillId = req.query.skillId;
-  const queId = req.query.queId;
+  //const queId = req.query.queId;
 
   //res.status(200).send("Home page of Questions Manager");
   function getData() {
@@ -27,7 +35,7 @@ router.get("/", (req, res) => {
         // Call mssql's query method passing in params
         req
           .query(
-            `SELECT Question FROM quest WHERE complexity='${complexity}' AND skillId = ${skillId} AND queId = ${queId}`
+            `SELECT Question FROM quest WHERE complexity='${complexity}' AND skillId = ${skillId}`
           )
           .then(function (recordset) {
             console.log(recordset);
@@ -50,12 +58,12 @@ router.get("/", (req, res) => {
   getData();
 });
 
-router.post("/", jsonParser, (req, res) => {
-    
-    if(req.body){
+router.post("/", (req, res) => {
+
+    if(req.body != null){
         const complexity = req.body.complexity;
         const skillId = req.body.skillId;
-        const queId = req.body.queId;
+        const Id = req.body.Id;
 
         function getData() {
             // Create connection instance
@@ -71,7 +79,7 @@ router.post("/", jsonParser, (req, res) => {
                 // Call mssql's query method passing in params
                 req
                   .query(
-                    `SELECT Question FROM quest WHERE complexity='${complexity}' AND skillId = ${skillId} AND queId = ${queId}`
+                    `SELECT TOP ${Id} Question FROM quest WHERE complexity='${complexity}' AND skillId = ${skillId}`
                   )
                   .then(function (recordset) {
                     console.log(recordset);
@@ -95,7 +103,7 @@ router.post("/", jsonParser, (req, res) => {
 
 
     }else{
-        res.status(400).send("Error");
+        res.send("Error");
     }
 });
 
