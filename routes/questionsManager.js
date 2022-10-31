@@ -83,7 +83,7 @@ router.post("/", (req, res) => {
                   )
                   .then(function (recordset) {
                     console.log(recordset);
-                    res.send(recordset);
+                    // res.send(recordset);
                     conn.close();
                   })
                   // Handle sql statement execution errors
@@ -99,7 +99,7 @@ router.post("/", (req, res) => {
               });
           }
         
-          getData();
+         res.send( getData());
 
 
     }else{

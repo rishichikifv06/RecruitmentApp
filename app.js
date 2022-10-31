@@ -21,6 +21,7 @@ var assessManagerRouter = require('./routes/assessmentManager');
 var profileManagerRouter = require('./routes/profileManager');
 var quesManagerRouter = require('./routes/questionsManager');
 var ansManagerRouter = require('./routes/answersManager');
+var skillsManagerRouter = require('./routes/skillsManager');
 
 
 // initialize express
@@ -62,6 +63,7 @@ app.use('/assessManager', assessManagerRouter );
 app.use('/profileManager', profileManagerRouter);
 app.use('/quesManager', quesManagerRouter);
 app.use('/ansManager', ansManagerRouter);
+app.use('/skillsManager', skillsManagerRouter);
 //app.use(dbRouter);
 
 
