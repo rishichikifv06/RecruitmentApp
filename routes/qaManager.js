@@ -82,6 +82,7 @@ router.get("/", (req, res) => {
 router.post("/", jsonParser, (req, res) => {
 
   if(req.body != undefined){
+      const id = req.body.id;
       const compId = req.body.compId;
       const skillId = req.body.skillId;
 
@@ -104,8 +105,7 @@ router.post("/", jsonParser, (req, res) => {
                 .then(function (recordset) {
                   console.log(recordset);
                   const{recordset: data} = recordset;
-                  const jData = {data}
-                   res.send(( jData));
+                   res.send(( data[id]));
                   conn.close();
                 })
                 // Handle sql statement execution errors
