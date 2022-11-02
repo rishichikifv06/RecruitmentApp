@@ -100,12 +100,65 @@ router.post("/", jsonParser, (req, res) => {
               // Call mssql's query method passing in params
               req
                 .query(
-                  `SELECT Question, Answer FROM QueandAns WHERE compId=${compId} AND skillId =${skillId}`
+                  `SELECT Question, Answer, queansId FROM QueandAns WHERE compId=${compId} AND skillId =${skillId}`
                 )
                 .then(function (recordset) {
                   console.log(recordset);
                   const{recordset: data} = recordset;
                    res.send(( data[id]));
+                  conn.close();
+                })
+                // Handle sql statement execution errors
+                .catch(function (err) {
+                  console.log(err);
+                  res.send(err);
+                  conn.close();
+                });
+            })
+            // Handle connection errors
+            .catch(function (err) {
+              console.log(err);
+              res.send(err);
+              conn.close();
+            });
+        }
+      
+        getData();
+
+
+  }else{
+      res.send("Error");
+  }
+});
+
+
+router.post("/allQA", jsonParser, (req, res) => {
+
+  if(req.body != undefined){
+      const compId = req.body.compId;
+      const skillId = req.body.skillId;
+
+      function getData() {
+          // Create connection instance
+          var conn = new sql.ConnectionPool(details.config);
+      
+          conn
+            .connect()
+            // Successfull connection
+            .then(function () {
+              // Create request instance, passing in connection instance
+              var req = new sql.Request(conn);
+      
+              // Call mssql's query method passing in params
+              req
+                .query(
+                  `SELECT Question, Answer, queansId FROM QueandAns WHERE compId=${compId} AND skillId =${skillId}`
+                )
+                .then(function (recordset) {
+                  console.log(recordset);
+                  const{recordset: data} = recordset;
+                  const jData = {data};
+                   res.send(jData);
                   conn.close();
                 })
                 // Handle sql statement execution errors
