@@ -162,11 +162,48 @@ router.post("/", jsonParser, (req, res) => {
 
         }
         
-  
     }else{
         res.send("Error");
     }
   });
 
+
+  router.get("/", (req, res) => {
+    // res.send("Home Page of qaManager");
+    function getData() {
+     // Create connection instance
+     var conn = new sql.ConnectionPool(details.config);
+    
+     conn.connect()
+     // Successfull connection
+     .then(function () {
+    
+       // Create request instance, passing in connection instance
+       var req = new sql.Request(conn);
+    
+       // Call mssql's query method passing in params
+       req.query(`SELECT canName FROM Candidate WHERE canEmail='${canEmail}'`)
+       .then(function (recordset) {
+         console.log(recordset);
+         const {recordset: data} = recordset;
+         res.status(200).json(data);
+         conn.close();
+       })
+       // Handle sql statement execution errors
+       .catch(function (err) {
+         console.log(err);
+         conn.close();
+       })
+    
+     })
+     // Handle connection errors
+     .catch(function (err) {
+       console.log(err);
+       conn.close();
+     });
+    }
+    
+    getData();
+   });
 
   module.exports = router;

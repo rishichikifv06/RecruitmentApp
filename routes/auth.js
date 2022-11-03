@@ -4,7 +4,13 @@
  */
 
 var express = require('express');
+var app = express();
 var msal = require('@azure/msal-node');
+var cors = require('cors');
+
+app.use(cors(
+    origin="*"
+))
 
 var {
     msalConfig,

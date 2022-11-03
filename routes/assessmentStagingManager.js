@@ -6,8 +6,10 @@ var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
 
 
-router.get("/", (req, res) => {
-    //res.status(200).send("Home page of Questions Manager");
+router.post("/", jsonParser, (req, res) => {
+
+
+   
     function getData() {
       // Create connection instance
       var conn = new sql.ConnectionPool(details.config);
@@ -19,7 +21,7 @@ router.get("/", (req, res) => {
           var req = new sql.Request(conn);
           // Call mssql's query method passing in params
           req
-            .query(`SELECT * FROM skills`)
+            .query(`INSERT INTO AsessmentStaging VALUES()`)
             .then(function (recordset) {
               console.log(recordset);
               const { recordset: data } = recordset;
