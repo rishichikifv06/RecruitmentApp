@@ -8,12 +8,6 @@ var app = express();
 //const { Connection, Request } = require("tedious");
 var jsonParser = bodyParser.json()
 
-var data = [
-  {
-    question: "qustion1",
-    answer: "answer1",
-  },
-];
 
 function authUser(req, res, next) {
   if (req.user == null) {
