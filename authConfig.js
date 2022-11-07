@@ -4,6 +4,21 @@
  */
 
 require('dotenv').config();
+var express = require('express');
+var cors = require('cors');
+var app = express();
+
+// app.use((req, res, next)=>{
+//     res.setHeader('Access-Control-Allow-Origin','*');
+//     req.header('Access-Control-Allow-Headers', '*');
+//     req.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, PATCH');
+//     next();
+//   });
+  
+//  Origin, X-Requested-With, Content-Type, Accept, Authorization
+app.use(cors(
+    origin="*"
+))
 
 /**
  * Configuration object to be passed to MSAL instance on creation.

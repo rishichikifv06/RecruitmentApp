@@ -8,9 +8,21 @@ var app = express();
 var msal = require('@azure/msal-node');
 var cors = require('cors');
 
-app.use(cors(
-    origin="*"
-))
+
+// app.use(cors(
+//     origin="*"
+// ))
+
+// app.use((req, res, next)=>{
+//     res.header('Access-Control-Allow-Origin','*');
+//     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+//     if(req.method === 'Options'){
+//       res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, PATCH');
+//       return res.status(200).json({});
+//     }
+//     next();
+//   });
+  
 
 var {
     msalConfig,
@@ -22,6 +34,7 @@ const router = express.Router();
 const msalInstance = new msal.ConfidentialClientApplication(msalConfig);
 const cryptoProvider = new msal.CryptoProvider();
 
+
 /**
  * Prepares the auth code request parameters and initiates the first leg of auth code flow
  * @param req: Express request object
@@ -31,6 +44,7 @@ const cryptoProvider = new msal.CryptoProvider();
  * @param authCodeRequestParams: parameters for requesting tokens using auth code
  */
 async function redirectToAuthCodeUrl(req, res, next, authCodeUrlRequestParams, authCodeRequestParams) {
+
 
     // Generate PKCE Codes before starting the authorization flow
     const { verifier, challenge } = await cryptoProvider.generatePkceCodes();
@@ -72,8 +86,10 @@ async function redirectToAuthCodeUrl(req, res, next, authCodeUrlRequestParams, a
     }
 };
 
+
 router.get('/signin', async function (req, res, next) {
 
+    //res.header("Access-Control-Allow-Origin", '*');
     // create a GUID for crsf
     req.session.csrfToken = cryptoProvider.createNewGuid();
 

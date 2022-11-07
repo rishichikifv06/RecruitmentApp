@@ -8,12 +8,14 @@ var app = express();
 var router = express.Router();
 var cors = require('cors');
 
-app.use(cors(
-  origin="*"
-))
+// app.use(cors(
+//   origin="*"
+// ))
 
 router.get('/', function (req, res, next) {
-  console.log(req.session)
+  
+  console.log(req.session);
+  
   res.status(200).json({ 
         title: 'Recruitment App',
          isAuthenticated: req.session.isAuthenticated,

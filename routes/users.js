@@ -5,11 +5,17 @@
 
 var express = require('express');
 var router = express.Router();
+var app = express();
+var cors = require('cors');
+
 
 var fetch = require('../fetch');
 
 var { GRAPH_ME_ENDPOINT } = require('../authConfig');
 
+// app.use(cors(
+//   origin="*"
+// ))
 // custom middleware to check auth state
 function isAuthenticated(req, res, next) {
     if (!req.session.isAuthenticated) {

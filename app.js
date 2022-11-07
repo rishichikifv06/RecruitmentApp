@@ -30,19 +30,27 @@ var assessmentStagingManagerRouter = require('./routes/assessmentStagingManager'
 // initialize express
 var app = express();
 
+app.use(cors(
+  origin="*"
+))
+
+
+// app.use((req, res, next)=>{
+//   res.header('Access-Control-Allow-Origin','*');
+//   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+//   if(req.method === 'Options'){
+//     res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, PATCH');
+//     return res.status(200).json({});
+//   }
+//   next();
+// });
+
 
 /**
  * Using express-session middleware for persistent user session. Be sure to
  * familiarize yourself with available options. Visit: https://www.npmjs.com/package/express-session
  */
- app.use(session({
-    secret: process.env.EXPRESS_SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: false, // set this to true on production
-    }
-}));
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -55,9 +63,15 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(cors(
-  origin="*"
-))
+app.use(session({
+  secret: process.env.EXPRESS_SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+      secure: false, // set this to true on production
+  }
+}));
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
