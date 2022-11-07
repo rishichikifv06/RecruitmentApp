@@ -35,7 +35,7 @@ router.get("/", (req, res) => {
         // Call mssql's query method passing in params
         req
           .query(
-            `SELECT Question FROM quest WHERE complexity='${complexity}' AND skillId = ${skillId}`
+            `SELECT Question FROM Questions WHERE complexity='${complexity}' AND skillId = ${skillId}`
           )
           .then(function (recordset) {
             console.log(recordset);

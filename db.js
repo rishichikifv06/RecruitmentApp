@@ -6,14 +6,14 @@ var sql = require("mssql");
 const config = {
   authentication: {
     options: {
-      userName: "v100", // update me
-      password: "Vishwa@123" // update me
+      userName: ".\backup.user", // update me
+      password: "Jktech@123" // update me
     },
     type: "default"
   },
-  server: "test1sql.database.windows.net", // update me
+  server: "JKTBLRCOM162", // update me
   options: {
-    database: "newSQL", //update me
+    database: "Testapp", //update me
     encrypt: true
   }
 };
