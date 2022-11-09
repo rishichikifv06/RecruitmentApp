@@ -1,22 +1,39 @@
-//const { Connection, Request } = require("tedious");
-var sql = require("mssql");
+const { Connection, Request } = require("tedious");
+//  var sql = require("mssql");
+const sql = require("msnodesqlv8");
+
+const connectionString = "server=JKTBLRCOM162;Database=Testapp;Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}";
+const query = "SELECT * FROM Complexity";
+
+// Driver=msnodesqlv8;Server=(JKTBLRCOM162)\INSTANCE;Database=Testapp;UID=AD\Guruprasad.J;PWD=;Encrypt=false
+//server=JKTBLRCOM162;Database=Testapp;Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}
+//Server=JKTBLRCOM162,1433;Database=Testapp;User Id=AD\Guruprasad.J;Password=;Encrypt=false;Trusted_Connection=Yes
+
+sql.query(connectionString, query, (err, rows) => {
+    console.log(rows);
+    console.log(err);
+})
+
 
 
 // Create connection to database
-const config = {
-  authentication: {
-    options: {
-      userName: ".\backup.user", // update me
-      password: "Jktech@123" // update me
-    },
-    type: "default"
-  },
-  server: "JKTBLRCOM162", // update me
-  options: {
-    database: "Testapp", //update me
-    encrypt: true
-  }
-};
+// const config = {
+//   authentication: {
+//     options: {
+//       userName: "AD\Guruprasad.J", // update me
+//       // password: "",
+//  // update me
+//     },
+//     type: "default",
+//   },
+//   server: "JKTBLRCOM162",
+//   Trusted_Connection: "Yes",
+//   Driver: "{SQL Server Native Client 11.0}", // update me
+//   options: {
+//     database: "Testapp",//update me
+//     encrypt: false
+//   },
+// };
 
 /* 
     //Use Azure VM Managed Identity to connect to the SQL database
@@ -66,7 +83,7 @@ const config = {
 
 //   // Read all rows from table
 //   const request = new Request(
-//     `SELECT TOP 5 * FROM [dbo].[QueandAns]`,
+//     `SELECT * FROM Complexity`,
 //     (err, rowCount) => {
 //       if (err) {
 //         console.error(err.message);
@@ -119,4 +136,4 @@ const config = {
    
    
 //    getData();
-module.exports.config = config;
+module.exports.connectionString = connectionString;

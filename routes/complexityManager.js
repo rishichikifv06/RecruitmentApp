@@ -1,11 +1,12 @@
 var express = require("express");
 var router = express.Router();
 var details = require("../db");
-var sql = require("mssql");
+// var sql = require("mssql");
+var sql = require("msnodesqlv8");
 var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
 
-//get all data
+
 // router.get("/", (req, res) => {
 //   //res.status(200).send("Home page of Questions Manager");
 //   function getData() {
@@ -45,28 +46,33 @@ var jsonParser = bodyParser.json();
 // });
 
 
-router.get("/", (req, res) => {
-    //res.status(200).send("Home page of Questions Manager");
-    const data = {
-        "data": [
-            {
-                "Id": 1,
-                "Name": "Easy"
-            },
-            {
-                "Id": 2,
-                "Name": "Medium"
-            },
-            {
-                "Id": 3,
-                "Name": "Hard"
-            }
-        ]
-    }
+router.get("/", (req, res)=>{
+  // var query = "SELECT * FROM Complexity";
 
-    res.json(data);
+  async function getData()
+  {
+    await sql.open(details.connectionString, async (err, conn)=>{
+    await  conn.query("SELECT * FROM Complexity",(err, data)=>{
+        if(data){
+          console.log(data);
+          const result = { data };
+          res.status(200).json(result);
+        }
+        if(err){
+          console.log(err);
+          res.send(err);
+        }
+      })
+      if(err){
+        console.log(err);
+        res.send(err);
+      }
+    })
+  }
+ 
+  getData();
+})
 
-  });
 
 
 module.exports = router;
