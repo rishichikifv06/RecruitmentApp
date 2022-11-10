@@ -3,7 +3,14 @@ const { Connection, Request } = require("tedious");
 const sql = require("msnodesqlv8");
 
 const connectionString = "server=JKTBLRCOM162;Database=Testapp;Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}";
-const query = "SELECT * FROM Complexity";
+
+// for(var i=990; i<=999; i++){
+// const query = `UPDATE Questions_and_Answers SET ansId = '${i}' WHERE queandansId = '${i}'`;
+// sql.query(connectionString, query, (err, rows)=>{
+//   console.log(rows);
+// })
+// }
+var query = "SELECT * FROM Complexity";
 
 // Driver=msnodesqlv8;Server=(JKTBLRCOM162)\INSTANCE;Database=Testapp;UID=AD\Guruprasad.J;PWD=;Encrypt=false
 //server=JKTBLRCOM162;Database=Testapp;Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}

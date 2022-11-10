@@ -158,6 +158,63 @@ var data = [
         }
       ]
 },
+{
+  canId: 6,
+  canName: "Priyanka",
+  canPhone: 9793456443,
+  Email: "priyanka@jk.com",
+  canExperience: 1,
+  Date: "2022-11-14",
+  Candidatestatus: "Open",
+  skills: [
+        {
+          skill: "Angular",
+          complexity: "Easy"
+        },
+        {
+          skill: "C#",
+          complexity: "Medium"
+        }
+      ]
+},
+{
+  canId: 7,
+  canName: "Purushottam",
+  canPhone: 9793430743,
+  Email: "purushottam@jk.com",
+  canExperience: 1,
+  Date: "2022-11-14",
+  Candidatestatus: "Open",
+  skills: [
+        {
+          skill: "Angular",
+          complexity: "Easy"
+        },
+        {
+          skill: "React",
+          complexity: "Medium"
+        }
+      ]
+},
+{
+  canId: 8,
+  canName: "Purushottam",
+  canPhone: 9793430743,
+  Email: "purushottam@jk.com",
+  canExperience: 1,
+  Date: "2022-11-14",
+  Candidatestatus: "Open",
+  skills: [
+        {
+          skill: "Angular",
+          complexity: "Easy"
+        },
+        {
+          skill: "React",
+          complexity: "Medium"
+        }
+      ]
+},
 ]
  
 var result = {data};
