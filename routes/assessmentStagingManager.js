@@ -161,14 +161,17 @@ var jsonParser = bodyParser.json();
 // });
 
 
-router.post("/", (req, res) => {
+router.post("/", jsonParser, (req, res) => {
+
+  // const canId = req.body.canId;
+  // const RowandQuestion_number = req.body.RowandQuestion_number;
 
   async function getData()
   {
     await sql.open(details.connectionString, async (err, conn)=>{
     await  conn.query(`SELECT Questions.Question, Answers.Answer, AssessmentStaging.RowandQuestion_number FROM AssessmentStaging
     LEFT JOIN Questions ON Questions.queId=AssessmentStaging.queId LEFT JOIN Answers ON Answers.ansId=AssessmentStaging.ansId
-    WHERE canId=2`,(err, data)=>{
+    WHERE canId=canId AND AssessmentStagingId=1`,(err, data)=>{
         if(data){
           console.log(data);
           const result = { data };
