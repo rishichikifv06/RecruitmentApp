@@ -225,10 +225,10 @@ var jsonParser = bodyParser.json();
 var result=[];
 router.get("/", (req, res)=>{
 
-   function getData() { 
+  async function getData() { 
     
-     sql.open(details.connectionString, (err, conn) => {
-      conn.query(
+   await  sql.open(details.connectionString,async (err, conn) => {
+     await conn.query(
         `select canId,canName,canPhone,canExperience,
         Date,Candidatestatus 
         from Candidates 
@@ -250,10 +250,12 @@ router.get("/", (req, res)=>{
               `,(err,val)=>{
                 if(val){
                   
-                  const arr = [...val];
+                  
+                  var arr = [...val];
                   item.skills = arr;
                   result.push(item);
-                  console.log(item);
+                 // console.log(item);
+                  
                    
                   // record={
                   //   canId : item.canId,
@@ -275,10 +277,15 @@ router.get("/", (req, res)=>{
                 }
               });
             
-              console.log(result)
+              //console.log(result)
             }
-            var output = {result};
+
+
+
+            console.log(result);
+            const output = {result};
             res.status(200).json(output);
+            result = [];
           }
           if (err) {
             console.log(err);
@@ -297,6 +304,7 @@ router.get("/", (req, res)=>{
 
   getData();
 })
+
 
 // var result2 = [];
 // router.get("/", (req, res) => {
