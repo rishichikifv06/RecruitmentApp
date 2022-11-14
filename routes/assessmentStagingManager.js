@@ -163,16 +163,23 @@ var jsonParser = bodyParser.json();
 
 router.post("/", jsonParser, (req, res) => {
 
-  // const canId = req.body.canId;
-  // const RowandQuestion_number = req.body.RowandQuestion_number;
+   var canId = req.body.canId;
+   var RowandQuestion_number = req.body.RowandQuestion_number;
+
+  
 
   async function getData()
   {
     await sql.open(details.connectionString, async (err, conn)=>{
     await  conn.query(`SELECT Questions.Question, Answers.Answer, AssessmentStaging.RowandQuestion_number FROM AssessmentStaging
     LEFT JOIN Questions ON Questions.queId=AssessmentStaging.queId LEFT JOIN Answers ON Answers.ansId=AssessmentStaging.ansId
-    WHERE canId=canId AND AssessmentStagingId=1`,(err, data)=>{
+    WHERE canId=${canId} AND RowandQuestion_number = ${RowandQuestion_number}`,(err, data)=>{
         if(data){
+          data[0].currentRecordId = RowandQuestion_number;
+          data[0].firsRecordId = 1;
+          data[0].nextRecordId = RowandQuestion_number+1;
+          data[0].previosRecordId = RowandQuestion_number-1;
+          data[0].lastRecordId = 20;
           console.log(data);
           const result = { data };
           res.status(200).json(result);

@@ -228,7 +228,7 @@ router.post("/saveData", jsonParser, (req, res)=>{
             // const result = { };
             res.send(err);
           }
-          else{
+          if(conn){
           conn.query(`SELECT canId from Candidates where canName= '${name}' and canPhone= '${phone}'and canExperience='${experience}' and
           EmailId = '${emailId}' `,(err,data)=> {
             if(data){
