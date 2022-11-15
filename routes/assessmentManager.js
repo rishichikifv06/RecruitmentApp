@@ -7,39 +7,27 @@ var jsonParser = bodyParser.json();
 
 router.post("/",jsonParser, (req, res) => {
 
-  function getData() {
-    // Create connection instance
-    var conn = new sql.ConnectionPool(details.config);
-    conn
-      .connect()
-      // Successfull connection
-      .then(function () {
-        // Create request instance, passing in connection instance
-        var req = new sql.Request(conn);
-        // Call mssql's query method passing in params
-        req
-          .query(`INSERT INTO Asessment VALUES()`)
-          .then(function (recordset) {
-            console.log(recordset);
-            const { recordset: data } = recordset;
-            const jData = { data };
-            res.send(jData);
-            conn.close();
-          })
-          // Handle sql statement execution errors
-          .catch(function (err) {
-            console.log(err);
-            res.send(err);
-            conn.close();
-          });
+  async function getData()
+  {
+    await sql.open(details.connectionString, async (err, conn)=>{
+    await  conn.query("SELECT * FROM Complexity",(err, data)=>{
+        if(data){
+          console.log(data);
+          const result = { data };
+          res.status(200).json(result);
+        }
+        if(err){
+          console.log(err);
+          res.send(err);
+        }
       })
-      // Handle connection errors
-      .catch(function (err) {
+      if(err){
         console.log(err);
         res.send(err);
-        conn.close();
-      });
+      }
+    })
   }
+ 
   getData();
 });
 

@@ -199,4 +199,39 @@ router.post("/", jsonParser, (req, res) => {
   getData();
 })
 
+
+router.post("/saveData", jsonParser, (req, res)=>{
+  var canId = req.body.canId;
+  var RowandQuestion_number = req.body.RowandQuestion_number;
+  var score = req.body.score;
+  var notes = req.body.notes;
+  console.log(notes);
+
+  async function getData()
+  {
+    await sql.open(details.connectionString, async (err, conn)=>{
+    await  conn.query(`UPDATE AssessmentStaging SET score=${score} ,Note='${notes}' WHERE canId = ${canId} AND 
+    RowandQuestion_number = ${RowandQuestion_number}`,(err, data)=>{
+        if(data){
+          var success = {
+            status: "Success",
+            message: `The response is saved successfully for candidateId ${canId} and question number ${RowandQuestion_number}`}
+
+          res.status(200).json(success);
+        }
+        if(err){
+          console.log(err);
+          res.send(err);
+        }
+      })
+      if(err){
+        console.log(err);
+        res.send(err);
+      }
+    })
+  }
+ 
+  getData();
+})
+
 module.exports = router;
