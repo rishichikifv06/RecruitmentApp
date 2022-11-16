@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var details = require("../db");
-var sql = require("mssql");
+var sql = require("msnodesqlv8");
 var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
 
@@ -46,6 +46,7 @@ router.post("/endAssessment",jsonParser, (req, res) => {
  
   getData();
 });
+
 
 
 
