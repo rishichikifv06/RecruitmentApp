@@ -7,7 +7,7 @@ var jsonParser = bodyParser.json();
 
 router.post("/endAssessment",jsonParser, (req, res) => {
 
-  const status = req.body.assessmentDetailsStatus;
+  const status = req.body.status;
   const canId = req.body.canId;
   const assessmentId = req.body.assessmentId;
 
@@ -17,7 +17,7 @@ router.post("/endAssessment",jsonParser, (req, res) => {
     await  conn.query(`INSERT INTO AssessmentDetails(assessmentId, queId, ansId, score, Note, assessmentDetailsStatus) 
     SELECT assessmentId, queId, ansId, score, Note, AssessmentStagingstatus FROM AssessmentStaging WHERE canId=${canId} AND assessmentId=${assessmentId}`,(err, data)=>{
         if(data){
-           conn.query(`UPDATE Candidates SET Candidatestatus='${status}' WHERE canId = ${canId} AND assessmentId = ${assessmentId}`),
+           conn.query(`UPDATE Candidates SET Candidatestatus='${status}' WHERE canId = ${canId}`),
           (err, output)=>{
             if(err){
               console.log(err);
