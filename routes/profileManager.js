@@ -231,8 +231,7 @@ router.get("/", (req, res)=>{
      await conn.query(
         `select canId,canName,canPhone,canExperience,
         Date,Candidatestatus 
-        from Candidates 
-        where Candidatestatus='Open' or Candidatestatus='Pending' `,
+        from Candidates  `,
          (err, data) => {
           if (data) {
             

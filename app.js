@@ -26,6 +26,7 @@ var complexityManagerRouter = require('./routes/complexityManager');
 var candidateManagerRouter = require('./routes/candidateManager');
 var assessmentStagingManagerRouter = require('./routes/assessmentStagingManager');
 var testRouter = require('./routes/test');
+var cardsScoreManagerRouter = require('./routes/cardsScoreManager');
 
 
 // initialize express
@@ -86,6 +87,7 @@ app.use('/complexityManager', complexityManagerRouter);
 app.use('/candidateManager', candidateManagerRouter);
 app.use('/assessmentStagingManager', assessmentStagingManagerRouter);
 app.use('/testManager', testRouter);
+app.use('/cardsScoreManager', cardsScoreManagerRouter);
 //app.use(dbRouter);
 
 

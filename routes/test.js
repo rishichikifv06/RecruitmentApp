@@ -21,37 +21,12 @@ router.post("/rand", jsonParser, (req, res) => {
     const skills = req.body.skills;
     // const assessmentId= req.body.assessmentId;
     const canId = req.body.canId;
-    var k = 1;
+    var k = 0;
     var ansId;
-    async function getQuestions() {
-      function getAnswer( arr) {
+     function getQuestions() {
       
-        a = getrandomId(arr.length);
-        console.log(arr[a]+  "arr[a]")
-        sql.open(details.connectionString, async (err, conn) => {
-          await conn.query(`Select ansId from Questions_and_Answers where queId = ${arr[a]}`, async (err, value) => {
-            
-            if (value) {
-              ansId = value[0].ansId;
-              console.log(ansId +"answerId");
-              await conn.query(`Insert into AssessmentStaging(RowandQuestion_number,AssessmentStagingstatus,queId,
-                  ansId,canId) values (${k},'open',${arr[a]},${ansId},${canId})`, (row) => {
-                if(row)
-                {
-                    console.log(row);
-                }
-              });
-            }
-            if(err)
-            {
-                console.log(err+"1");
-            }
-          })
-        })
-        toClear(arr);
-      }
       async function forqcount(n, sid, cid) {
-        sql.open(details.connectionString, async (err, conn) => {
+        await sql.open(details.connectionString, async (err, conn) => {
           await conn.query(
             ` select  * from Questions where  skillId=${sid} and cmpId=${cid}`,
             (err, data) => {
@@ -59,8 +34,7 @@ router.post("/rand", jsonParser, (req, res) => {
                 for (let item of data) {
                   q.push(item.queId)
                   
-                }
-                console.log(q);
+                }//console.log( q + "q array");
               }
               if (err) {
                 //res.send(err);
@@ -70,12 +44,46 @@ router.post("/rand", jsonParser, (req, res) => {
             {
                 console.log(err+"2")
             }
-            console.log( q.length + "q array")
         })
         for (let j = 0; j < n; j++) {
-          console.log( q + "questions");
           getAnswer(q);
         }
+        async function getAnswer( arr) {
+          var l=arr.length;
+             a = getrandomId(l);
+            console.log(arr[a]+  "arr[a]")
+            var v=arr[a];
+            await sql.open(details.connectionString, async (err, conn) => {
+              await conn.query(`Select ansId from Questions_and_Answers where queId = '${v}'`, async (err, value) => {
+                
+                if (value) {
+                    k++;
+                  ansId = value[0].ansId;
+                  console.log(ansId +"answerId");
+                  await conn.query(`Insert into AssessmentStaging(RowandQuestion_number,AssessmentStagingstatus,queId,
+                      ansId,canId) values (${k},'open',${v},${ansId},${canId})`, (err,row) => {
+                    if(row)
+                    {
+                      
+                      console.log(row);
+                    }if(err){
+                      console.log(err + "error while inserting");
+                    }
+                  });
+                }
+                if(err)
+                {
+                    console.log(err+"1");
+                }
+              })
+              if(err){
+                console.log(err+"conn err");
+              }
+            });
+             toClear(q);
+          }
+
+        
       }
       var count = skills.length
       var tque = 20;
@@ -168,6 +176,7 @@ router.post("/rand", jsonParser, (req, res) => {
       }
     }
     getQuestions();
+    k=0;
     // res.send("success");
   }
   else {

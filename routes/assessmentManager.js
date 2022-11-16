@@ -5,15 +5,31 @@ var sql = require("mssql");
 var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
 
-router.post("/",jsonParser, (req, res) => {
+router.post("/endAssessment",jsonParser, (req, res) => {
+
+  const status = req.body.assessmentDetailsStatus;
+  const canId = req.body.canId;
+  const assessmentId = req.body.assessmentId;
 
   async function getData()
   {
     await sql.open(details.connectionString, async (err, conn)=>{
-    await  conn.query("SELECT * FROM Complexity",(err, data)=>{
+    await  conn.query(`INSERT INTO AssessmentDetails(assessmentId, queId, ansId, score, Note, assessmentDetailsStatus) 
+    SELECT assessmentId, queId, ansId, score, Note, AssessmentStagingstatus FROM AssessmentStaging WHERE canId=${canId} AND assessmentId=${assessmentId}`,(err, data)=>{
         if(data){
+           conn.query(`UPDATE Candidates SET Candidatestatus='closed' WHERE canId = ${canId} AND assessmentId = ${assessmentId}`),
+          (err, output)=>{
+            if(err){
+              console.log(err);
+            }
+            if(output){
+              console.log(output);
+            }
+          }
           console.log(data);
-          const result = { data };
+          const result = { 
+            "status": `The assessment information is stored for candidateId ${canId} and status is set to closed`
+           };
           res.status(200).json(result);
         }
         if(err){
