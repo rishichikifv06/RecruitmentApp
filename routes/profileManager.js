@@ -230,7 +230,7 @@ router.get("/", (req, res)=>{
    await  sql.open(details.connectionString,async (err, conn) => {
      await conn.query(
         `select canId,canName,canPhone,canExperience,
-        Date,Candidatestatus 
+        Date,Candidatestatus ,EmailId
         from Candidates  `,
          (err, data) => {
           if (data) {
