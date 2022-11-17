@@ -171,9 +171,11 @@ router.post("/", jsonParser, (req, res) => {
   async function getData()
   {
     await sql.open(details.connectionString, async (err, conn)=>{
-    await  conn.query(`SELECT Questions.Question, Answers.Answer, AssessmentStaging.RowandQuestion_number , AssessmentStaging.AssessmentStagingstatus ,AssessmentStaging.score, AssessmentStaging.Note
+    await  conn.query(`SELECT Questions.Question, Answers.Answer, AssessmentStaging.RowandQuestion_number,Skill.skillName,Complexity.Name , AssessmentStaging.AssessmentStagingstatus ,AssessmentStaging.score, AssessmentStaging.Note
     FROM AssessmentStaging
-    LEFT JOIN Questions ON Questions.queId=AssessmentStaging.queId LEFT JOIN Answers ON Answers.ansId=AssessmentStaging.ansId
+    LEFT JOIN Questions ON Questions.queId=AssessmentStaging.queId LEFT JOIN Skill ON Questions.skillId=Skill.skillId 
+	LEFT JOIN Complexity ON Questions.cmpId=Complexity.cmpId
+	LEFT JOIN Answers ON Answers.ansId=AssessmentStaging.ansId
     WHERE canId=${canId} AND RowandQuestion_number = ${RowandQuestion_number}`,(err, data)=>{
         if(data){
           data[0].currentRecordId = RowandQuestion_number;
