@@ -17,7 +17,15 @@ router.post("/endAssessment",jsonParser, (req, res) => {
     await  conn.query(`INSERT INTO AssessmentDetails(assessmentId, queId, ansId, score, Note, assessmentDetailsStatus) 
     SELECT assessmentId, queId, ansId, score, Note, AssessmentStagingstatus FROM AssessmentStaging WHERE canId=${canId} AND assessmentId=${assessmentId}`,(err, data)=>{
         if(data){
-           conn.query(`UPDATE Candidates SET Candidatestatus='${status}' WHERE canId = ${canId}`),
+          conn.query(`UPDATE Assessment SET assessmentstatus= ${status} WHERE canId=${canId} AND assessmentId=${assessmentId}`,(err,data)=>{
+            if(data){
+              console.log(data);
+            }
+            if(err){
+              console.log(err);
+            }
+          });
+           conn.query(`UPDATE Candidates SET Candidatestatus='${status}' WHERE canId = ${canId} AND assessmentId=${assessmentId}`,
           (err, output)=>{
             if(err){
               console.log(err);
@@ -25,7 +33,7 @@ router.post("/endAssessment",jsonParser, (req, res) => {
             if(output){
               console.log(output);
             }
-          }
+          });
           console.log(data);
           const result = { 
             "status": `The assessment information is stored for candidateId ${canId} and status is set to closed`

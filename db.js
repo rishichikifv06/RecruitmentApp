@@ -10,7 +10,7 @@ const connectionString = "server=JKTBLRCOM162;Database=Testapp;Trusted_Connectio
 //   console.log(rows);
 // })
 // }
-var query = "SELECT * FROM Complexity";
+var query = "SELECT * FROM Assessment";
 
 // Driver=msnodesqlv8;Server=(JKTBLRCOM162)\INSTANCE;Database=Testapp;UID=AD\Guruprasad.J;PWD=;Encrypt=false
 //server=JKTBLRCOM162;Database=Testapp;Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}

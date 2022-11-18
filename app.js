@@ -25,7 +25,7 @@ var skillsManagerRouter = require('./routes/skillsManager');
 var complexityManagerRouter = require('./routes/complexityManager');
 var candidateManagerRouter = require('./routes/candidateManager');
 var assessmentStagingManagerRouter = require('./routes/assessmentStagingManager');
-var testRouter = require('./routes/test');
+var randomizationManagerRouter = require('./routes/randomizationManager');
 var cardsScoreManagerRouter = require('./routes/cardsScoreManager');
 
 
@@ -86,7 +86,7 @@ app.use('/skillsManager', skillsManagerRouter);
 app.use('/complexityManager', complexityManagerRouter);
 app.use('/candidateManager', candidateManagerRouter);
 app.use('/assessmentStagingManager', assessmentStagingManagerRouter);
-app.use('/testManager', testRouter);
+app.use('/randomizationManager', randomizationManagerRouter);
 app.use('/cardsScoreManager', cardsScoreManagerRouter);
 //app.use(dbRouter);
 
