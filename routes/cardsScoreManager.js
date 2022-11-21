@@ -74,26 +74,26 @@ router.post('/scores', jsonParser,(req, res)=>{
                                     if (val) {
                                         val.forEach(element => {
                                             element.skillScore = element.count*10;
-                                            element.average = Math.round(element.candidateScore/element.skillScore*100);
+                                            element.percentage = Math.round(element.candidateScore/element.skillScore*100);
                                         });
                                         console.log(val);
                                         let totalCount = 0;
                                         let totalScore = 0;
-                                        let totalAverage = 1;
+                                        let totalPercentage = 1;
                                         let totalCandidateScore = 0;
                                         val.forEach(element => {
                                             totalCount = totalCount+element.count;
                                             totalScore = totalScore+element.skillScore;
                                             totalCandidateScore = totalCandidateScore+element.candidateScore;  
                                         })
-                                        totalAverage = Math.round(totalCandidateScore/totalScore*100);
+                                        totalPercentage = Math.round(totalCandidateScore/totalScore*100);
 
                                         let data = {
                                             val,
                                             totalCount: totalCount,
                                             totalScore: totalScore,
                                             totalCandidateScore: totalCandidateScore,
-                                            totalAverage: totalAverage
+                                            totalPercentage: totalPercentage
                                         }
                                         
 
