@@ -243,7 +243,7 @@ router.get("/", (req, res)=>{
               //console.log(item);
               var id = item.canId;
               
-               conn.query(`select Skill.skillName,Complexity.Name,Complexity.skilllevel from CandidateSkills 
+               conn.query(`select Skill.skillName,Complexity.Name,Complexity.skilllevel,Skill.skillId,Complexity.cmpId from CandidateSkills 
               left join Skill on Skill.skillId=CandidateSkills.skillId left join Complexity 
               on  Complexity.cmpId =CandidateSkills.cmpId where CandidateSkills.canId = '${id}'
               `,(err,val)=>{

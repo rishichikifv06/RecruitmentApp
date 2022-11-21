@@ -118,7 +118,7 @@ router.post("/", jsonParser,(req, res) => {
                           ansId = value[0].ansId;
                           console.log(ansId +"answerId"+v);
                           await conn.query(`Insert into AssessmentStaging(RowandQuestion_number,AssessmentStagingstatus,queId,
-                              ansId,canId,assessmentId) values (${k},'open',${v},${ansId},${canId},${assessmentId})`, (err,row) => {
+                              ansId,canId,assessmentId) values (${k},'Open',${v},${ansId},${canId},${assessmentId})`, (err,row) => {
                             if(row)
                             {
                               
