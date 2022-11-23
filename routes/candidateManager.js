@@ -274,7 +274,7 @@ router.post("/saveData", jsonParser, (req, res)=>{
 router.post("/candidateSkill", jsonParser, (req, res) => {
 
   const emailId = req.body.emailId;
-  
+
   async function getCandidateSkillsandAssessment() {
     await sql.open(details.connectionString, async (err, conn) => {
       await conn.query(`select * from Candidates  where EmailId='${emailId}'`, (err, data) => {
@@ -282,7 +282,9 @@ router.post("/candidateSkill", jsonParser, (req, res) => {
           const canId = data[0].canId;
           console.log(canId);
           sql.open(details.connectionString, async (err, conn) => {
-            await conn.query(`select * from CandidateSkills  where canId=${canId}`, (err, val) => {
+            await conn.query(`select Skill.skillName,Complexity.Skilllevel from CandidateSkills 
+            left join Skill on Skill.skillId=CandidateSkills.skillId left join Complexity on Complexity.cmpId=CandidateSkills.cmpId
+            where canId=${canId}`, (err, val) => {
               if (val) {
                 data[0].skills = val;
                 // const record={data};
