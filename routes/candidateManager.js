@@ -271,61 +271,68 @@ router.post("/saveData", jsonParser, (req, res)=>{
 })
 
 
-router.post("/candidateSkill",jsonParser, (req, res)=>{
-  var result=[];
-  // var query = "SELECT * FROM Complexity";
-const emailId=req.body.emailId;
-  async function getCandidateSkillsandAssessment()
-  {
-    await sql.open(details.connectionString, async (err, conn)=>{
-    await  conn.query(`select * from Candidates  where EmailId='${emailId}'`,(err, data)=>{
-        if(data){
-          var canId=data[0].canId;
-          sql.open(details.connectionString, async (err, conn)=>{
-            await  conn.query(`select * from CandidateSkills  where canId=${canId}`,(err, val)=>{
-              if(val){
-                data[0].skills=val;
-                  // const record={data};
-                  // res.status(200).json(record);
+router.post("/candidateSkill", jsonParser, (req, res) => {
+
+  const emailId = req.body.emailId;
+  
+  async function getCandidateSkillsandAssessment() {
+    await sql.open(details.connectionString, async (err, conn) => {
+      await conn.query(`select * from Candidates  where EmailId='${emailId}'`, (err, data) => {
+        if (data.legth!=0) {
+          const canId = data[0].canId;
+          console.log(canId);
+          sql.open(details.connectionString, async (err, conn) => {
+            await conn.query(`select * from CandidateSkills  where canId=${canId}`, (err, val) => {
+              if (val) {
+                data[0].skills = val;
+                // const record={data};
+                // res.status(200).json(record);
               }
-              if(err){
+              if (err) {
                 res.send(err);
               }
             })
+          })
+          sql.open(details.connectionString, async (err, conn) => {
+            await conn.query(`select * from Assessment where canId=${canId}`, (err, details) => {
+              if (details) {
+                var flag = 0;
+                for (let i = 0; i < details.length; i++) {
+                  if (details[i].assessmentstatus === 'Open') {
+                    flag = 1;
+                  }
+                }
+                if (flag == 0) {
+                  data[0].assessmentsStatus = 'closed';
+                }
+                else {
+                  data[0].assessmentsStatus = 'notClosed';
+                }
+                data[0].assessments = details;
+                setTimeout(() => {
+                  res.status(200).json({ data });
+                  conn.close();
+                }, 2000)
+              }
+              if (err) {
+                res.send(err);
+              }
             })
-            sql.open(details.connectionString, async (err, conn)=>{
-              await  conn.query(`select * from Assessment where canId=${canId}`,(err,details )=>{
-                if(details){
-                  var flag=0;
-                  for(let i=0;i<details.length;i++){
-                    if(details[i].assessmentstatus ==='Open'){
-                      flag=1;
-                    }
-                  }
-                  if(flag==0){
-                    data[0].assessmentsStatus='closed';
-                  }
-                  else{
-                    data[0].assessmentsStatus='notClosed';
-                  }
-                  data[0].assessments=details;
-                    setTimeout(()=>{
-                      res.status(200).json({data});
-                      conn.close();
-                    },2000)
-                }
-                if(err){
-                  res.send(err);
-                }
-              })
-              })
+          })
         }
-        if(err){
+        else{
+          const result={
+            "status":"not found",
+            "message":"no record found"
+          }
+          res.send(result);
+        }
+        if (err) {
           console.log(err);
           res.send(err);
         }
       })
-      if(err){
+      if (err) {
         console.log(err);
         res.send(err);
       }
