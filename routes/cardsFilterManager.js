@@ -97,7 +97,9 @@ router.post("/",jsonParser, (req, res) => {
                             })
                         }
                         console.log(candidateData);
-                        //res.status(200).json({candidateData});
+                        setTimeout(()=>{
+                            res.status(200).json({candidateData});
+                          },1000)
                     })
                     .catch((err)=>{
                         console.log(err);

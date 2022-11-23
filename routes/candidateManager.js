@@ -271,7 +271,7 @@ router.post("/saveData", jsonParser, (req, res)=>{
 })
 
 
-router.post("/candidateskill",jsonParser, (req, res)=>{
+router.post("/candidateSkill",jsonParser, (req, res)=>{
   var result=[];
   // var query = "SELECT * FROM Complexity";
 const emailId=req.body.emailId;
@@ -296,9 +296,23 @@ const emailId=req.body.emailId;
             sql.open(details.connectionString, async (err, conn)=>{
               await  conn.query(`select * from Assessment where canId=${canId}`,(err,details )=>{
                 if(details){
+                  var flag=0;
+                  for(let i=0;i<details.length;i++){
+                    if(details[i].assessmentstatus ==='Open'){
+                      flag=1;
+                    }
+                  }
+                  if(flag==0){
+                    data[0].assessmentsStatus='closed';
+                  }
+                  else{
+                    data[0].assessmentsStatus='notClosed';
+                  }
                   data[0].assessments=details;
-                    const record={data};
-                    res.status(200).json(record);
+                    setTimeout(()=>{
+                      res.status(200).json({data});
+                      conn.close();
+                    },2000)
                 }
                 if(err){
                   res.send(err);
