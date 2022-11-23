@@ -83,8 +83,9 @@ router.post("/",jsonParser, (req, res) => {
                     from Candidates where canName = '${name}'`)
                     .then((candidateData)=>{
                         console.log(candidateData);
+                        var id;
                         for(let i=0; i<candidateData.length; i++){
-                            var id = candidateData[i].canId;
+                             id = candidateData[i].canId;
 
                             ExecuteQuery(dbConnection, `select Skill.skillName,Complexity.Name,Complexity.skilllevel,Skill.skillId,Complexity.cmpId from CandidateSkills 
                             left join Skill on Skill.skillId=CandidateSkills.skillId left join Complexity 
@@ -115,15 +116,8 @@ router.post("/",jsonParser, (req, res) => {
         searchByName();
     }
 
-    if(date){
+    if(date){}
 
-        async function searchByDate(){
-
-
-
-        }
-        searchByDate();
-    }
 });
 
 module.exports = router;

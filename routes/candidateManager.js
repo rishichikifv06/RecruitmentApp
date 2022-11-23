@@ -352,4 +352,50 @@ router.post("/filterEmail", jsonParser, (req, res) => {
     getProfileEmail();
   }
 });
+
+router.post("/updateCandidateStatus", jsonParser, (req, res) => {
+  const data = req.body.data; //array structure
+  const skills = data[0].skills;
+  const canId = data[0].canId;
+  console.log(canId)
+  async function getData() {
+    await sql.open(details.connectionString, async (err, conn) => {
+      await conn.query(`update Candidates set canExperience=${data[0].canExperience},Candidatestatus='${data[0].Candidatestatus}'`, async (err, data) => {
+        if (data) {
+          console.log(data);
+          for (let i = 0; i < skills.length; i++) {
+            await sql.open(details.connectionString, async (err, conn) => {
+              await conn.query(`insert into CandidateSkills(cmpId,skillId,canId) values(${skills[i].cmpId},${skills[i].skillId},
+                ${canId})`, (err, value) => {
+                if (value) {
+                  const result = {
+                    "status": "success",
+                    "Message": "candidate data updated successfully "
+                  };
+                  console.log(result);
+                  res.status(200).json(result);
+                }
+                if (err) {
+                  res.send(err);
+                }
+              })
+              if (err) {
+                res.send(err);
+              }
+            })
+          }
+        }
+        if (err) {
+          console.log(err);
+          res.send(err);
+        }
+      })
+      if (err) {
+        console.log(err);
+        res.send(err);
+      }
+    })
+  }
+  getData();
+});
   module.exports = router;
