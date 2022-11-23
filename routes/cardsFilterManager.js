@@ -13,7 +13,7 @@ router.post("/",jsonParser, (req, res) => {
 
     const emailId = req.body.emailId;
     const name = req.body.name;
-    const date = req.body.date;
+    const status = req.body.status;
 
     if(emailId){
 
@@ -116,7 +116,50 @@ router.post("/",jsonParser, (req, res) => {
         searchByName();
     }
 
-    if(date){}
+    if(status){
+
+        async function searchByStatus(){
+
+            ConnectToDb().then(async (dbConnection)=>{
+                if(dbConnection){
+                    ExecuteQuery(dbConnection, `select canId,canName,canPhone,canExperience,
+                    Candidatestatus ,EmailId
+                    from Candidates where Candidatestatus = '${status}'`)
+                    .then((candidateData)=>{
+                        console.log(candidateData);
+                        var id;
+                        for(let i=0; i<candidateData.length; i++){
+                             id = candidateData[i].canId;
+
+                            ExecuteQuery(dbConnection, `select Skill.skillName,Complexity.Name,Complexity.skilllevel,Skill.skillId,Complexity.cmpId from CandidateSkills 
+                            left join Skill on Skill.skillId=CandidateSkills.skillId left join Complexity 
+                            on  Complexity.cmpId =CandidateSkills.cmpId where CandidateSkills.canId = ${id}`)
+                            .then((candidateSkills)=>{
+                              candidateData[i].skills = candidateSkills;
+                              console.log(candidateData[i]);
+                            })
+                            .catch((err)=>{
+                                console.log(err);
+                            })
+                        }
+                        console.log(candidateData);
+                        setTimeout(()=>{
+                            res.status(200).json({candidateData});
+                          },4000)
+                    })
+                    .catch((err)=>{
+                        console.log(err);
+                    })
+                }
+                else{
+                    console.log("Not connected to db");
+                }
+            }).catch((err)=>{
+                console.log(err);
+            })
+        }
+        searchByStatus();
+    }
 
 });
 
