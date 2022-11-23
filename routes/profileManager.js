@@ -222,53 +222,34 @@ var jsonParser = bodyParser.json();
 // res.status(200).json(result);
 // })
 
-var result=[];
+let result=[];
 router.get("/", (req, res)=>{
 
+
+
   async function getData() { 
-    
-   await  sql.open(details.connectionString,async (err, conn) => {
-     await conn.query(
+    await sql.open(details.connectionString,async (err, conn) => {
+    await  conn.query(
         `select canId,canName,canPhone,canExperience,
-        Date,Candidatestatus ,EmailId
+        Candidatestatus ,EmailId
         from Candidates  `,
-         (err, data) => {
+        async (err, data) => {
           if (data) {
             
-            var record={}
-            //console.log(data);
-            var i=0;
              for (let item of data)
             {
               //console.log(item);
               var id = item.canId;
               
-               conn.query(`select Skill.skillName,Complexity.Name,Complexity.skilllevel,Skill.skillId,Complexity.cmpId from CandidateSkills 
+              await conn.query(`select Skill.skillName,Complexity.Name,Complexity.skilllevel,Skill.skillId,Complexity.cmpId from CandidateSkills 
               left join Skill on Skill.skillId=CandidateSkills.skillId left join Complexity 
               on  Complexity.cmpId =CandidateSkills.cmpId where CandidateSkills.canId = '${id}'
-              `,(err,val)=>{
+              `,async (err,val)=>{
                 if(val){
-                  
-                  
+                    
                   var arr = [...val];
                   item.skills = arr;
                   result.push(item);
-                 // console.log(item);
-                  
-                   
-                  // record={
-                  //   canId : item.canId,
-                  //   canName:item.canName,
-                  //   canPhone:item.canPhone,
-                  //   canExperience :item.canExperience,
-                  //   Date:item.Date,
-                  //   Candidatestatus:item.Candidatestatus,
-                  //   skills: arr
-                    
-                  // }
-                  // console.log(record)
-                  // result[i] = record;
-                  // i++;
                  
                 }
                 if(err){
@@ -279,8 +260,6 @@ router.get("/", (req, res)=>{
               //console.log(result)
             }
 
-
-
             console.log(result);
             const output = {result};
             res.status(200).json(output);
@@ -290,8 +269,7 @@ router.get("/", (req, res)=>{
             console.log(err);
             res.send(err);
           }
-          
-          
+                
         }
       );
       if (err) {
@@ -300,7 +278,6 @@ router.get("/", (req, res)=>{
       }
     });
   }
-
   getData();
 })
 

@@ -74,12 +74,12 @@ router.post("/", jsonParser,(req, res) => {
     //getAssessment();
     async function getAssId(conn){
       //await sql.open(details.connectionString,async(err,conn)=>{
-       conn.query(`select assessmentId from Assessment where canId=${canId} and date='${Date}'`, (err, val) => {
+      await conn.query(`select assessmentId from Assessment where canId=${canId} and date='${Date}' AND assessmentstatus='Open'`,async (err, val) => {
          if(val){
             assessmentId=val[0].assessmentId;
            console.log(assessmentId);
-             getQuestions(assessmentId)
-             function getQuestions(assessmentId) {
+            await getQuestions(assessmentId)
+            async function getQuestions(assessmentId) {
       
               async function forqcount(n, sid, cid) {
                 await sql.open(details.connectionString, async (err, conn) => {
@@ -102,15 +102,15 @@ router.post("/", jsonParser,(req, res) => {
                     }
                 })
                 for (let j = 0; j < n; j++) {
-                  getAnswer(q);
+                 await getAnswer(q);
                 }
                 async function getAnswer( arr) {
                   var l=arr.length;
                      a = getrandomId(l);
                     console.log(arr[a]+  "arr[a]")
                     var v=arr[a];
-                    await sql.open(details.connectionString, async (err, conn) => {
-                      await conn.query(`Select ansId from Questions_and_Answers where queId = ${v}`, async (err, value) => {
+                    await sql.open(details.connectionString,async  (err, conn) => {
+                      await conn.query(`Select ansId from Questions_and_Answers where queId = ${v}`,async(err, value) => {
                         
                         if (value) {
                           k++;
@@ -118,7 +118,7 @@ router.post("/", jsonParser,(req, res) => {
                           ansId = value[0].ansId;
                           console.log(ansId +"answerId"+v);
                           await conn.query(`Insert into AssessmentStaging(RowandQuestion_number,AssessmentStagingstatus,queId,
-                              ansId,canId,assessmentId) values (${k},'Open',${v},${ansId},${canId},${assessmentId})`, (err,row) => {
+                              ansId,canId,assessmentId) values (${k},'Open',${v},${ansId},${canId},${assessmentId})`,async (err,row) => {
                             if(row)
                             {
                               
@@ -152,7 +152,7 @@ router.post("/", jsonParser,(req, res) => {
 
             var qcount= Math.round(25/100 * tque);
 
-            forqcount(qcount,skills[i].skillId,skills[i].cmpId);
+            await forqcount(qcount,skills[i].skillId,skills[i].cmpId);
 
           }
 
@@ -163,27 +163,27 @@ router.post("/", jsonParser,(req, res) => {
                   if (skills[i].cmpId == 3) {
                     var qcount = Math.round(50 / 100 * tque);
                     var easy = Math.round(20 / 100 * qcount);
-                    forqcount(easy, skills[i].skillId, 1);
+                    await forqcount(easy, skills[i].skillId, 1);
                     var intermediate = Math.round(30 / 100 * qcount);
-                    forqcount(intermediate, skills[i].skillId, 2)
+                    await forqcount(intermediate, skills[i].skillId, 2)
                     var hard = Math.round(50 / 100 * qcount);
-                    forqcount(hard, skills[i].skillId, 3)
+                    await forqcount(hard, skills[i].skillId, 3)
                     //console.log(qcount);
                   }
                    if (skills[i].cmpId == 2) {
                     var qcount = Math.round(30 / 100 * tque);
                     var easy = Math.round(30 / 100 * qcount);
-                    forqcount(easy, skills[i].skillId, 1);
+                    await forqcount(easy, skills[i].skillId, 1);
                     var intermediate = Math.round(70 / 100 * qcount);
-                    forqcount(intermediate, skills[i].skillId, 2)
+                    await forqcount(intermediate, skills[i].skillId, 2)
                     // console.log(qcount);
                   }
                   if(skills[i].cmpId==1){
                     var qcount = Math.round(20 / 100 * tque);
                     var easy = Math.round(70 / 100 * qcount);
-                    forqcount(easy, skills[i].skillId, 1);
+                    await forqcount(easy, skills[i].skillId, 1);
                     var intermediate = Math.round(30/100 * qcount);
-                    forqcount(intermediate, skills[i].skillId, 2);
+                    await forqcount(intermediate, skills[i].skillId, 2);
                   }
                 }
               }
@@ -192,28 +192,28 @@ router.post("/", jsonParser,(req, res) => {
                   if (skills[i].cmpId == 3) {
                     var qcount = Math.round(50 / 100 * tque);
                     var easy = Math.round(20 / 100 * qcount);
-                    forqcount(easy, skills[i].skillId, 1);
+                    await forqcount(easy, skills[i].skillId, 1);
                     var intermediate = Math.round(30 / 100 * qcount);
-                    forqcount(intermediate, skills[i].skillId, 2)
+                    await forqcount(intermediate, skills[i].skillId, 2)
                     var hard = Math.round(50 / 100 * qcount);
-                    forqcount(hard, skills[i].skillId, 3)
+                    await forqcount(hard, skills[i].skillId, 3)
                   }
                    if (skills[i].cmpId == 2) {
                     var qcount = Math.round(50 / 100 * tque);
                     var easy = Math.round(50 / 100 * qcount);
-                    forqcount(easy, skills[i].skillId, 1);
+                    await forqcount(easy, skills[i].skillId, 1);
                     var intermediate = Math.round(30 / 100 * qcount);
-                    forqcount(intermediate, skills[i].skillId, 2);
+                    await forqcount(intermediate, skills[i].skillId, 2);
                     var hard = Math.round(20 / 100 * qcount);
-                    forqcount(hard, skills[i].skillId, 3)
+                    await forqcount(hard, skills[i].skillId, 3)
                   }
                    if (skills[i].cmpId==1)
                     {
                     var qcount = Math.round(50 / 100 * tque);
                     var easy = Math.round(70 / 100 * qcount);
-                    forqcount(easy, skills[i].skillId, 1);
+                    await forqcount(easy, skills[i].skillId, 1);
                     var intermediate = Math.round(30/100 * qcount);
-                    forqcount(intermediate, skills[i].skillId, 2);
+                    await forqcount(intermediate, skills[i].skillId, 2);
                   }
                 }
               }
@@ -222,29 +222,29 @@ router.post("/", jsonParser,(req, res) => {
                 if (skills[i].cmpId == 3) {
                   var qcount = Math.round(100 / 100 * tque);
                   var easy = Math.round(20 / 100 * qcount);
-                  forqcount(easy, skills[i].skillId, 1);
+                  await forqcount(easy, skills[i].skillId, 1);
                   var intermediate = Math.round(30 / 100 * qcount);
-                  forqcount(intermediate, skills[i].skillId, 2);
+                  await forqcount(intermediate, skills[i].skillId, 2);
                   var hard = Math.round(50 / 100 * qcount);
-                  forqcount(hard, skills[i].skillId, 3);
+                  await forqcount(hard, skills[i].skillId, 3);
                 }
                  if (skills[i].cmpId == 2) {
                   var qcount = Math.round(100 / 100 * tque);
                   var easy = Math.round(20 / 100 * qcount);
-                  forqcount(easy, skills[i].skillId, 1);
+                  await forqcount(easy, skills[i].skillId, 1);
                   var intermediate = Math.round(60 / 100 * qcount);
-                  forqcount(intermediate, skills[i].skillId, 2);
+                  await forqcount(intermediate, skills[i].skillId, 2);
                   var hard = Math.round(20 / 100 * qcount);
-                  forqcount(hard, skills[i].skillId, 3);
+                  await forqcount(hard, skills[i].skillId, 3);
                 }
                  if (skills[i].cmpId == 1) {
                   var qcount = Math.round(100 / 100 * tque);
                   var easy = Math.round(60 / 100 * qcount);
-                  forqcount(easy, skills[i].skillId, 1);
+                  await forqcount(easy, skills[i].skillId, 1);
                   var intermediate = Math.round(30 / 100 * qcount);
-                  forqcount(intermediate, skills[i].skillId, 2);
+                  await forqcount(intermediate, skills[i].skillId, 2);
                   var hard = Math.round(10 / 100 * qcount);
-                  forqcount(hard, skills[i].skillId, 3);
+                  await forqcount(hard, skills[i].skillId, 3);
                 }
                }
               }
@@ -254,7 +254,8 @@ router.post("/", jsonParser,(req, res) => {
            
               k=0;
               let result = {
-                "status": "Question and Answers have been successfully inserted in AssessmentStaging"
+                "status": "Question and Answers have been successfully inserted in AssessmentStaging",
+                assessmentId: assessmentId
               }
               res.status(200).json(result);
            //res.redirect('./staging/rand?assessmentId=${assessmentId}');
@@ -265,7 +266,7 @@ router.post("/", jsonParser,(req, res) => {
        });
       //})
      }
-     async function getAssessment()
+    async function getAssessment()
     {
       console.log(canId,Date,starttime,candidatestatus,recId)
       await sql.open(details.connectionString, async (err, conn) => {

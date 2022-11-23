@@ -46,25 +46,28 @@ var jsonParser = bodyParser.json();
 // });
 
 router.get("/", (req, res)=>{
-  // var query = "SELECT * FROM Complexity";
 
   async function getData()
   {
     await sql.open(details.connectionString, async (err, conn)=>{
+      console.log(conn);
     await  conn.query("SELECT * FROM skill",(err, data)=>{
         if(data){
           console.log(data);
           const result = { data };
           res.status(200).json(result);
+          conn.close();
         }
         if(err){
           console.log(err);
           res.send(err);
+          conn.close();
         }
       })
       if(err){
         console.log(err);
         res.send(err);
+        conn.close();
       }
     })
   }

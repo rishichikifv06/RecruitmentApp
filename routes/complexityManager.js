@@ -6,6 +6,8 @@ var sql = require("msnodesqlv8");
 var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
 
+const {getAllComplexities} = require("../models/queries");
+
 
 // router.get("/", (req, res) => {
 //   //res.status(200).send("Home page of Questions Manager");
@@ -57,15 +59,18 @@ router.get("/", (req, res)=>{
           console.log(data);
           const result = { data };
           res.status(200).json(result);
+          conn.close();
         }
         if(err){
           console.log(err);
           res.send(err);
+          conn.close();
         }
       })
       if(err){
         console.log(err);
         res.send(err);
+        conn.close();
       }
     })
   }
@@ -73,6 +78,21 @@ router.get("/", (req, res)=>{
   getData();
 })
 
+
+// router.get('/',async (req, res)=>{
+
+//   try {
+//     getAllComplexities().then((complexityData)=>{
+//       console.log('eexecuted getall complexities', complexityData)
+//     }).catch(()=>{
+//       console.log('couldnot execute')
+//     })
+//     /* if(!complexityData) throw Error;
+//     res.status(200).send(complexityData); */
+//   } catch (error) {
+//     throw error
+//   }
+// })
 
 
 module.exports = router;
