@@ -126,7 +126,6 @@ router.post("/",jsonParser, (req, res) => {
                     Candidatestatus ,EmailId
                     from Candidates where Candidatestatus = '${status}'`)
                     .then((candidateData)=>{
-                        console.log(candidateData);
                         var id;
                         for(let i=0; i<candidateData.length; i++){
                              id = candidateData[i].canId;
@@ -135,17 +134,16 @@ router.post("/",jsonParser, (req, res) => {
                             left join Skill on Skill.skillId=CandidateSkills.skillId left join Complexity 
                             on  Complexity.cmpId =CandidateSkills.cmpId where CandidateSkills.canId = ${id}`)
                             .then((candidateSkills)=>{
+                               // console.log(candidateSkills);
                               candidateData[i].skills = candidateSkills;
-                              console.log(candidateData[i]);
+                               console.log(candidateData[i]);
                             })
                             .catch((err)=>{
                                 console.log(err);
                             })
                         }
-                        console.log(candidateData);
-                        setTimeout(()=>{
-                            res.status(200).json({candidateData});
-                          },4000)
+                        // console.log(candidateData);
+                        res.status(200).json({candidateData});
                     })
                     .catch((err)=>{
                         console.log(err);

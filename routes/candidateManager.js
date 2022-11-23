@@ -278,7 +278,7 @@ router.post("/candidateSkill", jsonParser, (req, res) => {
   async function getCandidateSkillsandAssessment() {
     await sql.open(details.connectionString, async (err, conn) => {
       await conn.query(`select * from Candidates  where EmailId='${emailId}'`, (err, data) => {
-        if (data.legth!=0) {
+        if (data.length!=0) {
           const canId = data[0].canId;
           console.log(canId);
           sql.open(details.connectionString, async (err, conn) => {
@@ -322,12 +322,15 @@ router.post("/candidateSkill", jsonParser, (req, res) => {
             })
           })
         }
-        else{
+        if(data.length == 0){
           const result={
             "status":"not found",
             "message":"no record found"
           }
-          res.send(result);
+          setTimeout(()=>{
+            res.status(200).json(result);
+            conn.close();
+          },2000)
         }
         if (err) {
           console.log(err);
