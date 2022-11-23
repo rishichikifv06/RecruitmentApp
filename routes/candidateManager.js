@@ -270,4 +270,72 @@ router.post("/saveData", jsonParser, (req, res)=>{
   }
 })
 
+
+router.post("/candidateskill",jsonParser, (req, res)=>{
+  var result=[];
+  // var query = "SELECT * FROM Complexity";
+const emailId=req.body.emailId;
+  async function getCandidateSkillsandAssessment()
+  {
+    await sql.open(details.connectionString, async (err, conn)=>{
+    await  conn.query(`select * from Candidates  where EmailId='${emailId}'`,(err, data)=>{
+        if(data){
+          var canId=data[0].canId;
+          sql.open(details.connectionString, async (err, conn)=>{
+            await  conn.query(`select * from CandidateSkills  where canId=${canId}`,(err, val)=>{
+              if(val){
+                data[0].skills=val;
+                  // const record={data};
+                  // res.status(200).json(record);
+              }
+              if(err){
+                res.send(err);
+              }
+            })
+            })
+            sql.open(details.connectionString, async (err, conn)=>{
+              await  conn.query(`select * from Assessment where canId=${canId}`,(err,details )=>{
+                if(details){
+                  data[0].assessments=details;
+                    const record={data};
+                    res.status(200).json(record);
+                }
+                if(err){
+                  res.send(err);
+                }
+              })
+              })
+        }
+        if(err){
+          console.log(err);
+          res.send(err);
+        }
+      })
+      if(err){
+        console.log(err);
+        res.send(err);
+      }
+    })
+  }
+  getCandidateSkillsandAssessment();
+});
+
+router.post("/filterEmail", jsonParser, (req, res) => {
+  if (req.body != undefined) {
+    const emailId = req.body.emailId;
+    async function getProfileEmail() {
+      const emailquery=`select * from Candidates where EmailId='${emailId}'`
+     await sql.query(details.connectionString,emailquery, (data,err)=>{
+        if(data){
+          const candidate={data};
+          res.status(200).json(candidate);
+        }
+        if(err){
+          res.send(err);
+        }
+     })
+    }
+    getProfileEmail();
+  }
+});
   module.exports = router;

@@ -227,7 +227,7 @@ router.get("/", (req, res)=>{
 
 
 
-  async function getData() { 
+  async function getAllProfiles() { 
     await sql.open(details.connectionString,async (err, conn) => {
     await  conn.query(
         `select canId,canName,canPhone,canExperience,
@@ -236,10 +236,10 @@ router.get("/", (req, res)=>{
         async (err, data) => {
           if (data) {
             
-             for (let item of data)
+             for (let i=0; i<data.length; i++)
             {
               //console.log(item);
-              var id = item.canId;
+              var id = data[i].canId;
               
               await conn.query(`select Skill.skillName,Complexity.Name,Complexity.skilllevel,Skill.skillId,Complexity.cmpId from CandidateSkills 
               left join Skill on Skill.skillId=CandidateSkills.skillId left join Complexity 
@@ -247,9 +247,8 @@ router.get("/", (req, res)=>{
               `,async (err,val)=>{
                 if(val){
                     
-                  var arr = [...val];
-                  item.skills = arr;
-                  result.push(item);
+                  data[i].skills=val;
+                  result[i]=data[i]; 
                  
                 }
                 if(err){
@@ -260,14 +259,16 @@ router.get("/", (req, res)=>{
               //console.log(result)
             }
 
-            console.log(result);
-            const output = {result};
-            res.status(200).json(output);
-            result = [];
+            setTimeout(()=>{
+                res.status(200).json({result});
+                conn.close();
+              },2000)
+
           }
           if (err) {
             console.log(err);
             res.send(err);
+            conn.close();
           }
                 
         }
@@ -275,10 +276,11 @@ router.get("/", (req, res)=>{
       if (err) {
         console.log(err);
         res.send(err);
+        conn.close();
       }
     });
   }
-  getData();
+  getAllProfiles();
 })
 
 

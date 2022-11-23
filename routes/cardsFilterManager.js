@@ -5,6 +5,8 @@ var sql = require("msnodesqlv8");
 var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
 
+const {ConnectToDb,ExecuteQuery} = require('../db');
+
 var arr=[];
 router.post("/",jsonParser, (req, res) => {
 
@@ -46,11 +48,13 @@ router.post("/",jsonParser, (req, res) => {
                                 }
                                 })
                             }
-                            const result = {arr}
                             console.log("array is",arr);
-                            res.status(200).json(result);
-                            // await conn.close();
+                            setTimeout(()=>{
+                                res.status(200).json({arr});
+                                conn.close();
+                              },1000)
                         }
+                    //    await conn.close();
                         if(err){
                             console.log(err);
                             res.send(err);
@@ -72,24 +76,38 @@ router.post("/",jsonParser, (req, res) => {
 
         async function searchByName(){
 
-            await sql.open(details.connectionString, async (err, conn)=>{
-                if(conn){
-                    await conn.query(`SELECT * FROM Candidates WHERE canName='${name}'`, (err,data)=>{
-                        if(data){
-                            res.status(200).json({data});
-                            conn.close();
+            ConnectToDb().then(async (dbConnection)=>{
+                if(dbConnection){
+                    ExecuteQuery(dbConnection, `select canId,canName,canPhone,canExperience,
+                    Candidatestatus ,EmailId
+                    from Candidates where canName = '${name}'`)
+                    .then((candidateData)=>{
+                        console.log(candidateData);
+                        for(let i=0; i<candidateData.length; i++){
+                            var id = candidateData[i].canId;
+
+                            ExecuteQuery(dbConnection, `select Skill.skillName,Complexity.Name,Complexity.skilllevel,Skill.skillId,Complexity.cmpId from CandidateSkills 
+                            left join Skill on Skill.skillId=CandidateSkills.skillId left join Complexity 
+                            on  Complexity.cmpId =CandidateSkills.cmpId where CandidateSkills.canId = ${id}`)
+                            .then((candidateSkills)=>{
+                              candidateData[i].skills = candidateSkills;
+                            })
+                            .catch((err)=>{
+                                console.log(err);
+                            })
                         }
-                        if(err){
-                            console.log(err);
-                            res.send(err);
-                            conn.close();
-                        }
+                        console.log(candidateData);
+                        //res.status(200).json({candidateData});
+                    })
+                    .catch((err)=>{
+                        console.log(err);
                     })
                 }
-                if(err){
-                    console.log(err);
-                    res.send(err);
+                else{
+                    console.log("Not connected to db");
                 }
+            }).catch((err)=>{
+                console.log(err);
             })
         }
         searchByName();
@@ -99,25 +117,8 @@ router.post("/",jsonParser, (req, res) => {
 
         async function searchByDate(){
 
-            await sql.open(details.connectionString, async (err, conn)=>{
-                if(conn){
-                    await conn.query(`SELECT * FROM Candidates WHERE canName='${name}'`, (err,data)=>{
-                        if(data){
-                            res.status(200).json({data});
-                            conn.close();
-                        }
-                        if(err){
-                            console.log(err);
-                            res.send(err);
-                            conn.close();
-                        }
-                    })
-                }
-                if(err){
-                    console.log(err);
-                    res.send(err);
-                }
-            })
+
+
         }
         searchByDate();
     }

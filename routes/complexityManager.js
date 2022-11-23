@@ -51,7 +51,7 @@ const {getAllComplexities} = require("../models/queries");
 router.get("/", (req, res)=>{
   // var query = "SELECT * FROM Complexity";
 
-  async function getData()
+  async function getAllComplexities()
   {
     await sql.open(details.connectionString, async (err, conn)=>{
     await  conn.query("SELECT * FROM Complexity",(err, data)=>{
@@ -75,7 +75,7 @@ router.get("/", (req, res)=>{
     })
   }
  
-  getData();
+  getAllComplexities();
 })
 
 

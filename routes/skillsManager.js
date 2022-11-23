@@ -47,7 +47,7 @@ var jsonParser = bodyParser.json();
 
 router.get("/", (req, res)=>{
 
-  async function getData()
+  async function getAllSkills()
   {
     await sql.open(details.connectionString, async (err, conn)=>{
       console.log(conn);
@@ -72,7 +72,7 @@ router.get("/", (req, res)=>{
     })
   }
  
-  getData();
+  getAllSkills();
 })
 
 
