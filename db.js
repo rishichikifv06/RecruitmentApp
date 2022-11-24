@@ -10,7 +10,7 @@ module.exports.ConnectToDb = async () => {
    return sql.open(connectionString, async (err, conn) => {
       if (conn) {
         return conn};
-      return null
+      return err;
     });
   };
   

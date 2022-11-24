@@ -81,29 +81,31 @@ router.post("/",jsonParser, (req, res) => {
                     ExecuteQuery(dbConnection, `select canId,canName,canPhone,canExperience,
                     Candidatestatus ,EmailId
                     from Candidates where canName = '${name}'`)
-                    .then((candidateData)=>{
-                        console.log(candidateData);
+                    .then((candidateArrayData)=>{
+                        console.log(candidateArrayData);
                         var id;
-                        for(let i=0; i<candidateData.length; i++){
-                             id = candidateData[i].canId;
+                        for(let i=0; i<candidateArrayData.length; i++){
+                             id = candidateArrayData[i].canId;
 
                             ExecuteQuery(dbConnection, `select Skill.skillName,Complexity.Name,Complexity.skilllevel,Skill.skillId,Complexity.cmpId from CandidateSkills 
                             left join Skill on Skill.skillId=CandidateSkills.skillId left join Complexity 
                             on  Complexity.cmpId =CandidateSkills.cmpId where CandidateSkills.canId = ${id}`)
                             .then((candidateSkills)=>{
-                              candidateData[i].skills = candidateSkills;
+                              candidateArrayData[i].skills = candidateSkills;
                             })
                             .catch((err)=>{
                                 console.log(err);
                             })
                         }
-                        console.log(candidateData);
+                        console.log(candidateArrayData);
                         setTimeout(()=>{
-                            res.status(200).json({candidateData});
+                            res.status(200).json({candidateArrayData});
+                            dbConnection.close();
                           },1000)
                     })
                     .catch((err)=>{
                         console.log(err);
+                        dbConnection.close();
                     })
                 }
                 else{
@@ -111,6 +113,7 @@ router.post("/",jsonParser, (req, res) => {
                 }
             }).catch((err)=>{
                 console.log(err);
+                dbConnection.close();
             })
         }
         searchByName();
@@ -125,28 +128,17 @@ router.post("/",jsonParser, (req, res) => {
                     ExecuteQuery(dbConnection, `select canId,canName,canPhone,canExperience,
                     Candidatestatus ,EmailId
                     from Candidates where Candidatestatus = '${status}'`)
-                    .then((candidateData)=>{
-                        var id;
-                        for(let i=0; i<candidateData.length; i++){
-                             id = candidateData[i].canId;
-
-                            ExecuteQuery(dbConnection, `select Skill.skillName,Complexity.Name,Complexity.skilllevel,Skill.skillId,Complexity.cmpId from CandidateSkills 
-                            left join Skill on Skill.skillId=CandidateSkills.skillId left join Complexity 
-                            on  Complexity.cmpId =CandidateSkills.cmpId where CandidateSkills.canId = ${id}`)
-                            .then((candidateSkills)=>{
-                               // console.log(candidateSkills);
-                              candidateData[i].skills = candidateSkills;
-                               console.log(candidateData[i]);
-                            })
-                            .catch((err)=>{
-                                console.log(err);
-                            })
-                        }
-                        // console.log(candidateData);
-                        res.status(200).json({candidateData});
+                    .then(async (candidateArrayData)=>{
+                       await setSkillsToCandidates(dbConnection, candidateArrayData)
+                       .then((a)=>{
+                           console.log("skills is", a);
+                           res.status(200).json({a});
+                       })
+                        // console.log(candidateArrayData);
                     })
                     .catch((err)=>{
                         console.log(err);
+                        dbConnection.close();
                     })
                 }
                 else{
@@ -154,9 +146,31 @@ router.post("/",jsonParser, (req, res) => {
                 }
             }).catch((err)=>{
                 console.log(err);
+                dbConnection.close();
             })
         }
         searchByStatus();
+
+        async function setSkillsToCandidates(dbConnection, candidateArrayData){
+            var id;
+            for(let i=0; i<candidateArrayData.length; i++){
+                 id = candidateArrayData[i].canId;
+
+               await ExecuteQuery(dbConnection, `select Skill.skillName,Complexity.Name,Complexity.skilllevel,Skill.skillId,Complexity.cmpId from CandidateSkills 
+                left join Skill on Skill.skillId=CandidateSkills.skillId left join Complexity 
+                on  Complexity.cmpId =CandidateSkills.cmpId where CandidateSkills.canId = ${id}`)
+                .then((candidateSkills)=>{
+                    // console.log(candidateSkills);
+                     candidateArrayData[i].skills = candidateSkills;
+                     candidateArrayData;
+                   //console.log(candidateArrayData[i]);
+                })
+                .catch((err)=>{
+                    console.log(err);
+                })
+            }
+            return candidateArrayData;
+        }
     }
 
 });
