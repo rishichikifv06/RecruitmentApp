@@ -1,298 +1,231 @@
 var express = require("express");
 var router = express.Router();
-var details = require("../db");
-var sql = require("msnodesqlv8");
-var bodyParser = require('body-parser');
-const { json } = require("body-parser");
-var app = express();
-//const { Connection, Request } = require("tedious");
+var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
-
-// router.post("/",jsonParser, (req, res) => {
-
-//   function getData() {
-//     // Create connection instance
-//     var conn = new sql.ConnectionPool(details.config);
-//     conn
-//       .connect()
-//       // Successfull connection
-//       .then(function () {
-//         // Create request instance, passing in connection instance
-//         var req = new sql.Request(conn);
-//         // Call mssql's query method passing in params
-//         req
-//           .query(`INSERT INTO Asessment VALUES()`)
-//           .then(function (recordset) {
-//             console.log(recordset);
-//             const { recordset: data } = recordset;
-//             const jData = { data };
-//             res.send(jData);
-//             conn.close();
-//           })
-//           // Handle sql statement execution errors
-//           .catch(function (err) {
-//             console.log(err);
-//             res.send(err);
-//             conn.close();
-//           });
-//       })
-//       // Handle connection errors
-//       .catch(function (err) {
-//         console.log(err);
-//         res.send(err);
-//         conn.close();
-//       });
-//   }
-//   getData();
-// });
-
-
-
-// module.exports = router;
-
+const { ConnectToDb, ExecuteQuery } = require('../db');
 function getrandomId(number) {
-  return Math.floor(Math.random() * number)
+    return Math.round(Math.random() * number)
 }
 function toClear(array) {
-  for (let z = 0; z < array.length; z++) {
-    array.pop();
-  }
+    for (let z = 0; z < array.length; z++) {
+        array.pop();
+    }
 }
-
-var q=[];
-router.post("/", jsonParser,(req, res) => {
-  if(req.body !=undefined){
-    const canId=req.body.canId;
-    const recId=req.body.recId;
-    const Date=req.body.Date;
-    const starttime=req.body.starttime;
-    const candidatestatus=req.body.Candidatestatus;
-    const skills=req.body.skills;
-    var ansId;
-    var assessmentId;
-    var k=0;
-    //getAssessment();
-    async function getAssId(conn){
-      //await sql.open(details.connectionString,async(err,conn)=>{
-      await conn.query(`select assessmentId from Assessment where canId=${canId} and date='${Date}' AND assessmentstatus='Open'`,async (err, val) => {
-         if(val){
-            assessmentId=val[0].assessmentId;
-           console.log(assessmentId);
-            await getQuestions(assessmentId)
-            async function getQuestions(assessmentId) {
-      
-              async function forqcount(n, sid, cid) {
-                await sql.open(details.connectionString, async (err, conn) => {
-                  await conn.query(
-                    ` select  * from Questions where  skillId=${sid} and cmpId=${cid}`,
-                    (err, data) => {
-                      if (data) {
-                        for (let item of data) {
-                          q.push(item.queId)
-                          
-                        }//console.log( q + "q array");
-                      }
-                      if (err) {
-                        //res.send(err);
-                      }
-                    });
-                    if(err)
-                    {
-                        console.log(err+"2")
+var q = [];
+router.post("/", jsonParser, (req, res) => {
+    if (req.body != undefined) {
+        const canId = req.body.canId;
+        const recId = req.body.recId;
+        const Date = req.body.Date;
+        const starttime = req.body.starttime;
+        const candidatestatus = req.body.Candidatestatus;
+        const skills = req.body.skills;
+        console.log(skills);
+        var count = skills.length
+        console.log(count + " skill length");
+        var tque = 20;
+        var ansId;
+        var assessmentId;
+        var k = 0;
+        InsertIntoAssessment();
+        async function InsertIntoAssessment() {
+            await ConnectToDb().then(async (dbConnection) => {
+                if (dbConnection) {
+                    await ExecuteQuery(dbConnection, `insert into Assessment(canId,date,startTime,assessmentstatus,recId) 
+            values(${canId},'${Date}','${starttime}','${candidatestatus}',${recId})`)
+                        .then(async (data) => {
+                            console.log(data + " inserted assessment");
+                            await getAssessmentId(dbConnection);
+                        })
+                        .catch((err) => {
+                            console.log(err + 1);
+                        })
+                }
+                else {
+                    console.log("not connected to db");
+                }
+            })
+                .catch((err) => {
+                    console.log(err + 2);
+                    dbConnection.close();
+                })
+        }
+        async function getAssessmentId(dbConnection) {
+            if (dbConnection) {
+                await ExecuteQuery(dbConnection, `select assessmentId from Assessment where canId=${canId} and date='${Date}' AND assessmentstatus='Open'`)
+                    .then(async (assessmentDetails) => {
+                        if (assessmentDetails.length != 0) {
+                            assessmentId = assessmentDetails[0].assessmentId;
+                            console.log(assessmentId + "-  assId");
+                            await getQuestionCount(dbConnection, assessmentId);
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err + 3);
+                    })
+            }
+        }
+        async function getQuestionCount(dbConnection, assessmentId) {
+            if (count == 5) {
+                for (let i = 0; i < count; i++) {
+                    if (skills[i].cmpId == 3 || skills[i].cmpId == 2 || skills[i].cmpId == 1) {
+                        var qcount = Math.round(20 / 100 * tque);
+                        foreachQuestionCount(qcount, skills[i].skillId, skills[i].cmpId, dbConnection, assessmentId);
+                    }
+                }
+            }
+            if (count == 4) {
+                for (let i = 0; i < count; i++) {
+                    if (skills[i].cmpId == 3 || skills[i].cmpId == 2 || skills[i].cmpId == 1) {
+                        var qcount = Math.round(25 / 100 * tque);
+                        foreachQuestionCount(qcount, skills[i].skillId, skills[i].cmpId, dbConnection, assessmentId);
+                    }
+                }
+            }
+            if (count == 3) {
+                for (let i = 0; i < count; i++) {
+                    if (skills[i].cmpId == 3) {
+                        var qcount = Math.round(50 / 100 * tque);
+                        var easy = Math.round(20 / 100 * qcount);
+                        foreachQuestionCount(easy, skills[i].skillId, 1, dbConnection, assessmentId);
+                        var intermediate = Math.round(30 / 100 * qcount);
+                        foreachQuestionCount(intermediate, skills[i].skillId, 2, dbConnection, assessmentId)
+                        var hard = Math.round(50 / 100 * qcount);
+                        foreachQuestionCount(hard, skills[i].skillId, 3, dbConnection, assessmentId)
+                    }
+                    if (skills[i].cmpId == 2) {
+                        var qcount = Math.round(30 / 100 * tque);
+                        var easy = Math.round(30 / 100 * qcount);
+                        foreachQuestionCount(easy, skills[i].skillId, 1, dbConnection, assessmentId);
+                        var intermediate = Math.round(70 / 100 * qcount);
+                        foreachQuestionCount(intermediate, skills[i].skillId, 2, dbConnection, assessmentId)
+                    }
+                    if (skills[i].cmpId == 1) {
+                        var qcount = Math.round(20 / 100 * tque);
+                        var easy = Math.round(70 / 100 * qcount);
+                        foreachQuestionCount(easy, skills[i].skillId, 1, dbConnection, assessmentId);
+                        var intermediate = Math.round(30 / 100 * qcount);
+                        foreachQuestionCount(intermediate, skills[i].skillId, 2, dbConnection, assessmentId);
+                    }
+                }
+            }
+            if (count == 2) {
+                for (var i = 0; i < count; i++) {
+                    if (skills[i].cmpId == 3) {
+                        var qcount = Math.round(50 / 100 * tque);
+                        var easy = Math.round(20 / 100 * qcount);
+                        foreachQuestionCount(easy, skills[i].skillId, 1, dbConnection, assessmentId);
+                        var intermediate = Math.round(30 / 100 * qcount);
+                        foreachQuestionCount(intermediate, skills[i].skillId, 2, dbConnection, assessmentId)
+                        var hard = Math.round(50 / 100 * qcount);
+                        foreachQuestionCount(hard, skills[i].skillId, 3, dbConnection, assessmentId)
+                    }
+                    if (skills[i].cmpId == 2) {
+                        var qcount = Math.round(50 / 100 * tque);
+                        var easy = Math.round(50 / 100 * qcount);
+                        foreachQuestionCount(easy, skills[i].skillId, 1, dbConnection, assessmentId);
+                        var intermediate = Math.round(30 / 100 * qcount);
+                        foreachQuestionCount(intermediate, skills[i].skillId, 2, dbConnection, assessmentId);
+                        var hard = Math.round(20 / 100 * qcount);
+                        foreachQuestionCount(hard, skills[i].skillId, 3, dbConnection, assessmentId)
+                    }
+                    if (skills[i].cmpId == 1) {
+                        var qcount = Math.round(50 / 100 * tque);
+                        var easy = Math.round(70 / 100 * qcount);
+                        foreachQuestionCount(easy, skills[i].skillId, 1, dbConnection, assessmentId);
+                        var intermediate = Math.round(30 / 100 * qcount);
+                        foreachQuestionCount(intermediate, skills[i].skillId, 2, dbConnection, assessmentId);
+                    }
+                }
+            }
+            if (count == 1) {
+                for (let i = 0; i < count; i++) {
+                    if (skills[i].cmpId == 3) {
+                        var qcount = Math.round(100 / 100 * tque);
+                        var easy = Math.round(20 / 100 * qcount);
+                        foreachQuestionCount(easy, skills[i].skillId, 1, dbConnection, assessmentId);
+                        var intermediate = Math.round(30 / 100 * qcount);
+                        foreachQuestionCount(intermediate, skills[i].skillId, 2, dbConnection, assessmentId);
+                        var hard = Math.round(50 / 100 * qcount);
+                        foreachQuestionCount(hard, skills[i].skillId, 3, dbConnection, assessmentId);
+                    }
+                    if (skills[i].cmpId == 2) {
+                        var qcount = Math.round(100 / 100 * tque);
+                        var easy = Math.round(20 / 100 * qcount);
+                        foreachQuestionCount(easy, skills[i].skillId, 1, dbConnection, assessmentId);
+                        var intermediate = Math.round(60 / 100 * qcount);
+                        foreachQuestionCount(intermediate, skills[i].skillId, 2, dbConnection, assessmentId);
+                        var hard = Math.round(20 / 100 * qcount);
+                        foreachQuestionCount(hard, skills[i].skillId, 3, dbConnection, assessmentId);
+                    }
+                    if (skills[i].cmpId == 1) {
+                        var qcount = Math.round(100 / 100 * tque);
+                        var easy = Math.round(60 / 100 * qcount);
+                        foreachQuestionCount(easy, skills[i].skillId, 1, dbConnection, assessmentId);
+                        var intermediate = Math.round(30 / 100 * qcount);
+                        foreachQuestionCount(intermediate, skills[i].skillId, 2, dbConnection, assessmentId);
+                        var hard = Math.round(10 / 100 * qcount);
+                        foreachQuestionCount(hard, skills[i].skillId, 3, dbConnection, assessmentId);
+                    }
+                }
+            }
+            k = 0;
+            let result = {
+                "status": "Question and Answers have been successfully inserted in AssessmentStaging",
+                "assessmentId": assessmentId
+            }
+            setTimeout(() => {
+                res.status(200).json(result);
+                // dbConnection.close();
+            }, 2000)
+        }
+        async function foreachQuestionCount(n, sid, cid, dbConnection, assessmentId) {
+            await ExecuteQuery(dbConnection, ` select  * from Questions where  skillId=${sid} and cmpId=${cid}`)
+                .then(async (questions) => {
+                    if (questions.length != 0) {
+                        for (let item of questions) {
+                            q.push(item.queId);
+                        }
+                    }
+                    console.log(q + "- questions array");
+                })
+                .catch((err) => {
+                    console.log(err + 6);
+                })
+            for (let j = 0; j < n; j++) {
+                await getAnswer(q, dbConnection, assessmentId);
+            }
+            toClear(q);
+        }
+        async function getAnswer(arr, dbConnection, assessmentId) {
+            var l = arr.length;
+            a = getrandomId(l);
+            console.log(arr[a] + "arr[a]")
+            var v = arr[a];
+            await ExecuteQuery(dbConnection, `Select ansId from Questions_and_Answers where queId = ${v}`)
+                .then(async (answer) => {
+                    if (answer.length != 0) {
+                        k++;
+                        console.log(k + "--Q count");
+                        ansId = answer[0].ansId;
+                        console.log(ansId + " - answerId " + v + "- queId");
+                        await ExecuteQuery(dbConnection, `Insert into AssessmentStaging(RowandQuestion_number,
+                            AssessmentStagingstatus,queId,ansId,canId,assessmentId) 
+                            values(${k},'Open',${v},${ansId},${canId},${assessmentId})`)
+                            .then((row) => {
+                                if (row) {
+                                    console.log(row + "inserted staging");
+                                }
+                            })
+                            .catch((err) => {
+                                console.log(err + 5);
+                            })
                     }
                 })
-                for (let j = 0; j < n; j++) {
-                 await getAnswer(q);
-                }
-                async function getAnswer( arr) {
-                  var l=arr.length;
-                     a = getrandomId(l);
-                    console.log(arr[a]+  "arr[a]")
-                    var v=arr[a];
-                    await sql.open(details.connectionString,async  (err, conn) => {
-                      await conn.query(`Select ansId from Questions_and_Answers where queId = ${v}`,async(err, value) => {
-                        
-                        if (value) {
-                          k++;
-                          console.log(k);
-                          ansId = value[0].ansId;
-                          console.log(ansId +"answerId"+v);
-                          await conn.query(`Insert into AssessmentStaging(RowandQuestion_number,AssessmentStagingstatus,queId,
-                              ansId,canId,assessmentId) values (${k},'Open',${v},${ansId},${canId},${assessmentId})`,async (err,row) => {
-                            if(row)
-                            {
-                              
-                              console.log(row);
-                            }if(err){
-                              console.log(err + "error while inserting");
-                            }
-                          });
-                        }
-                        if(err)
-                        {
-                            console.log(err+"1");
-                        }
-                      })
-                      if(err){
-                        console.log(err+"conn err");
-                      }
-                    });
-                     toClear(q);
-                  }
-        
-                
-              }
-              var count = skills.length
-              var tque = 20;
-               if(count ==4){
-
-        for(let i=0;i<count;i++){
-
-          if(skills[i].cmpId==3 || skills[i].cmpId==2 || skills[i].cmpId ==1){
-
-            var qcount= Math.round(25/100 * tque);
-
-            await forqcount(qcount,skills[i].skillId,skills[i].cmpId);
-
-          }
-
+                .catch((err) => {
+                    console.log(err + 4);
+                })
         }
-      }
-              if (count == 3) {
-                for (let i = 0; i < count; i++) {
-                  if (skills[i].cmpId == 3) {
-                    var qcount = Math.round(50 / 100 * tque);
-                    var easy = Math.round(20 / 100 * qcount);
-                    await forqcount(easy, skills[i].skillId, 1);
-                    var intermediate = Math.round(30 / 100 * qcount);
-                    await forqcount(intermediate, skills[i].skillId, 2)
-                    var hard = Math.round(50 / 100 * qcount);
-                    await forqcount(hard, skills[i].skillId, 3)
-                    //console.log(qcount);
-                  }
-                   if (skills[i].cmpId == 2) {
-                    var qcount = Math.round(30 / 100 * tque);
-                    var easy = Math.round(30 / 100 * qcount);
-                    await forqcount(easy, skills[i].skillId, 1);
-                    var intermediate = Math.round(70 / 100 * qcount);
-                    await forqcount(intermediate, skills[i].skillId, 2)
-                    // console.log(qcount);
-                  }
-                  if(skills[i].cmpId==1){
-                    var qcount = Math.round(20 / 100 * tque);
-                    var easy = Math.round(70 / 100 * qcount);
-                    await forqcount(easy, skills[i].skillId, 1);
-                    var intermediate = Math.round(30/100 * qcount);
-                    await forqcount(intermediate, skills[i].skillId, 2);
-                  }
-                }
-              }
-               if (count == 2) {
-                for (var i = 0; i < count; i++) {
-                  if (skills[i].cmpId == 3) {
-                    var qcount = Math.round(50 / 100 * tque);
-                    var easy = Math.round(20 / 100 * qcount);
-                    await forqcount(easy, skills[i].skillId, 1);
-                    var intermediate = Math.round(30 / 100 * qcount);
-                    await forqcount(intermediate, skills[i].skillId, 2)
-                    var hard = Math.round(50 / 100 * qcount);
-                    await forqcount(hard, skills[i].skillId, 3)
-                  }
-                   if (skills[i].cmpId == 2) {
-                    var qcount = Math.round(50 / 100 * tque);
-                    var easy = Math.round(50 / 100 * qcount);
-                    await forqcount(easy, skills[i].skillId, 1);
-                    var intermediate = Math.round(30 / 100 * qcount);
-                    await forqcount(intermediate, skills[i].skillId, 2);
-                    var hard = Math.round(20 / 100 * qcount);
-                    await forqcount(hard, skills[i].skillId, 3)
-                  }
-                   if (skills[i].cmpId==1)
-                    {
-                    var qcount = Math.round(50 / 100 * tque);
-                    var easy = Math.round(70 / 100 * qcount);
-                    await forqcount(easy, skills[i].skillId, 1);
-                    var intermediate = Math.round(30/100 * qcount);
-                    await forqcount(intermediate, skills[i].skillId, 2);
-                  }
-                }
-              }
-               if (count == 1) {
-               for(let i=0;i<count;i++){
-                if (skills[i].cmpId == 3) {
-                  var qcount = Math.round(100 / 100 * tque);
-                  var easy = Math.round(20 / 100 * qcount);
-                  await forqcount(easy, skills[i].skillId, 1);
-                  var intermediate = Math.round(30 / 100 * qcount);
-                  await forqcount(intermediate, skills[i].skillId, 2);
-                  var hard = Math.round(50 / 100 * qcount);
-                  await forqcount(hard, skills[i].skillId, 3);
-                }
-                 if (skills[i].cmpId == 2) {
-                  var qcount = Math.round(100 / 100 * tque);
-                  var easy = Math.round(20 / 100 * qcount);
-                  await forqcount(easy, skills[i].skillId, 1);
-                  var intermediate = Math.round(60 / 100 * qcount);
-                  await forqcount(intermediate, skills[i].skillId, 2);
-                  var hard = Math.round(20 / 100 * qcount);
-                  await forqcount(hard, skills[i].skillId, 3);
-                }
-                 if (skills[i].cmpId == 1) {
-                  var qcount = Math.round(100 / 100 * tque);
-                  var easy = Math.round(60 / 100 * qcount);
-                  await forqcount(easy, skills[i].skillId, 1);
-                  var intermediate = Math.round(30 / 100 * qcount);
-                  await forqcount(intermediate, skills[i].skillId, 2);
-                  var hard = Math.round(10 / 100 * qcount);
-                  await forqcount(hard, skills[i].skillId, 3);
-                }
-               }
-              }
-             
-            
-            }
-           
-              k=0;
-              let result = {
-                "status": "Question and Answers have been successfully inserted in AssessmentStaging",
-                assessmentId: assessmentId
-              }
-              res.status(200).json(result);
-           //res.redirect('./staging/rand?assessmentId=${assessmentId}');
-         }
-         if(err){
-           console.log(err + "3");
-         }
-       });
-      //})
-     }
-    async function getAssessment()
-    {
-      console.log(canId,Date,starttime,candidatestatus,recId)
-      await sql.open(details.connectionString, async (err, conn) => {
-        await conn.query(`insert into Assessment(canId,date,startTime,assessmentstatus,recId) 
-        values(${canId},'${Date}','${starttime}','${candidatestatus}',${recId}
-          )`, (err, data) => {
-          if (data) {
-            console.log(data);
-            
-             getAssId(conn);
-            
-          }
-          if (err) {
-            console.log(err  + "1");
-            res.send(err);
-          }
-        });
-        if(err){
-          console.log(err  + "2");
-          res.send(err);
-        }
-      });
     }
-   getAssessment();
-  }
-   // getAssessment();
 });
-
 module.exports = router;
