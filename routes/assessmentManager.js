@@ -1,7 +1,5 @@
 var express = require("express");
 var router = express.Router();
-var details = require("../db");
-var sql = require("msnodesqlv8");
 var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
 const {ConnectToDb,ExecuteQuery} = require('../db');
@@ -73,7 +71,7 @@ router.post("/endAssessment",jsonParser, (req, res) => {
                         const result = { 
                           "status": `The assessment information is stored for candidateId ${canId} and status is set to closed`
                          };
-                         
+
                         res.status(200).json(result);
                       }
                       else{
