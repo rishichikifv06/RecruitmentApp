@@ -27,19 +27,43 @@ router.post("/",jsonParser, (req, res) => {
 
 
     const emailId = req.body.emailId;
+    console.log(emailId);
     const name = req.body.name;
     const status = req.body.status;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
 
-    if(emailId){
 
         async function searchByEmailId(){
 
            await ConnectToDb().then(async (dbConnection)=>{
                 if(dbConnection){
-                   await ExecuteQuery(dbConnection, `select canId,canName,canPhone,canExperience,
+
+                    let query = `select canId,canName,canPhone,canExperience,
                     Candidatestatus ,EmailId
-                    from Candidates where EmailId = '${emailId}'`)
+                    from Candidates where canId is not null`;
+
+                    if((emailId&&name&&status)===undefined){
+                        query = `select canId,canName,canPhone,canExperience,
+                        Candidatestatus ,EmailId
+                        from Candidates where Candidatestatus='Open'`
+                    }
+                    if(emailId){
+                        query += ` and EmailId like '${emailId}%'`
+                    }
+                    if(name){
+                        query += ` and canName like '%${name}%'`
+                    }
+                    if(status){
+                        query += ` and Candidatestatus='${status}'`
+                    }
+                    if(startDate&&endDate){
+                        query 
+                    }
+ 
+                    await ExecuteQuery(dbConnection, query)
                     .then(async (candidateArrayData)=>{
+                        console.log(query);
                        await setSkillsToCandidates(dbConnection, candidateArrayData)
                        .then((result)=>{
                            res.status(200).json({result});
@@ -63,76 +87,109 @@ router.post("/",jsonParser, (req, res) => {
 
         }
         searchByEmailId();
-    }
 
-    if(name){
+    // if(name){
 
-        async function searchByName(){
+    //     async function searchByName(){
 
-           await ConnectToDb().then(async (dbConnection)=>{
-                if(dbConnection){
-                   await ExecuteQuery(dbConnection, `select canId,canName,canPhone,canExperience,
-                    Candidatestatus ,EmailId
-                    from Candidates where canName = '${name}'`)
-                    .then(async (candidateArrayData)=>{
-                       await setSkillsToCandidates(dbConnection, candidateArrayData)
-                       .then((result)=>{
-                           res.status(200).json({result});
-                           dbConnection.close();
-                       })
-                    })
-                    .catch((err)=>{
-                        console.log(err);
-                        res.status(500).json(err);
-                        dbConnection.close();
-                    })
-                }
-                else{
-                    console.log("Not connected to db");
-                }
-            }).catch((err)=>{
-                console.log(err);
-                res.status(500).json(err);
-                dbConnection.close();
-            })
-        }
-        searchByName();
-    }
+    //        await ConnectToDb().then(async (dbConnection)=>{
+    //             if(dbConnection){
+    //                await ExecuteQuery(dbConnection, `select canId,canName,canPhone,canExperience,
+    //                 Candidatestatus ,EmailId
+    //                 from Candidates where canName like '%${name}%'`)
+    //                 .then(async (candidateArrayData)=>{
+    //                    await setSkillsToCandidates(dbConnection, candidateArrayData)
+    //                    .then((result)=>{
+    //                        res.status(200).json({result});
+    //                        dbConnection.close();
+    //                    })
+    //                 })
+    //                 .catch((err)=>{
+    //                     console.log(err);
+    //                     res.status(500).json(err);
+    //                     dbConnection.close();
+    //                 })
+    //             }
+    //             else{
+    //                 console.log("Not connected to db");
+    //             }
+    //         }).catch((err)=>{
+    //             console.log(err);
+    //             res.status(500).json(err);
+    //             dbConnection.close();
+    //         })
+    //     }
+    //     searchByName();
+    // }
 
-    if(status){
+    // if(status){
 
-        async function searchByStatus(){
+    //     async function searchByStatus(){
 
-           await ConnectToDb().then(async (dbConnection)=>{
-                if(dbConnection){
-                   await ExecuteQuery(dbConnection, `select canId,canName,canPhone,canExperience,
-                    Candidatestatus ,EmailId
-                    from Candidates where Candidatestatus = '${status}'`)
-                    .then(async (candidateArrayData)=>{
-                       await setSkillsToCandidates(dbConnection, candidateArrayData)
-                       .then((result)=>{
-                           res.status(200).json({result});
-                           dbConnection.close();
-                       })
-                    })
-                    .catch((err)=>{
-                        console.log(err);
-                        res.status(500).json(err);
-                        dbConnection.close();
-                    })
-                }
-                else{
-                    console.log("Not connected to db");
-                }
-            }).catch((err)=>{
-                console.log(err);
-                res.status(500).json(err);
-                dbConnection.close();
-            })
-        }
-        searchByStatus();
+    //        await ConnectToDb().then(async (dbConnection)=>{
+    //             if(dbConnection){
+    //                await ExecuteQuery(dbConnection, `select canId,canName,canPhone,canExperience,
+    //                 Candidatestatus ,EmailId
+    //                 from Candidates where Candidatestatus = '${status}'`)
+    //                 .then(async (candidateArrayData)=>{
+    //                    await setSkillsToCandidates(dbConnection, candidateArrayData)
+    //                    .then((result)=>{
+    //                        res.status(200).json({result});
+    //                        dbConnection.close();
+    //                    })
+    //                 })
+    //                 .catch((err)=>{
+    //                     console.log(err);
+    //                     res.status(500).json(err);
+    //                     dbConnection.close();
+    //                 })
+    //             }
+    //             else{
+    //                 console.log("Not connected to db");
+    //             }
+    //         }).catch((err)=>{
+    //             console.log(err);
+    //             res.status(500).json(err);
+    //             dbConnection.close();
+    //         })
+    //     }
+    //     searchByStatus();
 
-    }
+    // }
+
+    // if(startDate&&endDate)
+    // {
+    //     async function searchByDate(){
+
+    //         await ConnectToDb().then(async (dbConnection)=>{
+    //              if(dbConnection){
+    //                 await ExecuteQuery(dbConnection, `select Assessment.date, Assessment.assessmentstatus ,Candidates.canId, Candidates.canName, Candidates.EmailId, Candidates.canPhone
+    //                 ,Candidates.canExperience,Candidates.Candidatestatus from Assessment left join Candidates on 
+    //                 Candidates.canId=Assessment.canId where Assessment.date between '${startDate}' and '${endDate}'`)
+    //                  .then(async (candidateArrayData)=>{
+    //                     await setSkillsToCandidates(dbConnection, candidateArrayData)
+    //                     .then((result)=>{
+    //                         res.status(200).json({result});
+    //                         dbConnection.close();
+    //                     })
+    //                  })
+    //                  .catch((err)=>{
+    //                      console.log(err);
+    //                      res.status(500).json(err);
+    //                      dbConnection.close();
+    //                  })
+    //              }
+    //              else{
+    //                  console.log("Not connected to db");
+    //              }
+    //          }).catch((err)=>{
+    //              console.log(err);
+    //              res.status(500).json(err);
+    //              dbConnection.close();
+    //          })
+    //      }
+    //      searchByDate();
+    // }
 
 });
 

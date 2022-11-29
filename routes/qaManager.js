@@ -98,7 +98,8 @@ router.post("/allQA", jsonParser, (req, res)=>{
 
       await ConnectToDb().then(async (dbConnection)=>{
         if(dbConnection){
-          await ExecuteQuery(dbConnection, `SELECT Question, Answer FROM QandA WHERE cmpId=${cmpId} AND skillId =${skillId}`)
+          await ExecuteQuery(dbConnection, `select Question,Questions.queId,Answer,Answers.ansId from Questions_and_Answers left join Answers on Answers.ansId=Questions_and_Answers.ansId
+          inner join Questions on Questions.queId=Questions_and_Answers.queId where Questions.skillId=${skillId} and Questions.cmpId=${cmpId}`)
           .then((result)=>{
             res.status(200).json({result});
             dbConnection.close();
