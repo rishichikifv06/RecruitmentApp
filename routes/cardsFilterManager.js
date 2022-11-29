@@ -42,14 +42,16 @@ router.post("/",jsonParser, (req, res) => {
                     let query = `select canId,canName,canPhone,canExperience,
                     Candidatestatus ,EmailId
                     from Candidates where canId is not null`;
+                    // let whereClause  = "NoWhere" ;
 
-                    if((emailId&&name&&status)===undefined){
+                    if(emailId===undefined&&name===undefined&&status===undefined){
+                        console.log("status call!!");
                         query = `select canId,canName,canPhone,canExperience,
                         Candidatestatus ,EmailId
                         from Candidates where Candidatestatus='Open'`
                     }
                     if(emailId){
-                        query += ` and EmailId like '${emailId}%'`
+                        query += ` AND EmailId like '${emailId}%'`
                     }
                     if(name){
                         query += ` and canName like '%${name}%'`
@@ -57,9 +59,21 @@ router.post("/",jsonParser, (req, res) => {
                     if(status){
                         query += ` and Candidatestatus='${status}'`
                     }
-                    if(startDate&&endDate){
-                        query 
-                    }
+
+                    //   NoWhere AND Emaild Like    
+                    //   NOwhere AND canName  
+                    //   NoWhere AND CandidateStatus
+
+
+                  //  whereClause = Replace "NOWHERE AND" with "" 
+                    //  whereclause -> Emaild Like 
+
+                   // query.(whereclause); query += " " +  whereclause.
+
+
+                    // if(startDate&&endDate){
+                    //     query 
+                    // }
  
                     await ExecuteQuery(dbConnection, query)
                     .then(async (candidateArrayData)=>{
