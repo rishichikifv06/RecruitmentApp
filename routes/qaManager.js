@@ -123,4 +123,190 @@ router.post("/allQA", jsonParser, (req, res)=>{
   }
 })
 
+router.post("/insertQA", jsonParser, (req, res)=>{
+  if(req.body != undefined){
+    const cmpId = req.body.cmpId;
+    const skillId = req.body.skillId;
+    const Question = req.body.Question;
+    const Answer = req.body.Answer;
+    console.log(skillId,cmpId,Question,Answer);
+    var Qid;
+    var Aid;
+    async function InsertintoQuestions()//Inser Question
+    {
+      await ConnectToDb().then(async (dbConnection)=>{
+        if(dbConnection){
+          await ExecuteQuery(dbConnection, `insert into Questions(Question,skillId,cmpId) values('${Question}',${skillId},${cmpId})`)
+          .then(async (result)=>{
+            if(result){
+              console.log(result);
+              await getQueID(dbConnection); //to get queId
+            }
+            //dbConnection.close();
+          })
+          .catch((err)=>{
+            console.log(err+8);
+            //res.status(500).json(err);
+            dbConnection.close();
+          })
+        }
+        else{
+          console.log("Not connected to db");
+        }
+       }).catch((err)=>{
+        console.log(err+7);
+       })
+    }
+    async function getQueID(connection)
+    {
+        await ExecuteQuery(connection,`select queId from Questions where Question='${Question}'`)
+        .then(async(que)=>{
+          if(que){
+            console.log(que);
+            Qid=que[0].queId;
+            console.log(Qid +"questions id");
+            await InsertAnswer(connection);
+          }
+        })
+        .catch((err)=>{
+          console.log(err+6);
+          //res.send(err);
+        })
+    }
+    async function InsertAnswer(dbConnection){ 
+          await ExecuteQuery(dbConnection, `insert into Answers(Answer) values('${Answer}')`)
+          .then(async(record)=>{
+            if(record){
+              console.log(record+2);
+              await getAnswerID(dbConnection); //get ansId
+            }
+            dbConnection.close();
+          })
+          .catch((err)=>{
+            console.log(err+5);
+            //res.status(500).json(err);
+            dbConnection.close();
+          })
+        }
+    async function getAnswerID(dbConnection){
+      await ExecuteQuery(dbConnection,`select ansId from Answers where Answer='${Answer}'`)
+      .then(async(ans)=>{
+        if(ans){
+          console.log(ans);
+          Aid=ans[0].ansId;
+          console.log(Aid +"answer id");
+          await InsertIntoLinkTable();
+        }
+      })
+      .catch((err)=>{
+        console.log(err+3);
+      })
+    }
+    InsertintoQuestions();  //insert into Questions table
+    async function InsertIntoLinkTable(){
+      await ConnectToDb().then(async (dbConnection)=>{
+        if(dbConnection){
+          await ExecuteQuery(dbConnection,`insert into Questions_and_Answers(queId,ansId) values(${Qid},${Aid})`)
+          .then((result)=>{
+            console.log(result +"QandA");
+            res.status(200).json(result);
+            //dbConnection.close();
+          })
+          .catch((err)=>{
+            console.log(err+2);
+           // res.status(500).json(err);
+            //dbConnection.close();
+          })
+        }
+        else{
+          console.log("db not connected");
+        }
+      })
+      .catch((err)=>{
+        console.log(err +1);
+      })
+    }
+    //InsertIntoLinkTable(); 
+    //async function InsertQandA(){
+       //insert into Questions_and_Answers
+    //}
+    //InsertQandA();
+  }
+})
+//update a question using question id
+router.post("/updateQ", jsonParser, (req, res)=>{
+  if(req.body != undefined){
+    const queId = req.body.queId;
+    const Question= req.body.Question
+    async function EditQuestion()
+    {
+      await ConnectToDb().then(async (dbConnection)=>{
+        if(dbConnection){
+          await ExecuteQuery(dbConnection, `Update Questions set Question='${Question}' where queId=${queId}`)
+          .then((result)=>{
+            if(result){
+              var status={
+                "status":"success",
+                "Message":"Question is updated"
+              }
+              res.status(200).json(status);
+              dbConnection.close();
+            }
+          })
+          .catch((err)=>{
+            console.log(err);
+            res.status(500).json(err);
+            dbConnection.close();
+          })
+        }
+        else{
+          console.log("Not connected to db");
+        }
+       }).catch((err)=>{
+        console.log(err);
+        dbConnection.close();
+       })
+    }
+    EditQuestion();
+  }
+})
+
+//update answer using answer Id
+router.post("/updateA", jsonParser, (req, res)=>{
+  if(req.body != undefined){
+    const ansId = req.body.ansId;
+    const Answer= req.body.Answer
+    async function EditAnswer()
+    {
+      await ConnectToDb().then(async (dbConnection)=>{
+        if(dbConnection){
+          await ExecuteQuery(dbConnection, `Update Answers set Answer='${Question}' where ansId=${queId}`)
+          .then((result)=>{
+            if(result){
+              var status={
+                "status":"success",
+                "Message":"Question is updated"
+              }
+              res.status(200).json(status);
+              dbConnection.close();
+            }
+          })
+          .catch((err)=>{
+            console.log(err);
+            res.status(500).json(err);
+            dbConnection.close();
+          })
+        }
+        else{
+          console.log("Not connected to db");
+        }
+       }).catch((err)=>{
+        console.log(err);
+        dbConnection.close();
+       })
+    }
+    EditAnswer();
+  }
+})
+
 module.exports = router;

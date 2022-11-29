@@ -37,5 +37,34 @@ router.get("/", (req, res)=>{
 })
 
 
+router.post("/addSkill", (req, res)=>{
+  const skillName = req.body.skillName;
+  async function AddSkill()
+  {
+    await ConnectToDb().then(async (dbConnection)=>{
+      if(dbConnection){
+        await ExecuteQuery(dbConnection, `insert into Skill(skillName) values('${skillName}') `)
+        .then((result)=>{
+            var status ={
+              "status":"success",
+              "Message":"new skill is added"
+            }
+            res.status(200).json(status);
+            console.log(status);
+          dbConnection.close();
+        })
+        .catch((err)=>{
+          console.log(err);
+          res.status(500).json(err);
+          dbConnection.close();
+        })
+      }
+     }).catch((err)=>{
+      console.log(err);
+      dbConnection.close();
+     })
+  }
+  AddSkill();
+})
 
 module.exports = router;
