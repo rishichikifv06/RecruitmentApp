@@ -185,79 +185,137 @@ router.post("/candidateSkill", jsonParser, (req, res) => {
 
 
 
+// router.post("/updateCandidateStatus", jsonParser, (req, res) => {
+//   const data = req.body.data; //array structure
+//   const skills = data[0].skills;
+//   const canId = data[0].canId;
+//   console.log(canId)
+//   async function updateCandidateData() {
+    
+//     await ConnectToDb().then(async (dbConnection)=>{
+//       if(dbConnection){
+//          await ExecuteQuery(dbConnection, `update Candidates set canExperience=${data[0].canExperience},Candidatestatus='${data[0].Candidatestatus}'`)
+
+//           .then(async (updatedCandidateData)=>{
+//               if(updatedCandidateData){
+//                await toInsertCandidateSkills(dbConnection)
+
+//                .then((responseData)=>{
+//                if(responseData){
+//                   const result = {
+//                     "status": "success",
+//                     "Message": "candidate data and respective skills are updated successfully "
+//                   };
+//                   res.status(200).json(result);
+//                   dbConnection.close();
+//                 }
+//                })
+//                .catch((err)=>{
+//                 console.log(err);
+//                 res.status(500).json(err);
+//                 dbConnection.close();
+//                })
+//               }
+//               else{
+//                 console.log("Candidate data not updated!!!");
+//                 dbConnection.close();
+//               }
+
+//           })
+//           .catch((err)=>{
+//               console.log(err);
+//               res.status(500).json(err);
+//               dbConnection.close();
+//           })
+//       }
+//       else{
+//           console.log("Not connected to db");
+//       }
+//   }).catch((err)=>{
+//       console.log(err);
+//       res.status(500).json(err);
+//       dbConnection.close();
+//   })
+//   }
+//   updateCandidateData();
+
+//   async function toInsertCandidateSkills(dbConnection){
+
+//     let count=0;
+//     for(let i=0; i<skills.length; i++){
+//       await ExecuteQuery(dbConnection, `insert into CandidateSkills(cmpId,skillId,canId) values(${skills[i].cmpId},${skills[i].skillId},
+//         ${canId})`)
+//         .then((insertedCansdidateSkillsData)=>{
+//           if(insertedCansdidateSkillsData){
+//             count++;
+//           }
+//         })
+//         .catch((err)=>{
+//           console.log(err);
+//         })
+//       }
+//       if(count>0){
+//         return "Candidate skills inserted successfully!!!"
+//       }
+//       return null;
+//   }
+// });
+
+
 router.post("/updateCandidateStatus", jsonParser, (req, res) => {
   const data = req.body.data; //array structure
   const skills = data[0].skills;
   const canId = data[0].canId;
+  let flag =1;
   console.log(canId)
-  async function updateCandidateData() {
-    
-    await ConnectToDb().then(async (dbConnection)=>{
-      if(dbConnection){
-         await ExecuteQuery(dbConnection, `update Candidates set canExperience=${data[0].canExperience},Candidatestatus='${data[0].Candidatestatus}'`)
-
-          .then(async (updatedCandidateData)=>{
-              if(updatedCandidateData){
-               await toInsertCandidateSkills(dbConnection)
-
-               .then((responseData)=>{
-               if(responseData){
-                  const result = {
-                    "status": "success",
-                    "Message": "candidate data and respective skills are updated successfully "
-                  };
-                  res.status(200).json(result);
-                  dbConnection.close();
+  async function getData() {
+    await sql.open(details.connectionString, async (err, conn) => {
+      await conn.query(`update Candidates set canExperience=${data[0].canExperience},Candidatestatus='${data[0].Candidatestatus}'`, async (err, data) => {
+        if (data) {
+          console.log(data);
+          for (let i = 0; i < skills.length; i++) {
+            await sql.open(details.connectionString, async (err, conn) => {
+              if(skills[i].canskillId!=null){
+                await conn.query(`update CandidatSkills set cmpId=${skills[i].cmpId} where canskillId = ${skills[i].canskillId}`,(value)=>{
+                  flag =0;
+                })
+              }
+              await conn.query(`insert into CandidateSkills(cmpId,skillId,canId) values(${skills[i].cmpId},${skills[i].skillId},
+                ${canId})`, (err, value) => {
+                if (value) {
+                 flag=0;
                 }
-               })
-               .catch((err)=>{
-                console.log(err);
-                res.status(500).json(err);
-                dbConnection.close();
-               })
+                if (err) {
+                  flag=1;
+                  res.send(err);
+                }
+              })
+              if (err) {
+                res.send(err);
               }
-              else{
-                console.log("Candidate data not updated!!!");
-                dbConnection.close();
-              }
-
-          })
-          .catch((err)=>{
-              console.log(err);
-              res.status(500).json(err);
-              dbConnection.close();
-          })
-      }
-      else{
-          console.log("Not connected to db");
-      }
-  }).catch((err)=>{
-      console.log(err);
-      res.status(500).json(err);
-      dbConnection.close();
-  })
-  }
-  updateCandidateData();
-
-  async function toInsertCandidateSkills(dbConnection){
-
-    let count=0;
-    for(let i=0; i<skills.length; i++){
-      await ExecuteQuery(dbConnection, `insert into CandidateSkills(cmpId,skillId,canId) values(${skills[i].cmpId},${skills[i].skillId},
-        ${canId})`)
-        .then((insertedCansdidateSkillsData)=>{
-          if(insertedCansdidateSkillsData){
-            count++;
+            })
           }
-        })
-        .catch((err)=>{
+         if(flag == 0)
+         {
+          const result = {
+            "status": "success",
+            "Message": "candidate data updated successfully "
+          };
+          console.log(result);
+          res.status(200).json(result);
+         }
+        }
+        if (err) {
           console.log(err);
-        })
+          res.send(err);
+        }
+      })
+      if (err) {
+        console.log(err);
+        res.send(err);
       }
-      if(count>0){
-        return "Candidate skills inserted successfully!!!"
-      }
-      return null;
+    })
   }
+  getData();
 });
   module.exports = router;
