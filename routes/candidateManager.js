@@ -337,7 +337,9 @@ router.post("/displayCandidateSkills", jsonParser, (req, res) => {
     async function getcandidateSkills() {
      await ConnectToDb().then( async (dbConnection)=>{
       if(dbConnection){
-        await ExecuteQuery(dbConnection,`select CandidateSkills.skillName from CandidateSkills  where canId=${canId}`)
+        await ExecuteQuery(dbConnection,`select CandidateSkills.skillId,CandidateSkills.cmpId,Skill.skillName,Complexity.Name from CandidateSkills
+        left join Skill on Skill.skillId=CandidateSkills.skillId
+        left join Complexity on Complexity.cmpId = CandidateSkills.cmpId  where canId=${canId}`)
         .then((data)=>{
           if(data){
             res.status(200).json({data});
