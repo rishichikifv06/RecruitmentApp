@@ -270,26 +270,37 @@ router.post("/updateCandidateStatus", jsonParser, (req, res) => {
   console.log(canId)
   async function getData() {
     await sql.open(details.connectionString, async (err, conn) => {
-      await conn.query(`update Candidates set canExperience=${data[0].canExperience},Candidatestatus='${data[0].Candidatestatus}'`, async (err, data) => {
+      await conn.query(`update Candidates set canExperience=${data[0].canExperience},Candidatestatus='${data[0].Candidatestatus}'
+      where canId=${canId}`, async (err, data) => {
         if (data) {
-          console.log(data);
+          console.log("updating candidate data !!!");
           for (let i = 0; i < skills.length; i++) {
             await sql.open(details.connectionString, async (err, conn) => {
-              if(skills[i].canskillId!=null){
-                await conn.query(`update CandidatSkills set cmpId=${skills[i].cmpId} where canskillId = ${skills[i].canskillId}`,(value)=>{
-                  flag =0;
+              if(skills[i].canskillId){
+                await conn.query(`update CandidatSkills set cmpId=${skills[i].cmpId} where canskillId = ${skills[i].canskillId}`,(err,value)=>{
+                  if(value){
+                    console.log("updating candidate skills is done !!!")
+
+                    flag =0;
+                  }
+                  if(err){
+                    console.log(err);
+                  }
                 })
               }
-              await conn.query(`insert into CandidateSkills(cmpId,skillId,canId) values(${skills[i].cmpId},${skills[i].skillId},
-                ${canId})`, (err, value) => {
-                if (value) {
-                 flag=0;
-                }
-                if (err) {
-                  flag=1;
-                  res.send(err);
-                }
-              })
+              else{
+                await conn.query(`insert into CandidateSkills(cmpId,skillId,canId) values(${skills[i].cmpId},${skills[i].skillId},
+                  ${canId})`, (err, value) => {
+                  if (value) {
+                    console.log("inserting candidate skills is done !!!")
+                   flag=0;
+                  }
+                  if (err) {
+                    flag=1;
+                    res.send(err);
+                  }
+                })
+              }
               if (err) {
                 res.send(err);
               }
@@ -317,5 +328,34 @@ router.post("/updateCandidateStatus", jsonParser, (req, res) => {
     })
   }
   getData();
+});
+
+//get candidate skills by candidate id
+router.post("/displayCandidateSkills", jsonParser, (req, res) => {
+  if (req.body != undefined) {
+    const canId = req.body.canId;
+    async function getcandidateSkills() {
+     await ConnectToDb().then( async (dbConnection)=>{
+      if(dbConnection){
+        await ExecuteQuery(dbConnection,`select CandidateSkills.skillName from CandidateSkills  where canId=${canId}`)
+        .then((data)=>{
+          if(data){
+            res.status(200).json({data});
+            dbConnection.close();
+          }
+        })
+        .catch((err)=>{
+          console.log(err+1);
+          res.status(500).json(err);
+          dbConnection.close();
+        })
+      }
+     })
+    }
+    getcandidateSkills();
+  }
+  else{
+    console.log("body is undefined");
+  }
 });
   module.exports = router;

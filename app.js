@@ -28,6 +28,7 @@ var assessmentStagingManagerRouter = require('./routes/assessmentStagingManager'
 var randomizationManagerRouter = require('./routes/randomizationManager');
 var cardsScoreManagerRouter = require('./routes/cardsScoreManager');
 var cardsFilterManagerRouter = require('./routes/cardsFilterManager');
+var candidateInterviewManagerRouter = require('./routes/candidateInterviewManager');
 
 
 // initialize express
@@ -90,6 +91,7 @@ app.use('/assessmentStagingManager', assessmentStagingManagerRouter);
 app.use('/randomizationManager', randomizationManagerRouter);
 app.use('/cardsScoreManager', cardsScoreManagerRouter);
 app.use('/cardsFilterManager', cardsFilterManagerRouter);
+app.use('/candidateInterviewManager', candidateInterviewManagerRouter);
 //app.use(dbRouter);
 
 
