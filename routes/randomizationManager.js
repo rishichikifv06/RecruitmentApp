@@ -18,8 +18,9 @@ router.post("/", jsonParser, (req, res) => {
         const recId = req.body.recId;
         const Date = req.body.Date;
         const starttime = req.body.starttime;
-        const candidatestatus = req.body.Candidatestatus;
         const skills = req.body.skills;
+        const InterviewId = req.body.InterviewId;
+
         console.log(skills);
         var count = skills.length
         console.log(count + " skill length");
@@ -27,12 +28,13 @@ router.post("/", jsonParser, (req, res) => {
         var ansId;
         var assessmentId;
         var k = 0;
+
         InsertIntoAssessment();
         async function InsertIntoAssessment() {
             await ConnectToDb().then(async (dbConnection) => {
                 if (dbConnection) {
-                    await ExecuteQuery(dbConnection, `insert into Assessment(canId,date,startTime,assessmentstatus,recId) 
-            values(${canId},'${Date}','${starttime}','${candidatestatus}',${recId})`)
+                    await ExecuteQuery(dbConnection, `insert into Assessment(canId,date,startTime,assessmentstatus,recId,InterviewID) 
+                    values(${canId},'${Date}','${starttime}','Open',${recId},${InterviewId})`)
                         .then(async (data) => {
                             console.log(data + " inserted assessment");
                             await getAssessmentId(dbConnection);

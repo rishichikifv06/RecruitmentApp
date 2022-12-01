@@ -7,14 +7,14 @@ const { ConnectToDb, ExecuteQuery } = require("../db");
 async function setSkillsToCandidates(dbConnection, candidateArrayData) {
   var id;
   for (let i = 0; i < candidateArrayData.length; i++) {
-    id = candidateArrayData[i].canId;
+    id = candidateArrayData[i].InterviewId;
 
     await ExecuteQuery(
       dbConnection,
-      `select Skill.skillName,Complexity.Name,Complexity.skilllevel,Skill.skillId,Complexity.cmpId from CandidateSkills 
-       left join Skill on Skill.skillId=CandidateSkills.skillId 
-       left join Complexity on Complexity.cmpId =CandidateSkills.cmpId 
-       where CandidateSkills.canId = ${id}`
+      `select Skill.skillName,Complexity.Name,Complexity.skilllevel,Skill.skillId,Complexity.cmpId from InterviewSkills 
+       left join Skill on Skill.skillId=InterviewSkills.skillId 
+       left join Complexity on Complexity.cmpId =InterviewSkills.cmpId 
+       where InterviewSkills.InterviewId = ${id}`
     )
       .then((candidateSkills) => {
         candidateArrayData[i].skills = candidateSkills;
@@ -44,10 +44,10 @@ router.post("/", jsonParser, (req, res) => {
             await ConnectToDb()
               .then(async (dbConnection) => {
                 if (dbConnection) {
-                  let query = `select Assessment.date, Assessment.assessmentstatus ,Candidates.canId, Candidates.canName, Candidates.EmailId, Candidates.canPhone
-                  ,Candidates.canExperience,Candidates.Candidatestatus from Assessment 
-                  left join Candidates on Candidates.canId=Assessment.canId 
-                  where Assessment.date between '${startDate}' and '${endDate}'`;
+                  let query = `select CandidateInterview.date, CandidateInterview.InterviewId, CandidateInterview.status ,Candidates.canId, Candidates.canName, Candidates.EmailId, Candidates.canPhone
+                  ,Candidates.canExperience from CandidateInterview 
+                  left join Candidates on Candidates.canId=CandidateInterview.canId 
+                  where CandidateInterview.date between '${startDate}' and '${endDate}'`;
                   let whereClause = "noWhere";
         
                   if (
@@ -57,9 +57,10 @@ router.post("/", jsonParser, (req, res) => {
                     startDate === undefined &&
                     endDate === undefined
                   ) {
-                    query = `select canId,canName,canPhone,canExperience,
-                                Candidatestatus ,EmailId
-                                from Candidates where Candidatestatus='Open'`;
+                    query = `select CandidateInterview.date, CandidateInterview.InterviewId, CandidateInterview.status ,Candidates.canId, Candidates.canName, Candidates.EmailId, Candidates.canPhone
+                    ,Candidates.canExperience from CandidateInterview 
+                    left join Candidates on Candidates.canId=CandidateInterview.canId 
+                    where CandidateInterview.status='Open'`;
                   } else {
                     if (emailId) {
                       whereClause += ` AND EmailId like '${emailId}%'`;
@@ -116,9 +117,9 @@ router.post("/", jsonParser, (req, res) => {
            await ConnectToDb()
              .then(async (dbConnection) => {
                if (dbConnection) {
-                 let query = `select canId,canName,canPhone,canExperience,
-                           Candidatestatus ,EmailId
-                           from Candidates `;
+                 let query = `select CandidateInterview.date, CandidateInterview.InterviewId, CandidateInterview.status ,Candidates.canId, Candidates.canName, Candidates.EmailId, Candidates.canPhone
+                 ,Candidates.canExperience from CandidateInterview 
+                 left join Candidates on Candidates.canId=CandidateInterview.canId `;
                  let whereClause = "noWhere";
        
                  if (
@@ -126,9 +127,10 @@ router.post("/", jsonParser, (req, res) => {
                    name === undefined &&
                    status === undefined
                  ) {
-                   query = `select canId,canName,canPhone,canExperience,
-                               Candidatestatus ,EmailId
-                               from Candidates where Candidatestatus='Open'`;
+                   query = `select CandidateInterview.date, CandidateInterview.InterviewId, CandidateInterview.status ,Candidates.canId, Candidates.canName, Candidates.EmailId, Candidates.canPhone
+                   ,Candidates.canExperience from CandidateInterview 
+                   left join Candidates on Candidates.canId=CandidateInterview.canId 
+                   where CandidateInterview.status='Open'`;
                  } else {
                    if (emailId) {
                      whereClause += ` AND EmailId like '${emailId}%'`;

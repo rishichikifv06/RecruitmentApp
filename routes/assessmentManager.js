@@ -10,6 +10,7 @@ router.post("/endAssessment",jsonParser, (req, res) => {
   const canId = req.body.canId;
   const assessmentId = req.body.assessmentId;
   const endTime = req.body.endTime;
+  const InterviewId = req.body.InterviewId;
 
 
   // await sql.open(details.connectionString, async (err, conn)=>{
@@ -68,15 +69,25 @@ router.post("/endAssessment",jsonParser, (req, res) => {
 
                     .then(async (updatedCandidateData)=>{
                       if(updatedCandidateData){
-                        const result = { 
-                          "status": `The assessment information is stored for candidateId ${canId} and status is set to closed`
-                         };
 
-                        res.status(200).json(result);
-                        dbConnection.close();
+                        await ExecuteQuery(dbConnection, `UPDATE CandidateInterview SET status='${status}' WHERE canId = ${canId} AND InterviewId=${InterviewId}`)
+                        .then(async (updatedInterviewData)=>{
+                          if(updatedInterviewData){
+                            const result = { 
+                              "status": `The assessment and interview information is stored for candidateId ${canId} and status is set to closed`
+                             };
+    
+                            res.status(200).json(result);
+                            dbConnection.close();
+                          }
+                          else{
+                            res.status(500).send("Storing of assessment and interview iformation failed!!!");
+                            dbConnection.close();
+                          }
+                        })
                       }
                       else{
-                        res.status(500).send("Storing of assessment iformation failed!!!");
+                        console.log("Candidate status not updated!!!");
                         dbConnection.close();
                       }
                     })

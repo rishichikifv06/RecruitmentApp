@@ -11,25 +11,31 @@ router.post("/", jsonParser, (req, res) => {
 
    var canId = req.body.canId;
    var RowandQuestion_number = req.body.RowandQuestion_number;
+   var assessmentId = req.body.assessmentId;
 
   async function getSingleQandAFromStaging()
   {
     await ConnectToDb().then(async (dbConnection)=>{
       if(dbConnection){
+        var count = await getTotalCount(dbConnection);
         await ExecuteQuery(dbConnection, `SELECT Questions.Question, Answers.Answer, AssessmentStaging.RowandQuestion_number,Skill.skillName,Complexity.Name , AssessmentStaging.AssessmentStagingstatus ,AssessmentStaging.score, AssessmentStaging.Note
         FROM AssessmentStaging
         LEFT JOIN Questions ON Questions.queId=AssessmentStaging.queId LEFT JOIN Skill ON Questions.skillId=Skill.skillId 
         LEFT JOIN Complexity ON Questions.cmpId=Complexity.cmpId
         LEFT JOIN Answers ON Answers.ansId=AssessmentStaging.ansId
-        WHERE canId=${canId} AND RowandQuestion_number = ${RowandQuestion_number}`)
-        .then((result)=>{
-          result[0].currentRecordId = RowandQuestion_number;
-          result[0].firsRecordId = 1;
-          result[0].nextRecordId = RowandQuestion_number+1;
-          result[0].previosRecordId = RowandQuestion_number-1;
-          result[0].lastRecordId = 20;
-          res.status(200).json({result});
-          dbConnection.close();
+        WHERE canId=${canId} and assessmentId=${assessmentId} and RowandQuestion_number=${RowandQuestion_number}`)
+        .then(async (result)=>{
+          
+          if(result){
+            console.log(result);
+            result[0].currentRecordId = RowandQuestion_number;
+            result[0].firsRecordId = 1;
+            result[0].nextRecordId = RowandQuestion_number+1;
+            result[0].previosRecordId = RowandQuestion_number-1;
+            result[0].lastRecordId = count;
+            res.status(200).json({result});
+            dbConnection.close();
+          }
         })
         .catch((err)=>{
           console.log(err);
@@ -47,6 +53,26 @@ router.post("/", jsonParser, (req, res) => {
   }
  
   getSingleQandAFromStaging();
+
+  async function getTotalCount(dbConnection){
+
+    var count = 0;
+
+    await ExecuteQuery(dbConnection, `select count(AssessmentStaging.RowandQuestion_number) as Qcount from AssessmentStaging where assessmentId=${assessmentId}`)
+    .then((countOfQA)=>{
+      if(countOfQA){
+        count = countOfQA[0].Qcount;
+      }
+      else{
+        console.log("count value not acquired!!");
+      }
+    })
+
+    if(count>0){
+      return count;
+    }
+    return null;
+  }
 })
 
 
