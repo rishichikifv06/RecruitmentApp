@@ -19,8 +19,8 @@ router.post("/", jsonParser, (req, res) => {
         await ExecuteQuery(dbConnection, `SELECT Questions.Question, Answers.Answer, AssessmentStaging.RowandQuestion_number,Skill.skillName,Complexity.Name , AssessmentStaging.AssessmentStagingstatus ,AssessmentStaging.score, AssessmentStaging.Note
         FROM AssessmentStaging
         LEFT JOIN Questions ON Questions.queId=AssessmentStaging.queId LEFT JOIN Skill ON Questions.skillId=Skill.skillId 
-      LEFT JOIN Complexity ON Questions.cmpId=Complexity.cmpId
-      LEFT JOIN Answers ON Answers.ansId=AssessmentStaging.ansId
+        LEFT JOIN Complexity ON Questions.cmpId=Complexity.cmpId
+        LEFT JOIN Answers ON Answers.ansId=AssessmentStaging.ansId
         WHERE canId=${canId} AND RowandQuestion_number = ${RowandQuestion_number}`)
         .then((result)=>{
           result[0].currentRecordId = RowandQuestion_number;

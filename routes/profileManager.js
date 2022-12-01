@@ -11,9 +11,10 @@ async function setSkillsToCandidates(dbConnection, candidateArrayData){
   for(let i=0; i<candidateArrayData.length; i++){
        id = candidateArrayData[i].canId;
 
-     await ExecuteQuery(dbConnection, `select Skill.skillName,Complexity.Name,Complexity.skilllevel,Skill.skillId,Complexity.cmpId from CandidateSkills 
-      left join Skill on Skill.skillId=CandidateSkills.skillId left join Complexity 
-      on  Complexity.cmpId =CandidateSkills.cmpId where CandidateSkills.canId = ${id}`)
+     await ExecuteQuery(dbConnection, `select Skill.skillName,Complexity.Name,Complexity.skilllevel,Skill.skillId,Complexity.cmpId, from CandidateSkills 
+      left join Skill on Skill.skillId=CandidateSkills.skillId
+      left join Complexity on  Complexity.cmpId =CandidateSkills.cmpId
+      where CandidateSkills.canId = ${id}`)
       .then((candidateSkills)=>{
           candidateArrayData[i].skills = candidateSkills;
       })

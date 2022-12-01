@@ -73,19 +73,23 @@ router.post("/endAssessment",jsonParser, (req, res) => {
                          };
 
                         res.status(200).json(result);
+                        dbConnection.close();
                       }
                       else{
                         res.status(500).send("Storing of assessment iformation failed!!!");
+                        dbConnection.close();
                       }
                     })
                   }
                   else{
                     console.log("Assessment status not updated!!!");
+                    dbConnection.close();
                   }
                 })
               }
               else{
                 console.log("AssessmentDetails data is not inserted!!!");
+                dbConnection.close();
               }
           })
           .catch((err)=>{
