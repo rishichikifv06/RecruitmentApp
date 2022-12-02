@@ -136,7 +136,7 @@ router.post("/insertQA", jsonParser, (req, res)=>{
     var Qid;
     var Aid;
 
-    async function InsertintoQuestions()//Inser Question
+    async function InsertintoQuestions()//Insert Question
     {
       await ConnectToDb().then(async (dbConnection)=>{
         if(dbConnection){
@@ -213,7 +213,11 @@ router.post("/insertQA", jsonParser, (req, res)=>{
           await ExecuteQuery(dbConnection,`insert into Questions_and_Answers(queId,ansId) values(${Qid},${Aid})`)
           .then((result)=>{
             console.log(result +"QandA");
-            res.status(200).json(result);
+            const status = {
+              Status: "success",
+              Message: "Question and Answer inserted successfully!!"
+            }
+            res.status(200).json(status);
             //dbConnection.close();
           })
           .catch((err)=>{
@@ -230,11 +234,6 @@ router.post("/insertQA", jsonParser, (req, res)=>{
         console.log(err +1);
       })
     }
-    //InsertIntoLinkTable(); 
-    //async function InsertQandA(){
-       //insert into Questions_and_Answers
-    //}
-    //InsertQandA();
   }
 })
 //update a question using question id
