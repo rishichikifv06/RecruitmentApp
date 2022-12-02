@@ -125,13 +125,17 @@ router.post("/allQA", jsonParser, (req, res)=>{
 
 router.post("/insertQA", jsonParser, (req, res)=>{
   if(req.body != undefined){
+
     const cmpId = req.body.cmpId;
     const skillId = req.body.skillId;
     const Question = req.body.Question;
     const Answer = req.body.Answer;
+    const Answerkeywords = req.body.Answerkeywords;
+
     console.log(skillId,cmpId,Question,Answer);
     var Qid;
     var Aid;
+
     async function InsertintoQuestions()//Inser Question
     {
       await ConnectToDb().then(async (dbConnection)=>{
@@ -174,7 +178,7 @@ router.post("/insertQA", jsonParser, (req, res)=>{
         })
     }
     async function InsertAnswer(dbConnection){ 
-          await ExecuteQuery(dbConnection, `insert into Answers(Answer) values('${Answer}')`)
+          await ExecuteQuery(dbConnection, `insert into Answers(Answer,Answerkeywords) values('${Answer}','${Answerkeywords}')`)
           .then(async(record)=>{
             if(record){
               console.log(record+2);
@@ -280,12 +284,12 @@ router.post("/updateA", jsonParser, (req, res)=>{
     {
       await ConnectToDb().then(async (dbConnection)=>{
         if(dbConnection){
-          await ExecuteQuery(dbConnection, `Update Answers set Answer='${Question}' where ansId=${queId}`)
+          await ExecuteQuery(dbConnection, `Update Answers set Answer='${Answer}' where ansId=${ansId}`)
           .then((result)=>{
             if(result){
               var status={
                 "status":"success",
-                "Message":"Question is updated"
+                "Message":"Answer is updated"
               }
               res.status(200).json(status);
               dbConnection.close();

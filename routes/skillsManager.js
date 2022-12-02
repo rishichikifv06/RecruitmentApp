@@ -58,7 +58,7 @@ router.post("/addSkill", (req, res)=>{
             .then((result)=>{
                 var status ={
                   "status":"success",
-                  "Message":"new skill is added"
+                  "Message":`${skillName} added successfully!!`
                 }
                 res.status(200).json(status);
                 console.log(status);
