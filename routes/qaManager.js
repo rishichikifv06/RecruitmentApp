@@ -140,18 +140,32 @@ router.post("/insertQA", jsonParser, (req, res)=>{
     {
       await ConnectToDb().then(async (dbConnection)=>{
         if(dbConnection){
-          await ExecuteQuery(dbConnection, `insert into Questions(Question,skillId,cmpId) values('${Question}',${skillId},${cmpId})`)
-          .then(async (result)=>{
-            if(result){
-              console.log(result);
-              await getQueID(dbConnection); //to get queId
+          await ExecuteQuery(dbConnection, `select Question from Questions where Question='${Question}' and skillId=${skillId} and cmpId=${cmpId}`)
+          .then(async (questionData)=>{
+            if(questionData.length!=0){
+              var status = {
+                Message: "The Quetion is already present!!"
+              }
+              res.status(200).json(status);
+              dbConnection.close();
             }
-            //dbConnection.close();
-          })
-          .catch((err)=>{
-            console.log(err+8);
-            //res.status(500).json(err);
-            dbConnection.close();
+
+            else{
+
+              await ExecuteQuery(dbConnection, `insert into Questions(Question,skillId,cmpId) values('${Question}',${skillId},${cmpId})`)
+              .then(async (result)=>{
+                if(result){
+                  console.log(result);
+                  await getQueID(dbConnection); //to get queId
+                }
+                //dbConnection.close();
+              })
+              .catch((err)=>{
+                console.log(err+8);
+                //res.status(500).json(err);
+                dbConnection.close();
+              })
+            }
           })
         }
         else{
@@ -178,6 +192,20 @@ router.post("/insertQA", jsonParser, (req, res)=>{
         })
     }
     async function InsertAnswer(dbConnection){ 
+      await ExecuteQuery(dbConnection, `select Answers.Answer, Questions.cmpId, Questions.skillId from Questions_and_Answers
+      left join Answers on Questions_and_Answers.ansId=Answers.ansId
+      left join Questions on Questions_and_Answers.queId=Questions.queId
+      where Questions.cmpId=${cmpId} and Questions.skillId=${skillId} and Answers.Answer='${Answer}'`)
+      .then(async (answerData)=>{
+        if(answerData.length!=0){
+          var status = {
+            Message: "The Quetion is already present!!"
+          }
+          res.status(200).json(status);
+          dbConnection.close();
+        }
+        else{
+
           await ExecuteQuery(dbConnection, `insert into Answers(Answer,Answerkeywords) values('${Answer}','${Answerkeywords}')`)
           .then(async(record)=>{
             if(record){
@@ -191,6 +219,8 @@ router.post("/insertQA", jsonParser, (req, res)=>{
             //res.status(500).json(err);
             dbConnection.close();
           })
+        }
+      })
         }
     async function getAnswerID(dbConnection){
       await ExecuteQuery(dbConnection,`select ansId from Answers where Answer='${Answer}'`)
