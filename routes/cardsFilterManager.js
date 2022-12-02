@@ -28,6 +28,7 @@ async function setSkillsToCandidates(dbConnection, candidateArrayData) {
 
 router.post("/", jsonParser, (req, res) => {
   const emailId = req.body.emailId;
+  
   console.log(emailId);
   const name = req.body.name;
   const status = req.body.status;

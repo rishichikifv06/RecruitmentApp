@@ -18,7 +18,7 @@ router.post("/", jsonParser, (req, res) => {
     await ConnectToDb().then(async (dbConnection)=>{
       if(dbConnection){
         var count = await getTotalCount(dbConnection);
-        await ExecuteQuery(dbConnection, `SELECT Questions.Question, Answers.Answer, AssessmentStaging.RowandQuestion_number,Skill.skillName,Complexity.Name , AssessmentStaging.AssessmentStagingstatus ,AssessmentStaging.score, AssessmentStaging.Note
+        await ExecuteQuery(dbConnection, `SELECT Questions.Question, Answers.Answer, Answers.Answerkeywords, AssessmentStaging.RowandQuestion_number,Skill.skillName,Complexity.Name , AssessmentStaging.AssessmentStagingstatus ,AssessmentStaging.score, AssessmentStaging.Note
         FROM AssessmentStaging
         LEFT JOIN Questions ON Questions.queId=AssessmentStaging.queId LEFT JOIN Skill ON Questions.skillId=Skill.skillId 
         LEFT JOIN Complexity ON Questions.cmpId=Complexity.cmpId
