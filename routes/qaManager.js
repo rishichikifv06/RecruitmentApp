@@ -144,7 +144,7 @@ router.post("/insertQA", jsonParser, (req, res)=>{
           .then(async (questionData)=>{
             if(questionData.length!=0){
               var status = {
-                Message: "The Quetion is already present!!"
+                Message: "The Question is already present!!"
               }
               res.status(200).json(status);
               dbConnection.close();
@@ -199,7 +199,7 @@ router.post("/insertQA", jsonParser, (req, res)=>{
       .then(async (answerData)=>{
         if(answerData.length!=0){
           var status = {
-            Message: "The Quetion is already present!!"
+            Message: "The Answer is already present!!"
           }
           res.status(200).json(status);
           dbConnection.close();

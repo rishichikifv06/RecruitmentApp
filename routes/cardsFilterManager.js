@@ -28,7 +28,7 @@ async function setSkillsToCandidates(dbConnection, candidateArrayData) {
 
 router.post("/", jsonParser, (req, res) => {
   const emailId = req.body.emailId;
-  
+
   console.log(emailId);
   const name = req.body.name;
   const status = req.body.status;
@@ -49,6 +49,7 @@ router.post("/", jsonParser, (req, res) => {
                   ,Candidates.canExperience,Candidates.Candidatestatus from Assessment 
                   left join Candidates on Candidates.canId=Assessment.canId 
                   where Assessment.date between '${startDate}' and '${endDate}'`;
+                  
                   let whereClause = "noWhere";
         
                   if (

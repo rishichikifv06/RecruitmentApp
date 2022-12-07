@@ -151,7 +151,7 @@ router.post("/", jsonParser, (req, res) => {
                         var hard = Math.round(50 / 100 * qcount);
                         foreachQuestionCount(hard, skills[i].skillId, 3, dbConnection, assessmentId);
                     }
-                    if (skills[i].cmpId == 2) {
+                    else if (skills[i].cmpId == 2) {
                         var qcount = Math.round(100 / 100 * tque);
                         var easy = Math.round(20 / 100 * qcount);
                         foreachQuestionCount(easy, skills[i].skillId, 1, dbConnection, assessmentId);
@@ -160,7 +160,7 @@ router.post("/", jsonParser, (req, res) => {
                         var hard = Math.round(20 / 100 * qcount);
                         foreachQuestionCount(hard, skills[i].skillId, 3, dbConnection, assessmentId);
                     }
-                    if (skills[i].cmpId == 1) {
+                    else if (skills[i].cmpId == 1) {
                         var qcount = Math.round(100 / 100 * tque);
                         var easy = Math.round(60 / 100 * qcount);
                         foreachQuestionCount(easy, skills[i].skillId, 1, dbConnection, assessmentId);

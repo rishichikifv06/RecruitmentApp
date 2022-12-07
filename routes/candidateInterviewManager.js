@@ -9,9 +9,11 @@ const {ConnectToDb,ExecuteQuery} = require('../db');
 
 router.post("/addInterview", jsonParser, (req, res)=>{
     if(req.body != undefined){
+
       const canId = req.body.canId;
       const date =req.body.date;
       const interviewSkills =req.body.interviewSkills
+      
       async function InsertCandidateInterview()//Insert CandidateInterview
       {
         await ConnectToDb().then(async (dbConnection)=>{
@@ -31,7 +33,7 @@ router.post("/addInterview", jsonParser, (req, res)=>{
                             console.log("interview skills function call");
                               var statusMessage={
                                  "status":"success",
-                                 "message":"inserted into IterviewSkills table!!!"
+                                 "message":`Interview is scheduled for Candidate ${canId} on ${date}!!!`
                              }
                              res.status(200).json(statusMessage);
                              dbConnection.close();
