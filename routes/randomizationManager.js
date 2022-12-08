@@ -13,13 +13,16 @@ function toClear(array) {
 }
 var q = [];
 router.post("/", jsonParser, (req, res) => {
+    
     if (req.body != undefined) {
+
         const canId = req.body.canId;
         const recId = req.body.recId;
         const Date = req.body.Date;
         const starttime = req.body.starttime;
         const skills = req.body.skills;
         const InterviewId = req.body.InterviewId;
+        const status = req.body.status;
 
         console.log(skills);
         var count = skills.length
@@ -37,7 +40,13 @@ router.post("/", jsonParser, (req, res) => {
                     values(${canId},'${Date}','${starttime}','Open',${recId},${InterviewId})`)
                         .then(async (data) => {
                             console.log(data + " inserted assessment");
-                            await getAssessmentId(dbConnection);
+                            await ExecuteQuery(dbConnection, `update CandidateInterview set status = '${status}' where InterviewId = ${InterviewId} and canId=${canId}`)
+                            .then(async (updatedCandidateInterviewData)=>{
+                                if(updatedCandidateInterviewData){
+
+                                    await getAssessmentId(dbConnection);
+                                }
+                            })
                         })
                         .catch((err) => {
                             console.log(err + 1);
