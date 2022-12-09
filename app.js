@@ -16,7 +16,6 @@ const passport = require("passport");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var authRouter = require('./routes/auth');
 var qaManagerRouter = require('./routes/qaManager');
 var assessmentManagerRouter = require('./routes/assessmentManager');
 var profileManagerRouter = require('./routes/profileManager');
@@ -84,7 +83,6 @@ app.use(session({
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/auth', authRouter);
 app.use('/qaManager', qaManagerRouter);
 app.use('/assessmentManager', assessmentManagerRouter );
 app.use('/profileManager', profileManagerRouter);
