@@ -1,54 +1,36 @@
-/*
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-
 require('dotenv').config();
-var express = require('express');
-var cors = require('cors');
-var app = express();
-
-// app.use((req, res, next)=>{
-//     res.setHeader('Access-Control-Allow-Origin','*');
-//     req.header('Access-Control-Allow-Headers', '*');
-//     req.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, PATCH');
-//     next();
-//   });
-  
-//  Origin, X-Requested-With, Content-Type, Accept, Authorization
-app.use(cors(
-    origin="*"
-))
-
-/**
- * Configuration object to be passed to MSAL instance on creation.
- * For a full list of MSAL Node configuration parameters, visit:
- * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-node/docs/configuration.md
- */
-const msalConfig = {
-    auth: {
-        clientId: process.env.CLIENT_ID, // 'Application (client) ID' of app registration in Azure portal - this value is a GUID
-        authority: process.env.CLOUD_INSTANCE + process.env.TENANT_ID, // Full directory URL, in the form of https://login.microsoftonline.com/<tenant>
-        clientSecret: process.env.CLIENT_SECRET // Client secret generated from the app registration in Azure portal
+const passportConfig = {
+  credentials: {
+    tenantID: process.env.TENANT_ID, //"Enter_the_Tenant_Info_Here",
+    clientID: process.env.CLIENT_ID, //"Enter_the_Application_Id_Here",
+    clientSecret: "Enter_the_Client_Secret_Here", //process.env.CLIENT_SECRET,
+  },
+  metadata: {
+    authority: "login.microsoftonline.com",
+    discovery: ".well-known/openid-configuration",
+    version: "v2.0",
+  },
+  settings: {
+    validateIssuer: true,
+    passReqToCallback: true,
+    loggingLevel: "info",
+    loggingNoPII: true,
+    cacheTTL: 3600,
+  },
+  protectedRoutes: {
+    routes: {
+      endpoint: "https://graph.microsoft.com/v1.0/me/checkMemberGroups",
+      scopes: ["User.Read"],
+      delegatedPermissions: {
+        read: ["User.Read"],
+        write: ["User.Read"],
+      },
+      applicationPermissions: {
+        read: ["User.Read"],
+        write: ["User.Read"],
+      },
     },
-    system: {
-        loggerOptions: {
-            loggerCallback(loglevel, message, containsPii) {
-                console.log(message);
-            },
-            piiLoggingEnabled: false,
-            logLevel: "Info",
-        }
-    }
-}
-
-const REDIRECT_URI = process.env.REDIRECT_URI;
-const POST_LOGOUT_REDIRECT_URI = process.env.POST_LOGOUT_REDIRECT_URI;
-const GRAPH_ME_ENDPOINT = process.env.GRAPH_API_ENDPOINT + "v1.0/me";
-
-module.exports = {
-    msalConfig,
-    REDIRECT_URI,
-    POST_LOGOUT_REDIRECT_URI,
-    GRAPH_ME_ENDPOINT
+  },
 };
+
+module.exports = passportConfig;

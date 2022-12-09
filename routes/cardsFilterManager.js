@@ -3,6 +3,7 @@ var router = express.Router();
 var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
 const { ConnectToDb, ExecuteQuery } = require("../db");
+const {isAuthenticated} = require('../authorize')
 
 async function setSkillsToCandidates(dbConnection, candidateArrayData) {
   var id;
@@ -26,7 +27,7 @@ async function setSkillsToCandidates(dbConnection, candidateArrayData) {
   return candidateArrayData;
 }
 
-router.post("/", jsonParser, (req, res) => {
+router.post("/", jsonParser,isAuthenticated, (req, res) => {
   const emailId = req.body.emailId;
 
   console.log(emailId);
@@ -49,7 +50,7 @@ router.post("/", jsonParser, (req, res) => {
                   ,Candidates.canExperience,Candidates.Candidatestatus from Assessment 
                   left join Candidates on Candidates.canId=Assessment.canId 
                   where Assessment.date between '${startDate}' and '${endDate}'`;
-                  
+
                   let whereClause = "noWhere";
         
                   if (
