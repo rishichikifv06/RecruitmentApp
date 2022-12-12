@@ -1,4 +1,4 @@
-const { Connection, Request } = require("tedious");
+// const { Connection, Request } = require("tedious");
 //  var sql = require("mssql");
 const sql = require("msnodesqlv8");
 
@@ -35,31 +35,31 @@ var query = "SELECT * FROM Complexity";
 //server=JKTBLRCOM162;Database=Testapp;Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}
 //Server=JKTBLRCOM162,1433;Database=Testapp;User Id=AD\Guruprasad.J;Password=;Encrypt=false;Trusted_Connection=Yes
 
+
+
+// Create connection to database
+// const sqlConfig = {
+//     user: process.env.DB_USER,
+//     password: process.env.DB_PWD,
+//     database: process.env.DB_NAME,
+//     server: process.env.SERVER,
+//     driver: "msnodesqlv8",
+//     pool: {
+//       max: 10,
+//       min: 0,
+//       idleTimeoutMillis: 30000
+//     },
+//     options: {
+//         trustedConnection: true,
+//         encrypt: false, // for azure
+//         trustServerCertificate: true // change to true for local dev / self-signed certs
+//     }
+//   }
+
 sql.query(connectionString, query, (err, rows) => {
     console.log(rows);
     console.log(err);
 })
-
-
-
-// Create connection to database
-// const config = {
-//   authentication: {
-//     options: {
-//       userName: "AD\Guruprasad.J", // update me
-//       // password: "",
-//  // update me
-//     },
-//     type: "default",
-//   },
-//   server: "JKTBLRCOM162",
-//   Trusted_Connection: "Yes",
-//   Driver: "{SQL Server Native Client 11.0}", // update me
-//   options: {
-//     database: "Testapp",//update me
-//     encrypt: false
-//   },
-// };
 
 /* 
     //Use Azure VM Managed Identity to connect to the SQL database
@@ -131,7 +131,7 @@ sql.query(connectionString, query, (err, rows) => {
 
 // function getData() {
 //     // Create connection instance
-//     var conn = new sql.ConnectionPool(config);
+//     var conn = new sql.ConnectionPool(sqlConfig);
    
 //     conn.connect()
 //     // Successfull connection
@@ -141,7 +141,7 @@ sql.query(connectionString, query, (err, rows) => {
 //       var req = new sql.Request(conn);
    
 //       // Call mssql's query method passing in params
-//       req.query("SELECT TOP 5 * FROM QueandAns")
+//       req.query("SELECT * FROM Complexity")
 //       .then(function (recordset) {
 //         console.log(recordset);
 //         conn.close();
@@ -162,4 +162,3 @@ sql.query(connectionString, query, (err, rows) => {
    
    
 //    getData();
-module.exports.connectionString = connectionString;
