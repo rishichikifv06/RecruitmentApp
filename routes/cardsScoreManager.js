@@ -6,7 +6,8 @@ var jsonParser = bodyParser.json();
 const {ConnectToDb,ExecuteQuery} = require('../db');
 
 
-module.exports.getScore = async(canId,Date,res)=> {
+
+const getScore = async(canId,Date,res)=> {
 
     // await sql.open(details.connectionString, async (err, conn) => {
     //     await conn.query(`select assessmentId from Assessment where canId=${canId} and date='${Date}'`, async (err, data) => {
@@ -129,8 +130,10 @@ router.post('/scores', jsonParser,(req, res)=>{
                 const Date = req.body.Date;
 
 
-               this.getScore(canId,Date,res);
+               getScore(canId,Date,res);
 
             }
 })
-module.exports = router;
+ module.exports = {router:router,
+    getScore:getScore
+};

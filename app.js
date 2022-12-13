@@ -93,7 +93,7 @@ app.use('/complexityManager', complexityManagerRouter);
 app.use('/candidateManager', candidateManagerRouter);
 app.use('/assessmentStagingManager', assessmentStagingManagerRouter);
 app.use('/randomizationManager', randomizationManagerRouter);
-app.use('/cardsScoreManager', cardsScoreManagerRouter);
+app.use('/cardsScoreManager', cardsScoreManagerRouter.router);
 app.use('/cardsFilterManager', cardsFilterManagerRouter);
 app.use('/candidateInterviewManager', candidateInterviewManagerRouter);
 app.use('/interviewFilterManager', interviewFilterManagerRouter);

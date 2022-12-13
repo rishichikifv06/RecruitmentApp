@@ -69,7 +69,7 @@ router.post("/", jsonParser, (req, res) => {
                       whereClause += ` AND canName like '%${name}%'`;
                     }
                     if (status) {
-                      whereClause += ` AND Candidatestatus='${status}'`;
+                      whereClause += ` AND CandidateInterview.status='${status}'`;
                     }
                     whereClause = whereClause.replace("noWhere", "");
                     query += whereClause;
@@ -139,7 +139,7 @@ router.post("/", jsonParser, (req, res) => {
                      whereClause += ` AND canName like '%${name}%'`;
                    }
                    if (status) {
-                     whereClause += ` AND Candidatestatus='${status}'`;
+                     whereClause += ` AND CandidateInterview.status='${status}'`;
                    }
                    whereClause = whereClause.replace("noWhere AND", "where");
                    query += whereClause;

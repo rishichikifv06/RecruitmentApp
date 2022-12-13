@@ -4,6 +4,7 @@ var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
 const { ConnectToDb, ExecuteQuery } = require("../db");
 const {isAuthenticated} = require('../authorize')
+const {getScore} = require('./cardsScoreManager')
 
 async function setSkillsToCandidates(dbConnection, candidateArrayData) {
   var id;
