@@ -101,7 +101,17 @@ router.post("/allQA", jsonParser, (req, res)=>{
           await ExecuteQuery(dbConnection, `select Question,Questions.queId,Answer,Answers.ansId from Questions_and_Answers left join Answers on Answers.ansId=Questions_and_Answers.ansId
           inner join Questions on Questions.queId=Questions_and_Answers.queId where Questions.skillId=${skillId} and Questions.cmpId=${cmpId}`)
           .then((result)=>{
-            res.status(200).json({result});
+            res.status(200).json({
+              Status: {
+                StatusCode: 200,
+
+                StatusType: "Success",
+
+                StatusMessage: "Record Found",
+
+                StatusSeverity: "Information",
+              },
+              result});
             dbConnection.close();
           })
           .catch((err)=>{
@@ -239,29 +249,29 @@ router.post("/insertQA", jsonParser, (req, res)=>{
     InsertintoQuestions();  //insert into Questions table
     async function InsertIntoLinkTable(){
       await ConnectToDb().then(async (dbConnection)=>{
-        if(dbConnection){
           await ExecuteQuery(dbConnection,`insert into Questions_and_Answers(queId,ansId) values(${Qid},${Aid})`)
           .then((result)=>{
             console.log(result +"QandA");
             const status = {
-              Status: "success",
-              Message: "Question and Answer inserted successfully!!"
+              StatusCode: 200,
+              StatusType: "success",
+              StatusMessage: "Question and Answer inserted successfully!!",
+              StatusSeverity: "Inserted into database"
             }
             res.status(200).json(status);
-            //dbConnection.close();
+            dbConnection.close();
           })
           .catch((err)=>{
             console.log(err+2);
-           // res.status(500).json(err);
-            //dbConnection.close();
+            res.status(500).json({err});
+            dbConnection.close();
           })
-        }
-        else{
-          console.log("db not connected");
-        }
+
       })
       .catch((err)=>{
         console.log(err +1);
+        res.status(500).json({err});
+        dbConnection.close();
       })
     }
   }
@@ -274,13 +284,14 @@ router.post("/updateQ", jsonParser, (req, res)=>{
     async function EditQuestion()
     {
       await ConnectToDb().then(async (dbConnection)=>{
-        if(dbConnection){
           await ExecuteQuery(dbConnection, `Update Questions set Question='${Question}' where queId=${queId}`)
           .then((result)=>{
             if(result){
               var status={
-                "status":"success",
-                "Message":"Question is updated"
+                StatusCode: 200,
+                StatusType: "success",
+                StatusMessage: "Question is updated",
+                StatusSeverity: "Updated into database"
               }
               res.status(200).json(status);
               dbConnection.close();
@@ -291,10 +302,7 @@ router.post("/updateQ", jsonParser, (req, res)=>{
             res.status(500).json(err);
             dbConnection.close();
           })
-        }
-        else{
-          console.log("Not connected to db");
-        }
+
        }).catch((err)=>{
         console.log(err);
         dbConnection.close();
@@ -312,13 +320,14 @@ router.post("/updateA", jsonParser, (req, res)=>{
     async function EditAnswer()
     {
       await ConnectToDb().then(async (dbConnection)=>{
-        if(dbConnection){
           await ExecuteQuery(dbConnection, `Update Answers set Answer='${Answer}' where ansId=${ansId}`)
           .then((result)=>{
             if(result){
               var status={
-                "status":"success",
-                "Message":"Answer is updated"
+                StatusCode: 200,
+                StatusType: "success",
+                StatusMessage: "Answer is updated",
+                StatusSeverity: "Updated into database"
               }
               res.status(200).json(status);
               dbConnection.close();
@@ -329,10 +338,6 @@ router.post("/updateA", jsonParser, (req, res)=>{
             res.status(500).json(err);
             dbConnection.close();
           })
-        }
-        else{
-          console.log("Not connected to db");
-        }
        }).catch((err)=>{
         console.log(err);
         dbConnection.close();

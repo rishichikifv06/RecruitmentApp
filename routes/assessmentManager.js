@@ -73,11 +73,17 @@ router.post("/endAssessment",jsonParser, (req, res) => {
                         await ExecuteQuery(dbConnection, `UPDATE CandidateInterview SET status='${status}' WHERE canId = ${canId} AND InterviewId=${InterviewId}`)
                         .then(async (updatedInterviewData)=>{
                           if(updatedInterviewData){
-                            const result = { 
-                              "status": `The assessment and interview information is stored for candidateId ${canId} and status is set to closed`
-                             };
     
-                            res.status(200).json(result);
+                            res.status(200).json({
+                              Status: {
+                                StatusCode: 200,
+                
+                                StatusType: "Success",
+                
+                                StatusMessage: `The assessment and interview information is stored for candidateId ${canId} and status is set to closed`,
+                
+                                StatusSeverity: "Information stored",
+                              }});
                             dbConnection.close();
                           }
                           else{
@@ -105,7 +111,7 @@ router.post("/endAssessment",jsonParser, (req, res) => {
           })
           .catch((err)=>{
               console.log(err);
-              res.status(500).json(err);
+              res.status(500).json({err});
               dbConnection.close();
           })
       }
@@ -114,7 +120,7 @@ router.post("/endAssessment",jsonParser, (req, res) => {
       }
   }).catch((err)=>{
       console.log(err);
-      res.status(500).json(err);
+      res.status(500).json({err});
       dbConnection.close();
   })
   }

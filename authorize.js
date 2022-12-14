@@ -52,6 +52,7 @@ module.exports.bearerStrategy = new passportAzureAd.BearerStrategy(
 );
 
 module.exports.isAuthenticated = (req, res, next) => {
+  console.log(passport);
   passport.authenticate(
     "oauth-bearer",
     {

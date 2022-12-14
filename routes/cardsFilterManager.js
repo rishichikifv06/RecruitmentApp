@@ -29,9 +29,10 @@ async function setSkillsToCandidates(dbConnection, candidateArrayData) {
 }
 
 router.post("/", jsonParser,isAuthenticated, (req, res) => {
-  const emailId = req.body.emailId;
 
-  console.log(emailId);
+  console.log(req.headers);
+
+  const emailId = req.body.emailId;
   const name = req.body.name;
   const status = req.body.status;
   const startDate = req.body.startDate;
@@ -46,7 +47,7 @@ router.post("/", jsonParser,isAuthenticated, (req, res) => {
         
             await ConnectToDb()
               .then(async (dbConnection) => {
-                if (dbConnection) {
+          
                   let query = `select Assessment.date, Assessment.assessmentstatus ,Candidates.canId, Candidates.canName, Candidates.EmailId, Candidates.canPhone
                   ,Candidates.canExperience,Candidates.Candidatestatus from Assessment 
                   left join Candidates on Candidates.canId=Assessment.canId 
@@ -85,22 +86,29 @@ router.post("/", jsonParser,isAuthenticated, (req, res) => {
                         dbConnection,
                         candidateArrayData
                       ).then((result) => {
-                        res.status(200).json({ result });
+                        res.status(200).json({
+                          Status: {
+                            StatusCode: 200,
+            
+                            StatusType: "Success",
+            
+                            StatusMessage: "Record Found",
+            
+                            StatusSeverity: "Information",
+                          }, result });
                         dbConnection.close();
                       });
                     })
                     .catch((err) => {
                       console.log(err);
-                      res.status(500).json(err);
+                      res.status(500).json({err});
                       dbConnection.close();
                     });
-                } else {
-                  console.log("Not connected to db");
-                }
+                
               })
               .catch((err) => {
                 console.log(err);
-                res.status(500).json(err);
+                res.status(500).json({err});
                 dbConnection.close();
               });
           }
@@ -119,8 +127,8 @@ router.post("/", jsonParser,isAuthenticated, (req, res) => {
        
            await ConnectToDb()
              .then(async (dbConnection) => {
-               if (dbConnection) {
-                 let query = `select canId,canName,canPhone,canExperience,
+
+                let query = `select canId,canName,canPhone,canExperience,
                            Candidatestatus ,EmailId
                            from Candidates `;
                  let whereClause = "noWhere";
@@ -154,22 +162,29 @@ router.post("/", jsonParser,isAuthenticated, (req, res) => {
                        dbConnection,
                        candidateArrayData
                      ).then((result) => {
-                       res.status(200).json({ result });
+                       res.status(200).json({ 
+                        Status: {
+                          StatusCode: 200,
+          
+                          StatusType: "Success",
+          
+                          StatusMessage: "Record Found",
+          
+                          StatusSeverity: "Information",
+                        },result });
                        dbConnection.close();
                      });
                    })
                    .catch((err) => {
                      console.log(err);
-                     res.status(500).json(err);
+                     res.status(500).json({err});
                      dbConnection.close();
                    });
-               } else {
-                 console.log("Not connected to db");
-               }
+               
              })
              .catch((err) => {
                console.log(err);
-               res.status(500).json(err);
+               res.status(500).json({err});
                dbConnection.close();
              });
          }

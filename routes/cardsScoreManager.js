@@ -68,7 +68,7 @@ const getScore = async(canId,Date,res)=> {
 
     await ConnectToDb()
     .then(async (dbConnection)=>{
-        if(dbConnection){
+
             await ExecuteQuery(dbConnection, `select assessmentId from Assessment where canId=${canId} and date='${Date}'`)
             .then(async (assessmentIdData)=>{
                 let assessmentId = assessmentIdData[0].assessmentId;
@@ -102,24 +102,33 @@ const getScore = async(canId,Date,res)=> {
                             totalPercentage: totalPercentage
                         }
 
-                        res.status(200).json(data);
+                        res.status(200).json({
+                            Status: {
+                                StatusCode: 200,
+                
+                                StatusType: "Success",
+                
+                                StatusMessage: "Record Found",
+                
+                                StatusSeverity: "Information",
+                              },data});
                         dbConnection.close();
                 })
                 .catch((err)=>{
                     console.log(err);
-                    res.status(500).json(err);
+                    res.status(500).json({err});
                     dbConnection.close();
                 })
             })
             .catch((err)=>{
                 console.log(err);
-                res.status(500).json(err);
+                res.status(500).json({err});
                 dbConnection.close();
             })
-        }
-        else{
-            console.log("Not connected to db");
-        }
+        
+    }).catch((err)=>{
+        console.log(err);
+        res.status(500).json({err})
     })
 }
 

@@ -42,8 +42,10 @@ router.post("/saveData", jsonParser, (req, res)=>{
                       .then(async (insertedSkillsData)=>{
                         if(insertedSkillsData){
                           var success = {
-                            status: "Success",
-                            message: `Profile created successfully for ${canId}`
+                            StatusCode: 200,
+                            StatusType: "Success",
+                            StatusMessage: `Profile created successfully for ${canId}`,
+                            StatusSeverity: "Information updated"
                           }
                           res.status(200).json(success);
                           dbConnection.close();
@@ -309,8 +311,10 @@ router.post("/updateCandidateStatus", jsonParser, (req, res) => {
          if(flag == 0)
          {
           const result = {
-            "status": "success",
-            "Message": "candidate data updated successfully "
+            StatusCode: 200,
+            StatusType: "success",
+            StatusMessage: "candidate data updated successfully ",
+            StatusSeverity: "Information updated"
           };
           console.log(result);
           res.status(200).json(result);

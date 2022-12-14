@@ -43,7 +43,7 @@ router.post("/", jsonParser, (req, res) => {
         
             await ConnectToDb()
               .then(async (dbConnection) => {
-                if (dbConnection) {
+                
                   let query = `select CandidateInterview.date, CandidateInterview.InterviewId, CandidateInterview.status ,Candidates.canId, Candidates.canName, Candidates.EmailId, Candidates.canPhone
                   ,Candidates.canExperience from CandidateInterview 
                   left join Candidates on Candidates.canId=CandidateInterview.canId 
@@ -82,22 +82,28 @@ router.post("/", jsonParser, (req, res) => {
                         dbConnection,
                         candidateArrayData
                       ).then((result) => {
-                        res.status(200).json({ result });
+                        res.status(200).json({
+                          Status: {
+                            StatusCode: 200,
+            
+                            StatusType: "Success",
+            
+                            StatusMessage: "Record Found",
+            
+                            StatusSeverity: "Information",
+                          }, result });
                         dbConnection.close();
                       });
                     })
                     .catch((err) => {
                       console.log(err);
-                      res.status(500).json(err);
+                      res.status(500).json({err});
                       dbConnection.close();
                     });
-                } else {
-                  console.log("Not connected to db");
-                }
               })
               .catch((err) => {
                 console.log(err);
-                res.status(500).json(err);
+                res.status(500).json({err});
                 dbConnection.close();
               });
           }
@@ -116,7 +122,7 @@ router.post("/", jsonParser, (req, res) => {
        
            await ConnectToDb()
              .then(async (dbConnection) => {
-               if (dbConnection) {
+               
                  let query = `select CandidateInterview.date, CandidateInterview.InterviewId, CandidateInterview.status ,Candidates.canId, Candidates.canName, Candidates.EmailId, Candidates.canPhone
                  ,Candidates.canExperience from CandidateInterview 
                  left join Candidates on Candidates.canId=CandidateInterview.canId `;
@@ -152,22 +158,28 @@ router.post("/", jsonParser, (req, res) => {
                        dbConnection,
                        candidateArrayData
                      ).then((result) => {
-                       res.status(200).json({ result });
+                       res.status(200).json({ 
+                        Status: {
+                          StatusCode: 200,
+          
+                          StatusType: "Success",
+          
+                          StatusMessage: "Record Found",
+          
+                          StatusSeverity: "Information",
+                        },result });
                        dbConnection.close();
                      });
                    })
                    .catch((err) => {
                      console.log(err);
-                     res.status(500).json(err);
+                     res.status(500).json({err});
                      dbConnection.close();
                    });
-               } else {
-                 console.log("Not connected to db");
-               }
              })
              .catch((err) => {
                console.log(err);
-               res.status(500).json(err);
+               res.status(500).json({err});
                dbConnection.close();
              });
          }

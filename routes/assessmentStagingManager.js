@@ -33,7 +33,16 @@ router.post("/", jsonParser, (req, res) => {
             result[0].nextRecordId = RowandQuestion_number+1;
             result[0].previosRecordId = RowandQuestion_number-1;
             result[0].lastRecordId = count;
-            res.status(200).json({result});
+            res.status(200).json({
+              Status: {
+                StatusCode: 200,
+
+                StatusType: "Success",
+
+                StatusMessage: "Record Found",
+
+                StatusSeverity: "Information",
+              },result});
             dbConnection.close();
           }
         })
@@ -90,8 +99,11 @@ router.post("/saveData", jsonParser, (req, res)=>{
     RowandQuestion_number = ${RowandQuestion_number}`,(err, data)=>{
         if(data){
           var success = {
-            status: "Success",
-            message: `The response is saved successfully for candidateId ${canId} and question number ${RowandQuestion_number}`}
+            StatusCode: 200,
+            StatusType: "Success",
+            StatusMessage: `The response is saved successfully for candidateId ${canId} and question number ${RowandQuestion_number}`,
+            StatusSeverity: "Information updated"
+          }
 
           res.status(200).json(success);
         }

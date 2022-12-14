@@ -18,9 +18,6 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var qaManagerRouter = require('./routes/qaManager');
 var assessmentManagerRouter = require('./routes/assessmentManager');
-var profileManagerRouter = require('./routes/profileManager');
-var quesManagerRouter = require('./routes/questionsManager');
-var ansManagerRouter = require('./routes/answersManager');
 var skillsManagerRouter = require('./routes/skillsManager');
 var complexityManagerRouter = require('./routes/complexityManager');
 var candidateManagerRouter = require('./routes/candidateManager');
@@ -85,9 +82,6 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/qaManager', qaManagerRouter);
 app.use('/assessmentManager', assessmentManagerRouter );
-app.use('/profileManager', profileManagerRouter);
-app.use('/quesManager', quesManagerRouter);
-app.use('/ansManager', ansManagerRouter);
 app.use('/skillsManager', skillsManagerRouter);
 app.use('/complexityManager', complexityManagerRouter);
 app.use('/candidateManager', candidateManagerRouter);
@@ -97,7 +91,7 @@ app.use('/cardsScoreManager', cardsScoreManagerRouter.router);
 app.use('/cardsFilterManager', cardsFilterManagerRouter);
 app.use('/candidateInterviewManager', candidateInterviewManagerRouter);
 app.use('/interviewFilterManager', interviewFilterManagerRouter);
-//app.use(dbRouter);
+
 
 
 // catch 404 and forward to error handler

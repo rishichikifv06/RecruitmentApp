@@ -182,8 +182,11 @@ router.post("/", jsonParser, (req, res) => {
             }
             k = 0;
             let result = {
-                "status": "Question and Answers have been successfully inserted in AssessmentStaging",
-                "assessmentId": assessmentId
+                StatusCode: 200,
+                StatusType: "Success",
+                StatusMessage: "Question and Answers have been successfully inserted in AssessmentStaging",
+                StatusSeverity: "Information Stored",
+                assessmentId: assessmentId
             }
             setTimeout(() => {
                 res.status(200).json(result);

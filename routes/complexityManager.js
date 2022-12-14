@@ -19,7 +19,17 @@ router.get("/", (req, res)=>{
         if(dbConnection){
           await ExecuteQuery(dbConnection, `SELECT * FROM Complexity`)
           .then((result)=>{
-            res.status(200).json({result});
+            res.status(200).json({
+              Status: {
+                StatusCode: 200,
+
+                StatusType: "Success",
+
+                StatusMessage: "Record Found",
+
+                StatusSeverity: "Information",
+              },
+              result});
             dbConnection.close();
           })
           .catch((err)=>{

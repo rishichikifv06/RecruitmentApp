@@ -30,10 +30,12 @@ router.post("/addInterview", jsonParser, (req, res) => {
           .then((count) => {
             if (count.length!=0) {
               var statusMessage = {
-                "status": "Failed",
-                "message": `interview already exist on '${date}' !!!`
+                StatusCode: 400,
+                StatusType: "Failed",
+                StatusMessage: `Interview already exists on '${date}' !!!`,
+                StatusSeverity: "Information already exists"
               }
-              res.status(200).json(statusMessage);
+              res.status(200).json({statusMessage});
               dbConnection.close();
             }
             else{
@@ -60,8 +62,10 @@ router.post("/addInterview", jsonParser, (req, res) => {
                         if (insertedSkillsData) {
                           console.log("interview skills function call");
                           var statusMessage = {
-                            "status": "success",
-                            "message": `Interview is scheduled for Candidate ${canId} on ${date}!!!`
+                            StatusCode: 200,
+                            StatusType: "success",
+                            StatusMessage: `Interview is scheduled for Candidate ${canId} on ${date}!!!`,
+                            StatusSeverity: "Information loaded"
                           }
                           res.status(200).json(statusMessage);
                           dbConnection.close();
@@ -135,7 +139,16 @@ router.post("/addInterview", jsonParser, (req, res) => {
             .then((InterviewSkillsData)=>{
                 if(InterviewSkillsData)
                 {
-                    res.status(200).json({InterviewSkillsData});
+                    res.status(200).json({
+                      Status: {
+                        StatusCode: 200,
+        
+                        StatusType: "Success",
+        
+                        StatusMessage: "Record Found",
+        
+                        StatusSeverity: "Information",
+                      },InterviewSkillsData});
                     dbConnection.close();
                 }
                 else{
