@@ -19,18 +19,18 @@ const getScore = async(canId,Date,res)=> {
     //             on Questions.queId=AssessmentDetails.queId 
     //             LEFT JOIN Skill ON Questions.skillId=Skill.skillId LEFT JOIN Complexity ON Questions.cmpId=Complexity.cmpId where assessmentId=${assessmentId} 
     //             group by Skill.skillName
-    //             `,(err, val) => {
-    //                 if (val) {
-    //                     val.forEach(element => {
+    //             `,(err, skillData) => {
+    //                 if (skillData) {
+    //                     skillData.forEach(element => {
     //                         element.skillScore = element.count*10;
     //                         element.percentage = Math.round(element.candidateScore/element.skillScore*100);
     //                     });
-    //                     console.log(val);
+    //                     console.log(skillData);
     //                     let totalCount = 0;
     //                     let totalScore = 0;
     //                     let totalPercentage = 1;
     //                     let totalCandidateScore = 0;
-    //                     val.forEach(element => {
+    //                     skillData.forEach(element => {
     //                         totalCount = totalCount+element.count;
     //                         totalScore = totalScore+element.skillScore;
     //                         totalCandidateScore = totalCandidateScore+element.candidateScore;  
@@ -38,7 +38,7 @@ const getScore = async(canId,Date,res)=> {
     //                     totalPercentage = Math.round(totalCandidateScore/totalScore*100);
 
     //                     let data = {
-    //                         val,
+    //                         skillData,
     //                         totalCount: totalCount,
     //                         totalScore: totalScore,
     //                         totalCandidateScore: totalCandidateScore,
@@ -77,8 +77,8 @@ const getScore = async(canId,Date,res)=> {
                 on Questions.queId=AssessmentDetails.queId 
                 LEFT JOIN Skill ON Questions.skillId=Skill.skillId LEFT JOIN Complexity ON Questions.cmpId=Complexity.cmpId where assessmentId=${assessmentId} 
                 group by Skill.skillName`)
-                .then((val)=>{
-                    val.forEach(element => {
+                .then((skillData)=>{
+                    skillData.forEach(element => {
                         element.skillScore = element.count*10;
                         element.percentage = Math.round(element.candidateScore/element.skillScore*100);
                     });
@@ -87,7 +87,7 @@ const getScore = async(canId,Date,res)=> {
                         let totalScore = 0;
                         let totalPercentage = 1;
                         let totalCandidateScore = 0;
-                        val.forEach(element => {
+                        skillData.forEach(element => {
                             totalCount = totalCount+element.count;
                             totalScore = totalScore+element.skillScore;
                             totalCandidateScore = totalCandidateScore+element.candidateScore;  
@@ -95,7 +95,7 @@ const getScore = async(canId,Date,res)=> {
                         totalPercentage = Math.round(totalCandidateScore/totalScore*100);
 
                         let data = {
-                            val,
+                            skillData,
                             totalCount: totalCount,
                             totalScore: totalScore,
                             totalCandidateScore: totalCandidateScore,

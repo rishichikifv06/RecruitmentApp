@@ -1,16 +1,36 @@
 // const { Connection, Request } = require("tedious");
 //  var sql = require("mssql");
-const sql = require("msnodesqlv8");
+// const sql = require("msnodesqlv8");
+var mysql = require('mysql');
 
-const connectionString = "server=JKTBLRCOM162;Database=Testapp;Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}";
+var con = mysql.createConnection({
+    host: "10.210.21.187",
+    user: "guru",
+    password: "12345$@GhdJKTech12",
+    database: "testapp"
+  });
+  
+  con.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+    con.query(`select * from Complexity`, function (err, result, fields) {
+      if (err) throw err;
+      console.log("Result: " , result);
+    //   console.log("Fields: ", fields);
+    });
+  })
+
+// const connectionString = "server=JKTBLRCOM162;Database=Testapp;Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}";
 
 
 module.exports.ConnectToDb = async () => {
 
    return sql.open(connectionString, async (err, conn) => {
       if (conn) {
-        return conn};
-      return err;
+        return conn}
+        else if(err){
+            return err;
+        }
     });
   };
   
@@ -29,7 +49,7 @@ module.exports.ExecuteQuery = async (conn, queryString) => {
 //   console.log(rows);
 // })
 // }
-var query = "SELECT * FROM Complexity";
+// var query = "SELECT * FROM Complexity";
 
 // Driver=msnodesqlv8;Server=(JKTBLRCOM162)\INSTANCE;Database=Testapp;UID=AD\Guruprasad.J;PWD=;Encrypt=false
 //server=JKTBLRCOM162;Database=Testapp;Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}
@@ -56,10 +76,10 @@ var query = "SELECT * FROM Complexity";
 //     }
 //   }
 
-sql.query(connectionString, query, (err, rows) => {
-    console.log(rows);
-    console.log(err);
-})
+// sql.query(connectionString, query, (err, rows) => {
+//     console.log(rows);
+//     console.log(err);
+// })
 
 /* 
     //Use Azure VM Managed Identity to connect to the SQL database

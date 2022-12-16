@@ -14,8 +14,6 @@ var logger = require('morgan');
 var cors = require('cors');
 const passport = require("passport");
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var qaManagerRouter = require('./routes/qaManager');
 var assessmentManagerRouter = require('./routes/assessmentManager');
 var skillsManagerRouter = require('./routes/skillsManager');
@@ -58,9 +56,6 @@ app.use(cors(
  */
 
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
 
 
 app.use(logger('dev'));
@@ -78,8 +73,6 @@ app.use(session({
   }
 }));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/qaManager', qaManagerRouter);
 app.use('/assessmentManager', assessmentManagerRouter );
 app.use('/skillsManager', skillsManagerRouter);
