@@ -12,39 +12,52 @@ const pool = mysql.createPool({
     port: "3306"
   });
   
-//   pool.connect(function(err) {
-//     if (err) throw err;
-//     console.log("Connected!");
-//     // console.log(conn);
-//     conn.query(`select * from complexity`, function (err, result, fields) {
-//       if (err) throw err;
-//       console.log("Result: " , result);
-//     //   console.log("Fields: ", fields);
-//     });
-//   })
+  pool.getConnection(function(err,conn) {
+    if (err) throw err;
+    console.log("Connected!");
+    // console.log(conn);
+    conn.query(`select * from complexity`, function (err, result, fields) {
+      if (err) throw err;
+      console.log("Result: " , result);
+    //   console.log("Fields: ", fields);
+    });
+  })
 
-pool.getConnection((err,conn)=>{
-    if(err) throw err
-    conn.query(`select * from complexity`,(err,rows)=>{
-        if(err) throw err
-        console.log(rows);
-        conn.release();
-    })
-})
+// var Connection1= async ()=>{
+
+//         return new Promise((resolve,reject)=>{
+
+//             pool.getConnection(async (err,conn)=>{
+//             err ? reject(err) : resolve(conn)
+//         })
+//         })
+// }
+
+// var Connection2=(conn)=>{
+//     conn.query(`select * from complexity`,async (err,rows)=>{
+//         if(err) throw err
+//         console.log(rows);
+//         return conn;
+//     })
+// }
+
+// Connection1().then((connection
+//     )=>{
+//     }).catch((err)=>{
+//         console.log(err);
+//     })
 
 // const connectionString = "server=JKTBLRCOM162;Database=Testapp;Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}";
 
 
 module.exports.ConnectToDb = async () => {
 
-   return pool.getConnection(async (err, connection) => {
-      if (connection) {
-        console.log(connection);
-        return connection}
-        else if(err){
-            return err;
-        }
-    });
+    return new Promise((resolve,reject)=>{
+
+        pool.getConnection(async (err,conn)=>{
+        err ? reject(err) : resolve(conn)
+    })
+    })
   };
   
 module.exports.ExecuteQuery = async (conn, queryString) => {
@@ -56,6 +69,7 @@ module.exports.ExecuteQuery = async (conn, queryString) => {
 });
   
 }
+
 // for(var i=990; i<=999; i++){
 // const query = `UPDATE Questions_and_Answers SET ansId = '${i}' WHERE queandansId = '${i}'`;
 // sql.query(connectionString, query, (err, rows)=>{

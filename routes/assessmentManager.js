@@ -85,35 +85,35 @@ router.post("/endAssessment",jsonParser, (req, res) => {
                 
                                 StatusSeverity: "Information stored",
                               }});
-                            dbConnection.close();
+                            dbConnection.release();
                           }
                           else{
                             res.status(500).send("Storing of assessment and interview iformation failed!!!");
-                            dbConnection.close();
+                            dbConnection.release();
                           }
                         })
                       }
                       else{
                         console.log("Candidate status not updated!!!");
-                        dbConnection.close();
+                        dbConnection.release();
                       }
                     })
                   }
                   else{
                     console.log("Assessment status not updated!!!");
-                    dbConnection.close();
+                    dbConnection.release();
                   }
                 })
               }
               else{
                 console.log("AssessmentDetails data is not inserted!!!");
-                dbConnection.close();
+                dbConnection.release();
               }
           })
           .catch((err)=>{
               console.log(err);
               res.status(500).json({err});
-              dbConnection.close();
+              dbConnection.release();
           })
       }
       else{
@@ -122,7 +122,7 @@ router.post("/endAssessment",jsonParser, (req, res) => {
   }).catch((err)=>{
       console.log(err);
       res.status(500).json({err});
-      dbConnection.close();
+      dbConnection.release();
   })
   }
  

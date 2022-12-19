@@ -23,18 +23,18 @@ router.get("/", (req, res) => {
                   },
                   result,
                 });
-                dbConnection.close();
+                dbConnection.release();
               })
               .catch((err) => {
                 console.log(err);
                 res.status(500).json({err});
-                dbConnection.close();
+                dbConnection.release();
               });
         })
         .catch((err) => {
           console.log(err);
           res.status(500).json({err});
-          dbConnection.close();
+          dbConnection.release();
         });
     }
 
@@ -60,7 +60,7 @@ router.post("/addSkill", (req, res) => {
                 Message: "The skill is already present!!",
               };
               res.status(200).json(status);
-              dbConnection.close();
+              dbConnection.release();
             } else {
               await ExecuteQuery(
                 dbConnection,
@@ -73,12 +73,12 @@ router.post("/addSkill", (req, res) => {
                   };
                   res.status(200).json(status);
                   console.log(status);
-                  dbConnection.close();
+                  dbConnection.release();
                 })
                 .catch((err) => {
                   console.log(err);
                   res.status(500).json(err);
-                  dbConnection.close();
+                  dbConnection.release();
                 });
             }
           });
@@ -86,7 +86,7 @@ router.post("/addSkill", (req, res) => {
       })
       .catch((err) => {
         console.log(err);
-        dbConnection.close();
+        dbConnection.release();
       });
   }
   AddSkill();

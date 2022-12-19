@@ -61,20 +61,20 @@ function isAuthenticated(req, res, next) {
 //                   console.log(recordset);
 //                   const{recordset: data} = recordset;
 //                    res.send(( data[id]));
-//                   conn.close();
+//                   conn.release();
 //                 })
 //                 // Handle sql statement execution errors
 //                 .catch(function (err) {
 //                   console.log(err);
 //                   res.send(err);
-//                   conn.close();
+//                   conn.release();
 //                 });
 //             })
 //             // Handle connection errors
 //             .catch(function (err) {
 //               console.log(err);
 //               res.send(err);
-//               conn.close();
+//               conn.release();
 //             });
 //         }
       
@@ -98,8 +98,9 @@ router.post("/allQA", jsonParser, (req, res)=>{
 
       await ConnectToDb().then(async (dbConnection)=>{
         if(dbConnection){
-          await ExecuteQuery(dbConnection, `select Question,Questions.queId,Answer,Answers.ansId from Questions_and_Answers left join Answers on Answers.ansId=Questions_and_Answers.ansId
-          inner join Questions on Questions.queId=Questions_and_Answers.queId where Questions.skillId=${skillId} and Questions.cmpId=${cmpId}`)
+          await ExecuteQuery(dbConnection, `select question,questions.queId,answer,answer.ansId from questions_and_answers 
+          left join answer on answer.ansId=questions_and_answers.ansId inner join questions on questions.queId=questions_and_answers.queId 
+          where questions.skillId=${skillId} and questions.cmpId=${cmpId}`)
           .then((result)=>{
             res.status(200).json({
               Status: {
@@ -112,12 +113,12 @@ router.post("/allQA", jsonParser, (req, res)=>{
                 StatusSeverity: "Information",
               },
               result});
-            dbConnection.close();
+            dbConnection.release();
           })
           .catch((err)=>{
             console.log(err);
             res.status(500).json(err);
-            dbConnection.close();
+            dbConnection.release();
           })
         }
         else{
@@ -125,7 +126,7 @@ router.post("/allQA", jsonParser, (req, res)=>{
         }
        }).catch((err)=>{
         console.log(err);
-        dbConnection.close();
+        dbConnection.release();
        })
     }
    
@@ -150,30 +151,30 @@ router.post("/insertQA", jsonParser, (req, res)=>{
     {
       await ConnectToDb().then(async (dbConnection)=>{
         if(dbConnection){
-          await ExecuteQuery(dbConnection, `select Question from Questions where Question='${Question}' and skillId=${skillId} and cmpId=${cmpId}`)
+          await ExecuteQuery(dbConnection, `select question from questions where question='${Question}' and skillId=${skillId} and cmpId=${cmpId}`)
           .then(async (questionData)=>{
             if(questionData.length!=0){
               var status = {
                 Message: "The Question is already present!!"
               }
               res.status(200).json(status);
-              dbConnection.close();
+              dbConnection.release();
             }
 
             else{
 
-              await ExecuteQuery(dbConnection, `insert into Questions(Question,skillId,cmpId) values('${Question}',${skillId},${cmpId})`)
+              await ExecuteQuery(dbConnection, `insert into questions(Question,skillId,cmpId) values('${Question}',${skillId},${cmpId})`)
               .then(async (result)=>{
                 if(result){
                   console.log(result);
                   await getQueID(dbConnection); //to get queId
                 }
-                //dbConnection.close();
+                //dbConnection.release();
               })
               .catch((err)=>{
                 console.log(err+8);
                 //res.status(500).json(err);
-                dbConnection.close();
+                dbConnection.release();
               })
             }
           })
@@ -187,7 +188,7 @@ router.post("/insertQA", jsonParser, (req, res)=>{
     }
     async function getQueID(connection)
     {
-        await ExecuteQuery(connection,`select queId from Questions where Question='${Question}'`)
+        await ExecuteQuery(connection,`select queId from questions where Question='${Question}'`)
         .then(async(que)=>{
           if(que){
             console.log(que);
@@ -202,38 +203,38 @@ router.post("/insertQA", jsonParser, (req, res)=>{
         })
     }
     async function InsertAnswer(dbConnection){ 
-      await ExecuteQuery(dbConnection, `select Answers.Answer, Questions.cmpId, Questions.skillId from Questions_and_Answers
-      left join Answers on Questions_and_Answers.ansId=Answers.ansId
-      left join Questions on Questions_and_Answers.queId=Questions.queId
-      where Questions.cmpId=${cmpId} and Questions.skillId=${skillId} and Answers.Answer='${Answer}'`)
+      await ExecuteQuery(dbConnection, `select answers.Answer, questions.cmpId, questions.skillId from questions_and_answers
+      left join answers on questions_and_answers.ansId=answers.ansId
+      left join questions on questions_and_answers.queId=questions.queId
+      where questions.cmpId=${cmpId} and questions.skillId=${skillId} and answers.Answer='${Answer}'`)
       .then(async (answerData)=>{
         if(answerData.length!=0){
           var status = {
             Message: "The Answer is already present!!"
           }
           res.status(200).json(status);
-          dbConnection.close();
+          dbConnection.release();
         }
         else{
 
-          await ExecuteQuery(dbConnection, `insert into Answers(Answer,Answerkeywords) values('${Answer}','${Answerkeywords}')`)
+          await ExecuteQuery(dbConnection, `insert into answers(Answer,Answerkeywords) values('${Answer}','${Answerkeywords}')`)
           .then(async(record)=>{
             if(record){
               console.log(record+2);
               await getAnswerID(dbConnection); //get ansId
             }
-            dbConnection.close();
+            dbConnection.release();
           })
           .catch((err)=>{
             console.log(err+5);
             //res.status(500).json(err);
-            dbConnection.close();
+            dbConnection.release();
           })
         }
       })
         }
     async function getAnswerID(dbConnection){
-      await ExecuteQuery(dbConnection,`select ansId from Answers where Answer='${Answer}'`)
+      await ExecuteQuery(dbConnection,`select ansId from answers where Answer='${Answer}'`)
       .then(async(ans)=>{
         if(ans){
           console.log(ans);
@@ -249,7 +250,7 @@ router.post("/insertQA", jsonParser, (req, res)=>{
     InsertintoQuestions();  //insert into Questions table
     async function InsertIntoLinkTable(){
       await ConnectToDb().then(async (dbConnection)=>{
-          await ExecuteQuery(dbConnection,`insert into Questions_and_Answers(queId,ansId) values(${Qid},${Aid})`)
+          await ExecuteQuery(dbConnection,`insert into questions_and_answers(queId,ansId) values(${Qid},${Aid})`)
           .then((result)=>{
             console.log(result +"QandA");
             const status = {
@@ -259,19 +260,19 @@ router.post("/insertQA", jsonParser, (req, res)=>{
               StatusSeverity: "Inserted into database"
             }
             res.status(200).json(status);
-            dbConnection.close();
+            dbConnection.release();
           })
           .catch((err)=>{
             console.log(err+2);
             res.status(500).json({err});
-            dbConnection.close();
+            dbConnection.release();
           })
 
       })
       .catch((err)=>{
         console.log(err +1);
         res.status(500).json({err});
-        dbConnection.close();
+        dbConnection.release();
       })
     }
   }
@@ -284,7 +285,7 @@ router.post("/updateQ", jsonParser, (req, res)=>{
     async function EditQuestion()
     {
       await ConnectToDb().then(async (dbConnection)=>{
-          await ExecuteQuery(dbConnection, `Update Questions set Question='${Question}' where queId=${queId}`)
+          await ExecuteQuery(dbConnection, `Update questions set Question='${Question}' where queId=${queId}`)
           .then((result)=>{
             if(result){
               var status={
@@ -294,18 +295,18 @@ router.post("/updateQ", jsonParser, (req, res)=>{
                 StatusSeverity: "Updated into database"
               }
               res.status(200).json(status);
-              dbConnection.close();
+              dbConnection.release();
             }
           })
           .catch((err)=>{
             console.log(err);
             res.status(500).json(err);
-            dbConnection.close();
+            dbConnection.release();
           })
 
        }).catch((err)=>{
         console.log(err);
-        dbConnection.close();
+        dbConnection.release();
        })
     }
     EditQuestion();
@@ -320,7 +321,7 @@ router.post("/updateA", jsonParser, (req, res)=>{
     async function EditAnswer()
     {
       await ConnectToDb().then(async (dbConnection)=>{
-          await ExecuteQuery(dbConnection, `Update Answers set Answer='${Answer}' where ansId=${ansId}`)
+          await ExecuteQuery(dbConnection, `Update answers set Answer='${Answer}' where ansId=${ansId}`)
           .then((result)=>{
             if(result){
               var status={
@@ -330,17 +331,17 @@ router.post("/updateA", jsonParser, (req, res)=>{
                 StatusSeverity: "Updated into database"
               }
               res.status(200).json(status);
-              dbConnection.close();
+              dbConnection.release();
             }
           })
           .catch((err)=>{
             console.log(err);
             res.status(500).json(err);
-            dbConnection.close();
+            dbConnection.release();
           })
        }).catch((err)=>{
         console.log(err);
-        dbConnection.close();
+        dbConnection.release();
        })
     }
     EditAnswer();

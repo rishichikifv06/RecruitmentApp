@@ -18,11 +18,11 @@ router.post("/", jsonParser, (req, res) => {
     await ConnectToDb().then(async (dbConnection)=>{
       if(dbConnection){
         var count = await getTotalCount(dbConnection);
-        await ExecuteQuery(dbConnection, `SELECT Questions.Question, Answers.Answer, Answers.Answerkeywords, AssessmentStaging.RowandQuestion_number,Skill.skillName,Complexity.Name , AssessmentStaging.AssessmentStagingstatus ,AssessmentStaging.score, AssessmentStaging.Note
+        await ExecuteQuery(dbConnection, `SELECT Questions.Question, Answer.Answer, Answer.Answerkeywords, AssessmentStaging.RowandQuestion_number,Skill.skillName,Complexity.Name , AssessmentStaging.AssessmentStagingstatus ,AssessmentStaging.score, AssessmentStaging.Note
         FROM AssessmentStaging
         LEFT JOIN Questions ON Questions.queId=AssessmentStaging.queId LEFT JOIN Skill ON Questions.skillId=Skill.skillId 
         LEFT JOIN Complexity ON Questions.cmpId=Complexity.cmpId
-        LEFT JOIN Answers ON Answers.ansId=AssessmentStaging.ansId
+        LEFT JOIN Answer ON Answer.ansId=AssessmentStaging.ansId
         WHERE canId=${canId} and assessmentId=${assessmentId} and RowandQuestion_number=${RowandQuestion_number}`)
         .then(async (result)=>{
           
@@ -43,13 +43,13 @@ router.post("/", jsonParser, (req, res) => {
 
                 StatusSeverity: "Information",
               },result});
-            dbConnection.close();
+            dbConnection.release();
           }
         })
         .catch((err)=>{
           console.log(err);
           res.status(500).json(err);
-          dbConnection.close();
+          dbConnection.release();
         })
       }
       else{
@@ -57,7 +57,7 @@ router.post("/", jsonParser, (req, res) => {
       }
      }).catch((err)=>{
       console.log(err);
-      dbConnection.close();
+      dbConnection.release();
      })
   }
  

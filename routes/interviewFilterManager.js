@@ -92,19 +92,19 @@ router.post("/", jsonParser, (req, res) => {
             
                             StatusSeverity: "Information",
                           }, result });
-                        dbConnection.close();
+                        dbConnection.release();
                       });
                     })
                     .catch((err) => {
                       console.log(err);
                       res.status(500).json({err});
-                      dbConnection.close();
+                      dbConnection.release();
                     });
               })
               .catch((err) => {
                 console.log(err);
                 res.status(500).json({err});
-                dbConnection.close();
+                dbConnection.release();
               });
           }
           searchByFilter();  
@@ -168,19 +168,19 @@ router.post("/", jsonParser, (req, res) => {
           
                           StatusSeverity: "Information",
                         },result });
-                       dbConnection.close();
+                       dbConnection.release();
                      });
                    })
                    .catch((err) => {
                      console.log(err);
                      res.status(500).json({err});
-                     dbConnection.close();
+                     dbConnection.release();
                    });
              })
              .catch((err) => {
                console.log(err);
                res.status(500).json({err});
-               dbConnection.close();
+               dbConnection.release();
              });
          }
          searchByFilter();

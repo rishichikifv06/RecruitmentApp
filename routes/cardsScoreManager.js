@@ -112,18 +112,18 @@ const getScore = async(canId,Date,res)=> {
                 
                                 StatusSeverity: "Information",
                               },data});
-                        dbConnection.close();
+                        dbConnection.release();
                 })
                 .catch((err)=>{
                     console.log(err);
                     res.status(500).json({err});
-                    dbConnection.close();
+                    dbConnection.release();
                 })
             })
             .catch((err)=>{
                 console.log(err);
                 res.status(500).json({err});
-                dbConnection.close();
+                dbConnection.release();
             })
         
     }).catch((err)=>{

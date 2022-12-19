@@ -36,7 +36,7 @@ router.post("/addInterview", jsonParser, (req, res) => {
                 StatusSeverity: "Information already exists"
               }
               res.status(200).json({statusMessage});
-              dbConnection.close();
+              dbConnection.release();
             }
             else{
               console.log("else check function");
@@ -68,7 +68,7 @@ router.post("/addInterview", jsonParser, (req, res) => {
                             StatusSeverity: "Information loaded"
                           }
                           res.status(200).json(statusMessage);
-                          dbConnection.close();
+                          dbConnection.release();
                         }
                         else {
                           var statusMessage = {
@@ -76,7 +76,7 @@ router.post("/addInterview", jsonParser, (req, res) => {
                             "message": "Not inserted into IterviewSkills table!!!"
                           }
                           res.status(200).json(statusMessage);
-                          dbConnection.close();
+                          dbConnection.release();
                         }
                       })
                   }
@@ -86,7 +86,7 @@ router.post("/addInterview", jsonParser, (req, res) => {
                       "message": "Not inserted into CandidateInterview table!!!"
                     }
                     res.status(200).json(statusMessage);
-                    dbConnection.close();
+                    dbConnection.release();
                   }
                 })
             }
@@ -94,7 +94,7 @@ router.post("/addInterview", jsonParser, (req, res) => {
           .catch((err) => {
             console.log(err + 1);
             res.status(500).json(err);
-            dbConnection.close();
+            dbConnection.release();
           })
       }
       async function insertIntoInterviewSkills(dbConnection, skills, InterviewId) {
@@ -149,7 +149,7 @@ router.post("/addInterview", jsonParser, (req, res) => {
         
                         StatusSeverity: "Information",
                       },InterviewSkillsData});
-                    dbConnection.close();
+                    dbConnection.release();
                 }
                 else{
                     var statusMessage={
@@ -157,7 +157,7 @@ router.post("/addInterview", jsonParser, (req, res) => {
                         "message":"Could not fetch Inerview Skills !!!"
                     }
                     res.status(200).json(statusMessage);
-                    dbConnection.close();
+                    dbConnection.release();
                 }
             })
             .catch((err)=>{
