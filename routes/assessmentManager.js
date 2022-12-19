@@ -54,6 +54,7 @@ router.post("/endAssessment",jsonParser, (req, res) => {
 
   async function storeDataEndAssessment()
   {
+    
     await ConnectToDb().then(async (dbConnection)=>{
       if(dbConnection){
          await ExecuteQuery(dbConnection, `INSERT INTO AssessmentDetails(assessmentId, queId, ansId, score, Note, assessmentDetailsStatus) 

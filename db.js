@@ -3,31 +3,44 @@
 // const sql = require("msnodesqlv8");
 var mysql = require('mysql');
 
-var con = mysql.createConnection({
-    host: "10.210.21.187",
-    user: "guru",
-    password: "12345$@GhdJKTech12",
-    database: "testapp"
+const pool = mysql.createPool({
+    connectionLimit: 20,
+    host: "192.168.20.108",
+    user: "guru1",
+    password: "!.t.Vdg7JO4L}^9^aG",
+    database: "testapp",
+    port: "3306"
   });
   
-  con.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-    con.query(`select * from Complexity`, function (err, result, fields) {
-      if (err) throw err;
-      console.log("Result: " , result);
-    //   console.log("Fields: ", fields);
-    });
-  })
+//   pool.connect(function(err) {
+//     if (err) throw err;
+//     console.log("Connected!");
+//     // console.log(conn);
+//     conn.query(`select * from complexity`, function (err, result, fields) {
+//       if (err) throw err;
+//       console.log("Result: " , result);
+//     //   console.log("Fields: ", fields);
+//     });
+//   })
+
+pool.getConnection((err,conn)=>{
+    if(err) throw err
+    conn.query(`select * from complexity`,(err,rows)=>{
+        if(err) throw err
+        console.log(rows);
+        conn.release();
+    })
+})
 
 // const connectionString = "server=JKTBLRCOM162;Database=Testapp;Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}";
 
 
 module.exports.ConnectToDb = async () => {
 
-   return sql.open(connectionString, async (err, conn) => {
-      if (conn) {
-        return conn}
+   return pool.getConnection(async (err, connection) => {
+      if (connection) {
+        console.log(connection);
+        return connection}
         else if(err){
             return err;
         }

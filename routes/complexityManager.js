@@ -16,7 +16,6 @@ router.get("/", (req, res)=>{
       async function getAllComplexities()
       {
        await ConnectToDb().then(async (dbConnection)=>{
-        if(dbConnection){
           await ExecuteQuery(dbConnection, `SELECT * FROM Complexity`)
           .then((result)=>{
             res.status(200).json({
@@ -30,20 +29,16 @@ router.get("/", (req, res)=>{
                 StatusSeverity: "Information",
               },
               result});
-            dbConnection.close();
+            dbConnection.release();
           })
           .catch((err)=>{
             console.log(err);
             res.status(500).json(err);
-            dbConnection.close();
+            dbConnection.release();
           })
-        }
-        else{
-          console.log("Not connected to db");
-        }
        }).catch((err)=>{
         console.log(err);
-        dbConnection.close();
+        dbConnection.release();
        })
     
       }
