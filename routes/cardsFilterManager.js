@@ -109,7 +109,6 @@ router.post("/", jsonParser, (req, res) => {
               .catch((err) => {
                 console.log(err);
                 res.status(500).json({err});
-                dbConnection.release();
               });
           }
           searchByFilter();  
@@ -185,7 +184,6 @@ router.post("/", jsonParser, (req, res) => {
              .catch((err) => {
                console.log(err);
                res.status(500).json({err});
-               dbConnection.release();
              });
          }
          searchByFilter();

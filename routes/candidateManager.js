@@ -1,7 +1,5 @@
 var express = require("express");
 var router = express.Router();
-var details = require("../db");
-var sql = require("msnodesqlv8");
 var bodyParser = require('body-parser');
 const { json } = require("body-parser");
 var jsonParser = bodyParser.json();
@@ -186,8 +184,10 @@ router.post("/candidateSkill", jsonParser, (req, res) => {
     await ConnectToDb().then(async (dbConnection)=>{
       await ExecuteQuery(dbConnection, `select * from Candidates  where EmailId='${emailId}'`)
       .then( async (candidatesData)=>{
+        console.log(candidatesData);
         if(candidatesData.length!=0){
           const canId = candidatesData[0].canId;
+          console.log("candidateId ",canId);
 
           await ExecuteQuery(dbConnection, `select Skill.skillName,Complexity.Skilllevel,CandidateSkills.canskillId from CandidateSkills 
           left join Skill on Skill.skillId=CandidateSkills.skillId left join Complexity on Complexity.cmpId=CandidateSkills.cmpId
@@ -206,10 +206,10 @@ router.post("/candidateSkill", jsonParser, (req, res) => {
                 }
               }
               if (flag == 0) {
-                candidatesData[0].assessmentsStatus = 'released';
+                candidatesData[0].assessmentsStatus = 'Open';
               }
               else {
-                candidatesData[0].assessmentsStatus = 'notreleased';
+                candidatesData[0].assessmentsStatus = 'notOpen';
               }
               candidatesData[0].assessments = details;
             })

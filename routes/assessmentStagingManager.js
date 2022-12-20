@@ -1,7 +1,5 @@
 var express = require("express");
 var router = express.Router();
-var details = require("../db");
-var sql = require("msnodesqlv8");
 var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
 const {ConnectToDb,ExecuteQuery} = require('../db');
@@ -85,6 +83,7 @@ router.post("/", jsonParser, (req, res) => {
 })
 
 
+
 router.post("/saveData", jsonParser, (req, res)=>{
   var canId = req.body.canId;
   var RowandQuestion_number = req.body.RowandQuestion_number;
@@ -92,34 +91,36 @@ router.post("/saveData", jsonParser, (req, res)=>{
   var notes = req.body.notes;
   console.log(notes);
 
-  async function getData()
+  async function saveScoreNote()
   {
-    await sql.open(details.connectionString, async (err, conn)=>{
-    await  conn.query(`UPDATE AssessmentStaging SET score=${score} ,Note='${notes}', AssessmentStagingstatus='closed' WHERE canId = ${canId} AND 
-    RowandQuestion_number = ${RowandQuestion_number}`,(err, data)=>{
-        if(data){
-          var success = {
+    await ConnectToDb().then(async (dbConnection)=>{
+      await ExecuteQuery(dbConnection, `UPDATE AssessmentStaging SET score=${score} ,Note='${notes}', AssessmentStagingstatus='closed' WHERE canId = ${canId} AND 
+      RowandQuestion_number = ${RowandQuestion_number}`)
+      .then((updatedData)=>{
+         
+        res.status(200).json({
+          Status: {
             StatusCode: 200,
             StatusType: "Success",
             StatusMessage: `The response is saved successfully for candidateId ${canId} and question number ${RowandQuestion_number}`,
             StatusSeverity: "Information updated"
           }
-
-          res.status(200).json(success);
-        }
-        if(err){
-          console.log(err);
-          res.send(err);
-        }
+        })
+        dbConnection.release();
       })
-      if(err){
+      .catch((err)=>{
         console.log(err);
-        res.send(err);
-      }
+        res.status(500).json({err});
+        dbConnection.release();
+      })
+    })
+    .catch((err)=>{
+      console.log(err);
+      res.status(500).json({err});
     })
   }
  
-  getData();
+  saveScoreNote();
 })
 
 module.exports = router;
