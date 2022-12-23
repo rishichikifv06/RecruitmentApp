@@ -20,6 +20,7 @@
     "mysql": "^2.18.1",
     "passport": "^0.6.0",
     "passport-azure-ad": "^4.3.4",
+    "pg": "^8.8.0",
     "tedious": "^15.1.0"
   }
 }
