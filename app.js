@@ -55,7 +55,8 @@ app.use(cors(
  * familiarize yourself with available options. Visit: https://www.npmjs.com/package/express-session
  */
 
-
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hbs');
 
 
 app.use(logger('dev'));

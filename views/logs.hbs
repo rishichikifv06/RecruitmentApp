@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>logFilter</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <form action="" method="POST">
+      <div class="input-group">
+        <div >
+          <label>Log Method : </label>
+         <input type="text" class="form-control" name="userSearchInput" placeholder="Enter the method of logs" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        </div><br>
+        <div >
+          <label>start date : </label>
+         <input type="date" class="form-control" name="startdateInput" placeholder="Enter start date" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        </div><br>
+        <div >
+           <label>end date : </label>
+         <input type="date" class="form-control" name="enddateInput" placeholder="Enter the method" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        </div>
+        <br>
+         <div class="input-group-append">
+              <button class="btn btn-outline-secondary" id="searchBTN" type="submit" style="background-color: rgb(188, 250, 229);">
+                {{!-- <i class="fas fa-cart-plus mr-2"></i>  --}}
+                search
+                </button>
+       </div>
+    </div>
+   </form>
+   <div >
+     <p  name="logrecords" style="color: rgb(247, 156, 156);" ><b>logs : </b>
+      {{#if logrecords}}
+      <ul >
+        {{#each logrecords}}
+        <li>{{this}}</li>
+        {{/each}}
+      </ul>
+      {{else}}
+      <ul>
+        <li>
+          no record found
+        </li>
+      </ul>
+      {{/if}}
+      </p>
+   </div>
+  </body>
+</html>
