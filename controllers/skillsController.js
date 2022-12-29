@@ -7,8 +7,8 @@ const fetchSkills = (req,res) =>{
           await ConnectToDb()
             .then(async (dbConnection) => {
                 await ExecuteQuery(dbConnection, `SELECT * FROM Skill`)
-                  .then((result) => {
-                    res.status(200).json({
+                  .then(async (result) => {
+                   await res.status(200).json({
                       Status: {
                         StatusCode: 200,
     
@@ -18,20 +18,20 @@ const fetchSkills = (req,res) =>{
     
                         StatusSeverity: "Information",
                       },
-                      result,
+                      result
                     });
-                    dbConnection.release();
+                   await dbConnection.release();
                   })
-                  .catch((err) => {
+                  .catch(async (err) => {
                     console.log(err);
-                    res.status(500).json({err});
-                    dbConnection.release();
+                    await res.status(500).json({err});
+                    await dbConnection.release();
                   });
             })
-            .catch((err) => {
+            .catch(async (err) => {
               console.log(err);
-              res.status(500).json({err});
-              dbConnection.release();
+              await res.status(500).json({err});
+              await dbConnection.release();
             });
         }
     
@@ -60,34 +60,34 @@ const addSkillToDb = (req,res) => {
                     var status = {
                       Message: "The skill is already present!!",
                     };
-                    res.status(200).json(status);
-                    dbConnection.release();
+                    await res.status(200).json(status);
+                    await dbConnection.release();
                   } else {
                     await ExecuteQuery(
                       dbConnection,
                       `insert into Skill(skillName) values('${skillName}') `
                     )
-                      .then((result) => {
+                      .then(async (result) => {
                         var status = {
                           status: "success",
                           Message: `${skillName} added successfully!!`,
                         };
-                        res.status(200).json(status);
+                        await res.status(200).json(status);
                         console.log(status);
-                        dbConnection.release();
+                        await dbConnection.release();
                       })
-                      .catch((err) => {
+                      .catch(async (err) => {
                         console.log(err);
-                        res.status(500).json(err);
-                        dbConnection.release();
+                        await res.status(500).json(err);
+                        await dbConnection.release();
                       });
                   }
                 });
               }
             })
-            .catch((err) => {
+            .catch(async (err) => {
               console.log(err);
-              dbConnection.release();
+              await dbConnection.release();
             });
         }
         AddSkill();
