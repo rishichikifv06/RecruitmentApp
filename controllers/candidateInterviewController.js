@@ -1,7 +1,16 @@
 const {ConnectToDb,ExecuteQuery} = require('../db');
+const {fileNanme,logger} = require('../log4');
+
+var fname;
+
+fileNanme(__filename).then((data)=>{
+    fname=data;
+})
 
 const scheduleInterviewForCandidate = (req,res) => {
     try {
+        logger.trace(`file: ${fname},postMethod InsertCandidateInterview is called`);
+
         const canId = req.body.canId;
         const date = req.body.date;
         const interviewSkills = req.body.interviewSkills
@@ -28,6 +37,7 @@ const scheduleInterviewForCandidate = (req,res) => {
                   StatusMessage: `Interview already exists on '${date}' !!!`,
                   StatusSeverity: "Information already exists"
                 }
+                logger.info(`file: ${fname} , statuscode : 200`)
                 res.status(200).json({statusMessage});
                 dbConnection.release();
               }
@@ -37,10 +47,10 @@ const scheduleInterviewForCandidate = (req,res) => {
               }
             })
             .catch((err) => {
-              console.log(err+3);
+                logger.fatal(`file: ${fname},error: ${err} -1`); 
             })
         }
-        async function insertCandidateInterview(dbConnection) {
+        async function insertCandidateInterview(dbConnection) {            
           await ExecuteQuery(dbConnection, `insert into CandidateInterview(canId,date,status) values(${canId},'${date}','Open')`)
             .then(async (result) => {
               if (result) {
@@ -119,6 +129,8 @@ const scheduleInterviewForCandidate = (req,res) => {
 
 const fetchInterviewSkills = (req,res) => {
     try {
+        logger.trace(`file: ${fname},postMethod getInterviewSkills is called`);
+
         const InterviewId = req.body.InterviewId;
 
         async function getInterviewSkills()
@@ -132,6 +144,8 @@ const fetchInterviewSkills = (req,res) => {
                 .then((InterviewSkillsData)=>{
                     if(InterviewSkillsData)
                     {
+                        logger.info(`file: ${fname} , statuscode : 200`)
+
                         res.status(200).json({
                           Status: {
                             StatusCode: 200,
@@ -154,7 +168,7 @@ const fetchInterviewSkills = (req,res) => {
                     }
                 })
                 .catch((err)=>{
-                    console.log(err);
+                    logger.fatal(`file: ${fname},error: ${err} -2`); 
                     res.status(500).json({err});
                 })
     
@@ -163,7 +177,7 @@ const fetchInterviewSkills = (req,res) => {
               console.log("Not connected to db");
             }
            }).catch((err)=>{
-            console.log(err+2);
+            logger.fatal(`file: ${fname},error: ${err} -3`); 
             res.status(500).json({err});
            })
           }

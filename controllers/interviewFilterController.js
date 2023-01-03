@@ -1,5 +1,11 @@
 const {ConnectToDb,ExecuteQuery} = require('../db');
+const {fileNanme,logger} = require('../log4');
 
+var fname;
+
+fileNanme(__filename).then((data)=>{
+    fname=data;
+})
 
 async function setSkillsToCandidates(dbConnection, candidateArrayData) {
   var id;
@@ -24,6 +30,9 @@ async function setSkillsToCandidates(dbConnection, candidateArrayData) {
 }
 
 const interviewFilter = (req, res) => {
+
+  logger.trace(`file: ${fname},postMethod searchByFilter is called`);
+
   const emailId = req.body.emailId;
   console.log(emailId);
   const name = req.body.name;
@@ -74,6 +83,8 @@ const interviewFilter = (req, res) => {
                   dbConnection,
                   candidateArrayData
                 ).then(async (result) => {
+                    logger.info(`file: ${fname} , statuscode : 200`);
+
                   await res.status(200).json({
                     Status: {
                       StatusCode: 200,
@@ -90,13 +101,13 @@ const interviewFilter = (req, res) => {
                 });
               })
               .catch(async (err) => {
-                console.log(err);
+                logger.fatal(`file: ${fname},error: ${err} -1`); 
                 await res.status(500).json({ err });
                 await dbConnection.release();
               });
           })
           .catch(async (err) => {
-            console.log(err);
+            logger.fatal(`file: ${fname},error: ${err} -2`); 
             await res.status(500).json({ err });
             await dbConnection.release();
           });
@@ -107,6 +118,7 @@ const interviewFilter = (req, res) => {
     }
   } else {
     try {
+        logger.trace(`file: ${fname},postMethod searchByFilter is called -1`);
       async function searchByFilter() {
         await ConnectToDb()
           .then(async (dbConnection) => {
@@ -145,6 +157,8 @@ const interviewFilter = (req, res) => {
                   dbConnection,
                   candidateArrayData
                 ).then(async (result) => {
+                    logger.info(`file: ${fname} , statuscode : 200 -1`);
+
                   await res.status(200).json({
                     Status: {
                       StatusCode: 200,
@@ -161,13 +175,13 @@ const interviewFilter = (req, res) => {
                 });
               })
               .catch(async (err) => {
-                console.log(err);
+                logger.fatal(`file: ${fname},error: ${err} -3`); 
                 await res.status(500).json({ err });
                 await dbConnection.release();
               });
           })
           .catch(async (err) => {
-            console.log(err);
+            logger.fatal(`file: ${fname},error: ${err} -4`); 
             await res.status(500).json({ err });
             await dbConnection.release();
           });

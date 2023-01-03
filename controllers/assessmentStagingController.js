@@ -1,8 +1,16 @@
 const {ConnectToDb,ExecuteQuery} = require('../db');
+const {fileNanme,logger} = require('../log4');
 
+var fname;
+
+fileNanme(__filename).then((data)=>{
+    fname=data;
+})
 
 const fetchQaFromAssessmentStaging = (req,res) => {
     try {
+        logger.trace(`file: ${fname},postMethod getSingleQandAFromStaging is called`);
+
         var canId = req.body.canId;
         var RowandQuestion_number = req.body.RowandQuestion_number;
         var assessmentId = req.body.assessmentId;
@@ -37,12 +45,14 @@ const fetchQaFromAssessmentStaging = (req,res) => {
      
                      StatusSeverity: "Information",
                    },result});
+                   logger.info(`file: ${fname} , statuscode : 200`)
+
                  dbConnection.release();
                }
              })
              .catch((err)=>{
-               console.log(err);
-               res.status(500).json(err);
+                logger.fatal(`file: ${fname},error: ${err} -1`); 
+                res.status(500).json(err);
                dbConnection.release();
              })
            }
@@ -50,8 +60,8 @@ const fetchQaFromAssessmentStaging = (req,res) => {
              console.log("Not connected to db");
            }
           }).catch((err)=>{
-           console.log(err);
-           res.status(500).json({err});
+            logger.fatal(`file: ${fname},error: ${err} -2`); 
+            res.status(500).json({err});
           })
        }
       
@@ -84,6 +94,8 @@ const fetchQaFromAssessmentStaging = (req,res) => {
 
 const saveScoreNoteInAssessmentStaging = (req,res) => {
     try {
+        logger.trace(`file: ${fname},postMethod saveScoreNote is called`);
+
         var canId = req.body.canId;
         var RowandQuestion_number = req.body.RowandQuestion_number;
         var score = req.body.score;
@@ -96,7 +108,7 @@ const saveScoreNoteInAssessmentStaging = (req,res) => {
             await ExecuteQuery(dbConnection, `UPDATE AssessmentStaging SET score=${score} ,Note='${notes}', AssessmentStagingstatus='closed' WHERE canId = ${canId} AND 
             RowandQuestion_number = ${RowandQuestion_number}`)
             .then((updatedData)=>{
-               
+                logger.info(`file: ${fname} , statuscode : 200`)
               res.status(200).json({
                 Status: {
                   StatusCode: 200,
@@ -108,13 +120,13 @@ const saveScoreNoteInAssessmentStaging = (req,res) => {
               dbConnection.release();
             })
             .catch((err)=>{
-              console.log(err);
-              res.status(500).json({err});
+                logger.fatal(`file: ${fname},error: ${err} -3`); 
+                res.status(500).json({err});
               dbConnection.release();
             })
           })
           .catch((err)=>{
-            console.log(err);
+            logger.fatal(`file: ${fname},error: ${err} -4`); 
             res.status(500).json({err});
           })
         }

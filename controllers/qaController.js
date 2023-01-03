@@ -1,7 +1,16 @@
 const { ConnectToDb, ExecuteQuery } = require("../db");
+const {fileNanme,logger} = require('../log4');
+
+var fname;
+
+fileNanme(__filename).then((data)=>{
+    fname=data;
+})
 
 const fetchAllQa = (req, res) => {
   try {
+    logger.trace(`file: ${fname},postMethod getAllQandA is called`);
+
     const cmpId = req.body.compId;
     const skillId = req.body.skillId;
 
@@ -15,6 +24,8 @@ const fetchAllQa = (req, res) => {
           where questions.skillId=${skillId} and questions.cmpId=${cmpId}`
           )
             .then(async (result) => {
+                logger.info(`file: ${fname} , statuscode : 200`)
+
               await res.status(200).json({
                 Status: {
                   StatusCode: 200,
@@ -30,13 +41,13 @@ const fetchAllQa = (req, res) => {
               dbConnection.release();
             })
             .catch(async (err) => {
-              console.log(err);
+              logger.fatal(`file: ${fname},error: ${err} -1`); 
               await res.status(500).json({ err });
               dbConnection.release();
             });
         })
         .catch(async (err) => {
-          console.log(err);
+          logger.fatal(`file: ${fname},error: ${err} -2`); 
           await res.Status(500).json({ err });
         });
     }
@@ -49,6 +60,7 @@ const fetchAllQa = (req, res) => {
 
 const insertQaToDb = (req,res) => {
   try {
+    logger.trace(`file: ${fname},postMethod InsertintoQuestions is called`);
     const cmpId = req.body.cmpId;
     const skillId = req.body.skillId;
     const Question = req.body.Question;
@@ -71,6 +83,7 @@ const insertQaToDb = (req,res) => {
                 var status = {
                   Message: "The Question is already present!!",
                 };
+                logger.info(`file: ${fname} , statuscode : 200`)
                 await res.status(200).json(status);
                 await dbConnection.release();
               } else {
@@ -87,6 +100,8 @@ const insertQaToDb = (req,res) => {
                   })
                   .catch((err) => {
                     console.log(err + 8);
+                    logger.fatal(`file: ${fname},error: ${err} -3`); 
+
                     //res.status(500).json(err);
                     dbConnection.release();
                   });
@@ -204,7 +219,8 @@ const insertQaToDb = (req,res) => {
 
 const updateQInDb = (req,res) => {
     try {
-        const queId = req.body.queId;
+        logger.trace(`file: ${fname},postMethod EditQuestion is called`);
+    const queId = req.body.queId;
     const Question= req.body.Question
     async function EditQuestion()
     {
@@ -218,18 +234,19 @@ const updateQInDb = (req,res) => {
                 StatusMessage: "Question is updated",
                 StatusSeverity: "Updated into database"
               }
+              logger.info(`file: ${fname} , statuscode : 200`)
               await res.status(200).json(status);
               await dbConnection.release();
             }
           })
           .catch(async(err)=>{
-            console.log(err);
+            logger.fatal(`file: ${fname},error: ${err} -4`); 
             await res.status(500).json(err);
             await dbConnection.release();
           })
 
        }).catch(async (err)=>{
-        console.log(err);
+        logger.fatal(`file: ${fname},error: ${err} -5`); 
         await dbConnection.release();
        })
     }
@@ -241,6 +258,7 @@ const updateQInDb = (req,res) => {
 
 const updateAInDb = (req,res) => {
     try {
+        logger.trace(`file: ${fname},postMethod EditAnswer is called`);
         const ansId = req.body.ansId;
         const Answer= req.body.Answer
         async function EditAnswer()
@@ -255,17 +273,18 @@ const updateAInDb = (req,res) => {
                     StatusMessage: "Answer is updated",
                     StatusSeverity: "Updated into database"
                   }
+                  logger.info(`file: ${fname} , statuscode : 200`)
                   await res.status(200).json(status);
                   await dbConnection.release();
                 }
               })
               .catch(async (err)=>{
-                console.log(err);
+                logger.fatal(`file: ${fname},error: ${err} -6`); 
                 await res.status(500).json(err);
                 await dbConnection.release();
               })
            }).catch(async (err)=>{
-            console.log(err);
+            logger.fatal(`file: ${fname},error: ${err} -7`); 
             await dbConnection.release();
            })
         }

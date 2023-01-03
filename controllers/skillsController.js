@@ -1,14 +1,22 @@
 const {ConnectToDb,ExecuteQuery} = require('../db');
+const {fileNanme,logger} = require('../log4');
 
+var fname;
+
+fileNanme(__filename).then((data)=>{
+    fname=data;
+})
 
 const fetchSkills = (req,res) =>{
     try {
+        logger.trace(`file: ${fname},getMethod getAllSkills is called`);
         async function getAllSkills() {
           await ConnectToDb()
             .then(async (dbConnection) => {
                 await ExecuteQuery(dbConnection, `SELECT * FROM Skill`)
                   .then(async (result) => {
-                   await res.status(200).json({
+                    logger.info(`file: ${fname} , statuscode : 200`)
+                     await res.status(200).json({
                       Status: {
                         StatusCode: 200,
     
@@ -23,13 +31,13 @@ const fetchSkills = (req,res) =>{
                    await dbConnection.release();
                   })
                   .catch(async (err) => {
-                    console.log(err);
+                    logger.fatal(`file: ${fname},error: ${err} -1`); 
                     await res.status(500).json({err});
                     await dbConnection.release();
                   });
             })
             .catch(async (err) => {
-              console.log(err);
+              logger.fatal(`file: ${fname},error: ${err} -2`);
               await res.status(500).json({err});
               await dbConnection.release();
             });
@@ -37,7 +45,7 @@ const fetchSkills = (req,res) =>{
     
         getAllSkills();
       } catch (error) {
-        console.log(error);
+        logger.fatal(`file: ${fname},error: ${err} -3`);
       }
 }
 
@@ -45,6 +53,7 @@ const fetchSkills = (req,res) =>{
 const addSkillToDb = (req,res) => {
 
     try {
+        logger.trace(`file: ${fname},postMethod addSkill is called`);
         
         const skillName = req.body.skillName;
         async function AddSkill() {
@@ -60,6 +69,7 @@ const addSkillToDb = (req,res) => {
                     var status = {
                       Message: "The skill is already present!!",
                     };
+                    logger.info(`file: ${fname} , statuscode : 200`)
                     await res.status(200).json(status);
                     await dbConnection.release();
                   } else {
@@ -72,12 +82,13 @@ const addSkillToDb = (req,res) => {
                           status: "success",
                           Message: `${skillName} added successfully!!`,
                         };
+                        logger.info(`file: ${fname} , statuscode : 200`);
                         await res.status(200).json(status);
                         console.log(status);
                         await dbConnection.release();
                       })
                       .catch(async (err) => {
-                        console.log(err);
+                        logger.fatal(`file: ${fname},error: ${err} -4`); 
                         await res.status(500).json(err);
                         await dbConnection.release();
                       });
@@ -86,8 +97,8 @@ const addSkillToDb = (req,res) => {
               }
             })
             .catch(async (err) => {
-              console.log(err);
-              await dbConnection.release();
+                logger.fatal(`file: ${fname},error: ${err} -5`); 
+                await dbConnection.release();
             });
         }
         AddSkill();

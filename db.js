@@ -4,8 +4,7 @@ const  {Pool, Client}  = require('pg');
 var pg = require('pg');
 
 
-
-const pool = new Pool({
+const config = {
   max: process.env.DB_MAX_CONNECTION,
   connectionTimeoutMillis: process.env.DB_TIMEOUT,
   host: process.env.SERVER,
@@ -14,7 +13,10 @@ const pool = new Pool({
   password: process.env.DB_PWD,
   database: process.env.DB_NAME,
   ssl: true
-});
+}
+
+
+const pool = new Pool(config);
 
 // const pool = new Pool({
 //   max: 10,
@@ -79,7 +81,7 @@ queryDatabase();
   // queryDatabase();
 
 
-module.exports.ConnectToDb = async () => {
+const ConnectToDb = async () => {
 
     return new Promise((resolve,reject)=>{
 
@@ -89,7 +91,7 @@ module.exports.ConnectToDb = async () => {
     })
   };
   
-module.exports.ExecuteQuery = async (conn, queryString) => {
+const ExecuteQuery = async (conn, queryString) => {
    return new Promise((resolve,reject)=>{
        
        conn.query(queryString, (err, data) => {
@@ -97,4 +99,9 @@ module.exports.ExecuteQuery = async (conn, queryString) => {
 }) 
 });
   
+}
+
+module.exports = {
+  ConnectToDb,
+  ExecuteQuery
 }

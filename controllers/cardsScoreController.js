@@ -1,7 +1,15 @@
 const {ConnectToDb,ExecuteQuery} = require('../db');
+const {fileNanme,logger} = require('../log4');
+
+var fname;
+
+fileNanme(__filename).then((data)=>{
+    fname=data;
+})
 
 const fetchScoresForCandidate = (req,res) => {
     try {
+        logger.trace(`file: ${fname},postMethod getScore is called`);
         async function getScore()
         {
             const canId = req.body.canId;
@@ -41,7 +49,7 @@ const fetchScoresForCandidate = (req,res) => {
                                     totalCandidateScore: totalCandidateScore,
                                     totalPercentage: totalPercentage
                                 }
-        
+                                logger.info(`file: ${fname} , statuscode : 200`)
                                 await res.status(200).json({
                                     Status: {
                                         StatusCode: 200,
@@ -55,19 +63,19 @@ const fetchScoresForCandidate = (req,res) => {
                                 await dbConnection.release();
                         })
                         .catch(async (err)=>{
-                            console.log(err);
+                            logger.fatal(`file: ${fname},error: ${err} -1`); 
                             await res.status(500).json({err});
                             await dbConnection.release();
                         })
                     })
                     .catch(async (err)=>{
-                        console.log(err);
+                        logger.fatal(`file: ${fname},error: ${err} -2`); 
                         await res.status(500).json({err});
                         await dbConnection.release();
                     })
                 
             }).catch(async (err)=>{
-                console.log(err);
+                logger.fatal(`file: ${fname},error: ${err} -3`); 
                 await res.status(500).json({err})
             })
         }

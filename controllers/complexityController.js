@@ -1,13 +1,21 @@
 const {ConnectToDb,ExecuteQuery} = require('../db');
+const {fileNanme,logger} = require('../log4');
+
+var fname;
+
+fileNanme(__filename).then((data)=>{
+    fname=data;
+})
 
 const fetchComplexities = (req,res) => {
     try {
-    
+        logger.trace(`file: ${fname},getMethod getAllComplexities is called`);
         async function getAllComplexities()
         {
          await ConnectToDb().then(async (dbConnection)=>{
             await ExecuteQuery(dbConnection, `SELECT * FROM Complexity`)
             .then(async (result)=>{
+                logger.info(`file: ${fname} , statuscode : 200`)
               await res.status(200).json({
                 Status: {
                   StatusCode: 200,
@@ -22,13 +30,13 @@ const fetchComplexities = (req,res) => {
               await dbConnection.release();
             })
             .catch(async (err)=>{
-              console.log(err);
-              await res.status(500).json({err});
+                logger.fatal(`file: ${fname},error: ${err} -1`); 
+                await res.status(500).json({err});
               await dbConnection.release();
             })
          }).catch(async (err)=>{
-          console.log(err);
-          await res.status(500).json({err});
+            logger.fatal(`file: ${fname},error: ${err} -2`); 
+            await res.status(500).json({err});
          })
       
         }
@@ -43,6 +51,7 @@ const fetchComplexities = (req,res) => {
 
 const addComplexityToDb = (req,res) => {
     try {
+        logger.trace(`file: ${fname},postMethod AddComplexity is called`);
         const Name = req.body.Name;
         const Skilllevel=req.body.Skilllevel;
         async function AddComplexity()
@@ -52,6 +61,7 @@ const addComplexityToDb = (req,res) => {
               await ExecuteQuery(dbConnection, `insert into Complexity(Name,Skilllevel) values('${Name}','${Skilllevel}') `)
               .then(async (result)=>{
                  if(result){
+                    logger.info(`file: ${fname} , statuscode : 200`)
                   var status ={
                     "status":"success",
                     "Message":"new skill is added"
@@ -62,13 +72,13 @@ const addComplexityToDb = (req,res) => {
                  }
               })
               .catch(async (err)=>{
-                console.log(err);
+                logger.fatal(`file: ${fname},error: ${err} -3`); 
                 await res.status(500).json(err);
                 await dbConnection.close();
               })
             }
            }).catch(async (err)=>{
-            console.log(err);
+            logger.fatal(`file: ${fname},error: ${err} -4`); 
             await res.status(500).json({err});
            })
         }

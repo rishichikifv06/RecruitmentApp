@@ -1,7 +1,16 @@
 const { ConnectToDb, ExecuteQuery } = require("../db");
+const {fileNanme,logger} = require('../log4');
+
+var fname;
+
+fileNanme(__filename).then((data)=>{
+    fname=data;
+})
 
 const createCandidate = (req, res) => {
   try {
+    logger.trace(`file: ${fname},postMethod toCreateCandidateProfile is called`);
+
     const emailId = req.body.emailId;
     const name = req.body.name;
     const phone = req.body.phone;
@@ -25,7 +34,7 @@ const createCandidate = (req, res) => {
                   EmailId = '${emailId}'`
                   ).then(async (candidateData) => {
                     if (candidateData) {
-                      const [{ canId }] = candidateData;
+                      const [{ canid }] = candidateData;
 
                       await toInsertSkillsForCandidate(canId, dbConnection)
                         .catch((err) => {
@@ -38,9 +47,10 @@ const createCandidate = (req, res) => {
                             var success = {
                               StatusCode: 200,
                               StatusType: "Success",
-                              StatusMessage: `Profile created successfully for ${canId}`,
+                              StatusMessage: `Profile created successfully for ${canid}`,
                               StatusSeverity: "Information updated",
                             };
+                            logger.info(`file: ${fname} , statuscode : 200`)
                             await res.status(200).json(success);
                             await dbConnection.release();
                           } else {
@@ -49,7 +59,7 @@ const createCandidate = (req, res) => {
                           }
                         })
                         .catch(async (err) => {
-                          console.log(err);
+                          logger.fatal(`file: ${fname},error: ${err} -1`); 
                           await res.status(500).json({ err });
                           await dbConnection.release();
                         });
@@ -64,7 +74,7 @@ const createCandidate = (req, res) => {
                 }
               })
               .catch(async (err) => {
-                console.log(err);
+                logger.fatal(`file: ${fname},error: ${err} -2`); 
                 await res.status(500).json({ err });
                 await dbConnection.release();
               });
@@ -73,8 +83,8 @@ const createCandidate = (req, res) => {
           }
         })
         .catch(async (err) => {
-          console.log(err);
-          await res.status(500).json({ err });
+            logger.fatal(`file: ${fname},error: ${err} -3`); 
+            await res.status(500).json({ err });
         });
     }
     toCreateCandidateProfile();
@@ -103,6 +113,8 @@ const createCandidate = (req, res) => {
 
 const fetchCandidateSkillAndAssessment = (req, res) => {
   try {
+    logger.trace(`file: ${fname},postMethod getCandidateSkillsandAssessment is called`);
+
     const emailId = req.body.emailId;
 
     async function getCandidateSkillsandAssessment() {
@@ -115,7 +127,7 @@ const fetchCandidateSkillAndAssessment = (req, res) => {
             .then(async (candidatesData) => {
               console.log(candidatesData);
               if (candidatesData.length != 0) {
-                const canId = candidatesData[0].canId;
+                const canId = candidatesData[0].canid;
                 console.log("candidateId ", canId);
 
                 await ExecuteQuery(
@@ -143,9 +155,10 @@ const fetchCandidateSkillAndAssessment = (req, res) => {
                         } else {
                           candidatesData[0].assessmentsStatus = "notOpen";
                         }
-                        candidatesData[0].assessments = details;
+                        candidatesData[0].assessments = assessmentData;
                       })
                       .then(() => {
+                        logger.info(`file: ${fname} , statuscode : 200`)
                         res.status(200).json({
                           Status: {
                             StatusCode: 200,
@@ -160,13 +173,13 @@ const fetchCandidateSkillAndAssessment = (req, res) => {
                         });
                       })
                       .catch((err) => {
-                        console.log(err);
+                        logger.fatal(`file: ${fname},error: ${err} -1`); 
                         dbConnection.release();
                         res.status(500).json({ err });
                       });
                   })
                   .catch((err) => {
-                    console.log(err);
+                    logger.fatal(`file: ${fname},error: ${err} -2`); 
                     dbConnection.release();
                     res.status(500).json({ err });
                   });
@@ -185,14 +198,14 @@ const fetchCandidateSkillAndAssessment = (req, res) => {
               }
             })
             .catch((err) => {
-              console.log(err);
+                logger.fatal(`file: ${fname},error: ${err} -3`); 
               dbConnection.release();
               res.status(500).json({ err });
             });
         })
         .catch((err) => {
-          console.log(err);
-          res.status(500).json({ err });
+            logger.fatal(`file: ${fname},error: ${err} -4`); 
+            res.status(500).json({ err });
         });
     }
     getCandidateSkillsandAssessment();
@@ -203,6 +216,8 @@ const fetchCandidateSkillAndAssessment = (req, res) => {
 
 const statusUpdateCandidate = (req, res) => {
   try {
+    logger.trace(`file: ${fname},postMethod updateCandidateData is called`);
+
     const data = req.body.data; //array structure
     const skills = data[0].skills;
     const canId = data[0].canId;
@@ -226,13 +241,14 @@ const statusUpdateCandidate = (req, res) => {
                           StatusMessage: "candidate data updated successfully ",
                           StatusSeverity: "Information updated",
                         };
+                        logger.info(`file: ${fname} , statuscode : 200`)
                         res.status(200).json(result);
                         dbConnection.release();
                       }
                     })
                     .catch((err) => {
-                      console.log(err);
-                      res.status(500).json(err);
+                        logger.fatal(`file: ${fname},error: ${err} -5`); 
+                        res.status(500).json(err);
                       dbConnection.release();
                     });
                 } else {
@@ -241,7 +257,7 @@ const statusUpdateCandidate = (req, res) => {
                 }
               })
               .catch((err) => {
-                console.log(err);
+                logger.fatal(`file: ${fname},error: ${err} -6`); 
                 res.status(500).json(err);
                 dbConnection.release();
               });
@@ -250,8 +266,8 @@ const statusUpdateCandidate = (req, res) => {
           }
         })
         .catch((err) => {
-          console.log(err);
-          res.status(500).json(err);
+            logger.fatal(`file: ${fname},error: ${err} -7`); 
+            res.status(500).json(err);
         });
     }
     updateCandidateData();
@@ -300,6 +316,7 @@ const statusUpdateCandidate = (req, res) => {
 
 const fetchCandidateSkills = (req, res) => {
   try {
+    logger.trace(`file: ${fname},postMethod getcandidateSkills is called`);
     const canId = req.body.canId;
     async function getcandidateSkills() {
       await ConnectToDb()
@@ -313,20 +330,21 @@ const fetchCandidateSkills = (req, res) => {
             )
               .then((data) => {
                 if (data) {
+                    logger.info(`file: ${fname} , statuscode : 200`)
                   res.status(200).json({ data });
                   dbConnection.release();
                 }
               })
               .catch((err) => {
-                console.log(err + 1);
+                logger.fatal(`file: ${fname},error: ${err} -8`); 
                 res.status(500).json({ err });
                 dbConnection.release();
               });
           }
         })
         .catch((err) => {
-          console.log(err);
-          res.status(500).json({ err });
+            logger.fatal(`file: ${fname},error: ${err} -9`); 
+            res.status(500).json({ err });
         });
     }
     getcandidateSkills();

@@ -1,7 +1,19 @@
 const {ConnectToDb,ExecuteQuery} = require('../db');
+const {fileNanme,logger} = require('../log4');
+
+var fname;
+
+fileNanme(__filename).then((data)=>{
+    fname=data;
+})
+
 
 const saveEndAssessment = (req,res) => {
     try {
+
+        logger.trace(`file: ${fname},postMethod storeDataEndAssessment is called`);
+
+
         const status = req.body.status;
         const canId = req.body.canId;
         const assessmentId = req.body.assessmentId;
@@ -31,6 +43,8 @@ const saveEndAssessment = (req,res) => {
                               .then(async (updatedInterviewData)=>{
                                 if(updatedInterviewData){
           
+                                    logger.info(`file: ${fname} , statuscode : 200`)
+
                                   res.status(200).json({
                                     Status: {
                                       StatusCode: 200,
@@ -67,7 +81,7 @@ const saveEndAssessment = (req,res) => {
                     }
                 })
                 .catch((err)=>{
-                    console.log(err);
+                    logger.fatal(`file: ${fname},error: ${err} -1`); 
                     res.status(500).json({err});
                     dbConnection.release();
                 })
@@ -76,7 +90,7 @@ const saveEndAssessment = (req,res) => {
                 console.log("Not connected to db");
             }
         }).catch((err)=>{
-            console.log(err);
+            logger.fatal(`file: ${fname},error: ${err} -2`); 
             res.status(500).json({err});
         })
         }
