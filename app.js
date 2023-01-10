@@ -13,6 +13,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
 const passport = require("passport");
+var fileUpload = require('express-fileupload'); 
+
 
 var qaManagerRouter = require('./routes/qaManager');
 var assessmentManagerRouter = require('./routes/assessmentManager');
@@ -25,6 +27,7 @@ var cardsScoreManagerRouter = require('./routes/cardsScoreManager');
 var cardsFilterManagerRouter = require('./routes/cardsFilterManager');
 var candidateInterviewManagerRouter = require('./routes/candidateInterviewManager');
 var interviewFilterManagerRouter = require('./routes/interviewFilterManager');
+var uploadFileManagerRouter = require('./routes/uploadFileManager');
 const { bearerStrategy } = require('./authorize');
 
 
@@ -59,9 +62,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
 app.use(express.json());
+app.use(fileUpload());
 
 app.use(logger('dev'));
-app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -86,6 +89,7 @@ app.use('/cardsScoreManager', cardsScoreManagerRouter);
 app.use('/cardsFilterManager', cardsFilterManagerRouter);
 app.use('/candidateInterviewManager', candidateInterviewManagerRouter);
 app.use('/interviewFilterManager', interviewFilterManagerRouter);
+app.use('/uploadFileManager', uploadFileManagerRouter);
 
 
 

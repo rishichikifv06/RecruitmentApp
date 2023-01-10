@@ -36,7 +36,7 @@ const createCandidate = (req, res) => {
                     if (candidateData) {
                       const [{ canid }] = candidateData;
 
-                      await toInsertSkillsForCandidate(canId, dbConnection)
+                      await toInsertSkillsForCandidate(canid, dbConnection)
                         .catch((err) => {
                           console.log(err);
                           res.send(err);

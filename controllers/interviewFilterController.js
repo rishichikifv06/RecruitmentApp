@@ -10,7 +10,7 @@ fileNanme(__filename).then((data)=>{
 async function setSkillsToCandidates(dbConnection, candidateArrayData) {
   var id;
   for (let i = 0; i < candidateArrayData.length; i++) {
-    id = candidateArrayData[i].InterviewId;
+    id = candidateArrayData[i].interviewid;
 
     await ExecuteQuery(
       dbConnection,

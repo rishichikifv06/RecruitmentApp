@@ -58,7 +58,7 @@ const scheduleInterviewForCandidate = (req,res) => {
                 await ExecuteQuery(dbConnection, `select InterviewId from CandidateInterview where canId=${canId} and date='${date}' and status='Open' `)
                   .then(async (interviewId) => {
                     if (interviewId) {
-                      let id = interviewId[0].InterviewId;
+                      let id = interviewId[0].interviewid;
                       console.log(id, "interview id");
                       await insertIntoInterviewSkills(dbConnection, interviewSkills, id)
                         .then((insertedSkillsData) => {
