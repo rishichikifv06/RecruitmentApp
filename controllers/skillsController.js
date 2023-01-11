@@ -39,7 +39,6 @@ const fetchSkills = (req,res) =>{
             .catch(async (err) => {
               logger.fatal(`file: ${fname},error: ${err} -2`);
               await res.status(500).json({err});
-              await dbConnection.release();
             });
         }
     
@@ -98,7 +97,6 @@ const addSkillToDb = (req,res) => {
             })
             .catch(async (err) => {
                 logger.fatal(`file: ${fname},error: ${err} -5`); 
-                await dbConnection.release();
             });
         }
         AddSkill();

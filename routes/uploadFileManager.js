@@ -1,5 +1,7 @@
 var express = require("express");
 var router = express.Router();
+var path = require('path');
+
 
 router.post('/uploadFile/', (req, res)=>{
     console.log(req.files);
@@ -14,7 +16,7 @@ router.post('/uploadFile/', (req, res)=>{
   
     sampleFile = req.files.file;
     console.log(sampleFile);
-    uploadPath = __dirname + '/downloads/' + sampleFile.name;
+    uploadPath = path.join(__dirname, '..', 'downloads', sampleFile.name)
     console.log(uploadPath);
   
     sampleFile.mv(uploadPath, function(err) {
@@ -23,7 +25,7 @@ router.post('/uploadFile/', (req, res)=>{
         return res.status(500).send(err);
       }
   
-      res.send('File uploaded!');
+      res.status(200).json({Message: `File uploaded!`});
     });
 })
 
