@@ -30,6 +30,8 @@ var interviewFilterManagerRouter = require('./routes/interviewFilterManager');
 var uploadFileManagerRouter = require('./routes/uploadFileManager');
 const { bearerStrategy } = require('./authorize');
 
+var ListDataMasterManagerRouter = require('./routes/ListDataMasterManager');
+var ListDataDetailManagerRouter = require('./routes/ListDataDetailManager');
 
 // initialize express
 var app = express();
@@ -94,7 +96,8 @@ app.use('/candidateInterviewManager', candidateInterviewManagerRouter);
 app.use('/interviewFilterManager', interviewFilterManagerRouter);
 app.use('/uploadFileManager', uploadFileManagerRouter);
 
-
+app.use('/listDataMasterManager', ListDataMasterManagerRouter);
+app.use('/listDataDetailManager', ListDataDetailManagerRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
