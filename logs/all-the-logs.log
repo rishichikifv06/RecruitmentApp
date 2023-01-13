@@ -1,0 +1,6 @@
+[2023-01-13T12:24:27.794] [FATAL] default - file: complexityController.js,error: Error: Connection terminated due to connection timeout -2
+[2023-01-13T12:24:34.466] [FATAL] default - file: complexityController.js,error: Error: Connection terminated due to connection timeout -2
+[2023-01-13T15:07:39.680] [INFO] default - file: complexityController.js , statuscode : 200
+[2023-01-13T15:42:34.627] [FATAL] default - file: cardsScoreController.js,error: error: column "undefined" does not exist -1
+[2023-01-13T15:43:53.872] [INFO] default - file: cardsScoreController.js , statuscode : 200
+[2023-01-13T15:44:12.158] [INFO] default - file: cardsScoreController.js , statuscode : 200

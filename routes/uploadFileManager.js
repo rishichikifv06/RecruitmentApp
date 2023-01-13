@@ -5,8 +5,7 @@ var path = require('path');
 
 router.post('/uploadFile/', (req, res)=>{
     console.log(req.files);
-    const fileName = req.files.file.name;
-    console.log(fileName);
+
     let sampleFile;
     let uploadPath;
   

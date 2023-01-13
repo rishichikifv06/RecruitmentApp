@@ -17,7 +17,6 @@ router.post("/", jsonParser, (req, res) => {
     if (req.body != undefined) {
 
         const canId = req.body.canId;
-        const recId = req.body.recId;
         const Date = req.body.Date;
         const starttime = req.body.starttime;
         const skills = req.body.skills;
@@ -36,8 +35,8 @@ router.post("/", jsonParser, (req, res) => {
         async function InsertIntoAssessment() {
             await ConnectToDb().then(async (dbConnection) => {
                 if (dbConnection) {
-                    await ExecuteQuery(dbConnection, `insert into Assessment(canId,date,startTime,assessmentstatus,recId,InterviewID) 
-                    values(${canId},'${Date}','${starttime}','Open',${recId},${InterviewId})`)
+                    await ExecuteQuery(dbConnection, `insert into Assessment(canId,date,startTime,assessmentstatus,InterviewID) 
+                    values(${canId},'${Date}','${starttime}','Open',${InterviewId})`)
                         .then(async (data) => {
                             console.log(data + " inserted assessment");
                             await ExecuteQuery(dbConnection, `update CandidateInterview set status = '${status}' where InterviewId = ${InterviewId} and canId=${canId}`)
@@ -66,7 +65,7 @@ router.post("/", jsonParser, (req, res) => {
                 await ExecuteQuery(dbConnection, `select assessmentId from Assessment where canId=${canId} and date='${Date}' AND assessmentstatus='Open'`)
                     .then(async (assessmentDetails) => {
                         if (assessmentDetails.length != 0) {
-                            assessmentId = assessmentDetails[0].assessmentId;
+                            assessmentId = assessmentDetails[0].assessmentid;
                             console.log(assessmentId + "-  assId");
                             await getQuestionCount(dbConnection, assessmentId);
                         }
@@ -198,7 +197,7 @@ router.post("/", jsonParser, (req, res) => {
                 .then(async (questions) => {
                     if (questions.length != 0) {
                         for (let item of questions) {
-                            q.push(item.queId);
+                            q.push(item.queid);
                         }
                     }
                     console.log(q + "- questions array");
@@ -221,7 +220,7 @@ router.post("/", jsonParser, (req, res) => {
                     if (answer.length != 0) {
                         k++;
                         console.log(k + "--Q count");
-                        ansId = answer[0].ansId;
+                        ansId = answer[0].ansid;
                         console.log(ansId + " - answerId " + v + "- queId");
                         await ExecuteQuery(dbConnection, `Insert into AssessmentStaging(RowandQuestion_number,
                             AssessmentStagingstatus,queId,ansId,canId,assessmentId) 

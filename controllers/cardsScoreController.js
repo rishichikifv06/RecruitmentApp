@@ -19,7 +19,7 @@ const fetchScoresForCandidate = (req,res) => {
         
                     await ExecuteQuery(dbConnection, `select assessmentId from Assessment where canId=${canId} and date='${Date}'`)
                     .then(async (assessmentIdData)=>{
-                        let assessmentId = assessmentIdData[0].assessmentId;
+                        let assessmentId = assessmentIdData[0].assessmentid;
                         await ExecuteQuery(dbConnection, `select Skill.skillName, Sum(AssessmentDetails.score) as "candidateScore",count(Questions.skillId)as 
                         "count" from AssessmentDetails left join Questions
                         on Questions.queId=AssessmentDetails.queId 

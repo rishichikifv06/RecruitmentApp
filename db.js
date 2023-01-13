@@ -85,18 +85,30 @@ const ConnectToDb = async () => {
 
     return new Promise((resolve,reject)=>{
 
+      try {
+        
         pool.connect(async (err,conn)=>{
         err ? reject(err) : resolve(conn)
-    })
+  
+      })
+      } catch (error) {
+        console.log(error);
+      }
     })
   };
   
 const ExecuteQuery = async (conn, queryString) => {
    return new Promise((resolve,reject)=>{
+
+    try {
+      
+      conn.query(queryString, (err, data) => {
+      err ? reject(err) : resolve(data.rows)
+  })
+    } catch (error) {
+      console.log(error);
+    }
        
-       conn.query(queryString, (err, data) => {
-        err ? reject(err) : resolve(data.rows)
-}) 
 });
   
 }

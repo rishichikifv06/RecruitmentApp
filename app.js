@@ -78,6 +78,9 @@ app.use(session({
   }
 }));
 
+app.on('error',()=>console.log("Error handled"));
+
+
 app.use('/qaManager', qaManagerRouter);
 app.use('/assessmentManager', assessmentManagerRouter );
 app.use('/skillsManager', skillsManagerRouter);
@@ -106,7 +109,7 @@ app.use(function (err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    res.render('error');
 });
+
 
 module.exports = app;
