@@ -183,7 +183,7 @@ const addListDetailToDb = (req, res) => {
                       } else {
                         await ExecuteQuery(
                           dbConnection,
-                          `INSERT INTO listdatadetail(listmstid, listdtlvalue, listdtldesc, listdtlcomment) VALUES ('${listMstId}', '${listDtlValue}', '${listDtlDesc}', ${listDtlComment})`
+                          `INSERT INTO listdatadetail(listmstid, listdtlvalue, listdtldesc, listdtlcomment) VALUES ('${listMstId}', '${listDtlValue}', '${listDtlDesc}', '${listDtlComment}')`
                         )
                           .then((result) => {
                             logger.info(`file: ${fname} , statuscode : 200`);
@@ -238,10 +238,13 @@ const updListDetailToDb = (req, res) => {
   try {
     logger.trace(`file: ${fname},putMethod updListDetailToDb is called`);
 
-    const listMstId = req.body.listMstId;
+    const listDtlId = req.body.listDtlId;
     const listDtlValue = req.body.listDtlValue;
     const listDtlDesc = req.body.listDtlDesc;
     const listDtlComment = req.body.listDtlComment;
+
+    console.log(listDtlId)
+    console.log(listDtlValue)
 
     async function updListDetail() {
       await ConnectToDb()
@@ -249,19 +252,19 @@ const updListDetailToDb = (req, res) => {
           if (dbConnection) {
             await ExecuteQuery(
               dbConnection,
-              `SELECT listdtlvalue FROM listdatadetail WHERE listmstid ='${listMstId}' AND listdtlvalue = '${listDtlValue}'`
+              `SELECT listdtlvalue FROM listdatadetail WHERE listdtlid ='${listDtlId}'`
             )
               .then(async (selectedmaster) => {
                 if (selectedmaster.length != 0) {
                   await ExecuteQuery(
                     dbConnection,
-                    `UPDATE listdatadetail SET listdtldesc = '${listDtlDesc}', listdtlcomment = '${listDtlComment}' WHERE listmstid = '${listMstId}' and listdtlvalue = '${listDtlValue}'`
+                    `UPDATE listdatadetail SET listdtlvalue = '${listDtlValue}', listdtldesc = '${listDtlDesc}', listdtlcomment = '${listDtlComment}' WHERE listdtlid = '${listDtlId}'`
                   )
                     .then((upddata) => {
                       logger.info(`file: ${fname} , statuscode : 200`);
                       var status = {
                         status: "success",
-                        Message: `listDtlValue ${listDtlValue} updated successfully for master ${listMstId}!!`,
+                        Message: `listDtl ${listDtlId} updated successfully!!`,
                       };
                       res.status(200).json(status);
                       dbConnection.release();
@@ -274,7 +277,7 @@ const updListDetailToDb = (req, res) => {
                 } else {
                   logger.info(`file: ${fname} , statuscode : 200`);
                   var status = {
-                    Message: `listDtlValue ${listDtlValue} does not exist for master ${listMstId}`,
+                    Message: `listDtl record does not exist for Id ${listDtlId}`,
                   };
                   res.status(200).json(status);
                   dbConnection.release();

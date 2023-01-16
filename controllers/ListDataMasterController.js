@@ -72,13 +72,13 @@ const postListData = (req, res, next) => {
             .catch((err) => {
               logger.fatal(`file: ${fname},error: ${err} -4`);
               res.status(500).json({ err });
-              dbConnection.release();
+              // dbConnection.release();
             });
         })
         .catch((err) => {
           logger.fatal(`file: ${fname},error: ${err} -5`);
           res.status(500).json({ err });
-          dbConnection.release();
+          // dbConnection.release();
         });
     }
     postDataValue();
@@ -122,12 +122,12 @@ const getMasterDataByCode = (req, res, next) => {
             .catch((err) => {
               logger.fatal(`file: ${fname},error: ${err} -7`);
               res.status(500).json({err});
-              dbConnection.release();
+              // dbConnection.release();
             });
         })
         .catch((err) => {
           logger.fatal(`file: ${fname},error: ${err} -8`);
-          dbConnection.release();
+          // dbConnection.release();
         });
     }
     getSingleData();
@@ -137,9 +137,10 @@ const getMasterDataByCode = (req, res, next) => {
 };
 
 const updateDataMaster = (req, res, next) => {
-  const masterid = req.params.masterid;
+  const masterid = req.body.masterid;
   const listcode = req.body.listcode;
   const listdesc = req.body.listdesc;
+  console.log(masterid,listcode)
   try {
     logger.trace(`file: ${fname},updateMethod updateListDataMaster is called`);
 
@@ -188,7 +189,7 @@ const updateDataMaster = (req, res, next) => {
     updateRecord();
   } catch (err) {
     logger.fatal(`file: ${fname},error: ${err} -12`);
-    dbConnection.release();
+    // dbConnection.release();
   }
 };
 
@@ -202,19 +203,12 @@ const deleteMasterData = (req, res, next) => {
           if (dbConnection) {
             await ExecuteQuery(
               dbConnection,
-              `DELETE FROM listdatadetail WHERE listdatadetail.listmstid = ${masterId}`
-            ).then(async (listdatamaster) => {
-              if (listdatamaster.length == 0) {
-                var status = {
-                  Message: "The entered masterID is not present",
-                };
-                logger.info(`file: ${fname} , statuscode : 200`);
-                res.status(200).json(status);
-                dbConnection.release();
-              } else {
+              `DELETE FROM listdatadetail WHERE listdatadetail.listdtlid = '${masterId}'`
+              ).then(async (listdatamaster) => {
+               {
                 await ExecuteQuery(
                   dbConnection,
-                  `DELETE FROM listdatamaster WHERE listdatamaster.listmstid = ${masterId}`
+                  `DELETE FROM listdatamaster WHERE listmstid = ${masterId}`
                 )
                   .then((result) => {
                     var status = {
@@ -238,7 +232,7 @@ const deleteMasterData = (req, res, next) => {
         })
         .catch((err) => {
           logger.fatal(`file: ${fname},error: ${err} -14`);
-          dbConnection.release();
+          // dbConnection.release();
         });
     }
     deleteData();
