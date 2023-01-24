@@ -1,7 +1,11 @@
 var express = require("express");
 var router = express.Router();
 var path = require('path');
+const { skillsUpload, profileUpload } = require('../controllers/uploadsFileController');
 
+router.post('/uploadSKills', skillsUpload);
+
+router.post('/uploadProfile', profileUpload);
 
 router.post('/uploadFile/', (req, res)=>{
     console.log(req.files);
