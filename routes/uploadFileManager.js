@@ -1,11 +1,13 @@
 var express = require("express");
 var router = express.Router();
 var path = require('path');
-const { skillsUpload, profileUpload } = require('../controllers/uploadsFileController');
+const { skillsUpload, profileUpload, qnaUpload } = require('../controllers/uploadsFileController');
 
-router.post('/uploadSKills', skillsUpload);
+router.post('/uploadSkills', skillsUpload);
 
 router.post('/uploadProfile', profileUpload);
+
+router.post('/uploadQnA', qnaUpload);
 
 router.post('/uploadFile/', (req, res)=>{
     console.log(req.files);
@@ -22,6 +24,11 @@ router.post('/uploadFile/', (req, res)=>{
     uploadPath = path.join(__dirname, '..', 'downloads', sampleFile.name)
     console.log(uploadPath);
   
+    // var arr = [];
+    // arr.push(...req.files.file.data)
+    // console.log('arr')
+    // console.log(arr)
+
     sampleFile.mv(uploadPath, function(err) {
       if (err){
         console.log(err);
