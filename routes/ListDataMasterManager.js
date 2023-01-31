@@ -15,7 +15,7 @@ router.get("/listdatamaster/:masterid", getMasterDataByCode);
 
 router.post("/postdatamaster", postListData);
 
-router.put("/updateDataMaster/:masterid", updateDataMaster);
+router.put("/updateDataMaster", updateDataMaster);
 
 router.delete("/deleteRecord/:masterId", deleteMasterData);
 

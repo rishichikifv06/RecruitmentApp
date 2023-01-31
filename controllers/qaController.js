@@ -19,7 +19,7 @@ const fetchAllQa = (req, res) => {
         .then(async (dbConnection) => {
           await ExecuteQuery(
             dbConnection,
-            `select question,questions.queId,answer,answer.ansId from questions_and_answers 
+            `select question,questions.queId,answer,answer.ansId,answer.answerkeywords from questions_and_answers 
           left join answer on answer.ansId=questions_and_answers.ansId inner join questions on questions.queId=questions_and_answers.queId 
           where questions.skillId=${skillId} and questions.cmpId=${cmpId}`
           )

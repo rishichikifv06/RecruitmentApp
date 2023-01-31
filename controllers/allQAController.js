@@ -12,7 +12,6 @@ const allQA = (req, res) => {
     async function getAllQandA() {
       await ConnectToDb()
         .then(async (dbConnection) => {
-          if (dbConnection) {
             await ExecuteQuery(
               dbConnection,
               `select assessmentid, date from assessment where interviewid = ${interviewid}`
@@ -73,13 +72,11 @@ const allQA = (req, res) => {
                 console.log(error);
                 res.status(500).json(err);
               });
-          } else {
-            // logger.warn(`file: ${fname},error: db is not connected`);
-          }
         })
         .catch((err) => {
           //   logger.error(`file: ${fname},error: ${err} -2`);
-          dbConnection.release();
+          console.log(err)
+          res.status(500).json(err);
         });
     }
 
