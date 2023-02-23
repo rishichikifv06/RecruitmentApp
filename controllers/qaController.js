@@ -17,6 +17,9 @@ const fetchAllQa = (req, res) => {
     async function getAllQandA() {
       await ConnectToDb()
         .then(async (dbConnection) => {
+          console.log( `select question,questions.queId,answer,answer.ansId,answer.answerkeywords from questions_and_answers 
+          left join answer on answer.ansId=questions_and_answers.ansId inner join questions on questions.queId=questions_and_answers.queId 
+          where questions.skillId=${skillId} and questions.cmpId=${cmpId}`);
           await ExecuteQuery(
             dbConnection,
             `select question,questions.queId,answer,answer.ansId,answer.answerkeywords from questions_and_answers 
@@ -260,11 +263,12 @@ const updateAInDb = (req,res) => {
     try {
         logger.trace(`file: ${fname},postMethod EditAnswer is called`);
         const ansId = req.body.ansId;
-        const Answer= req.body.Answer
+        const Answer= req.body.Answer;
+        const answerkeywords= req.body.answerkeywords;
         async function EditAnswer()
         {
           await ConnectToDb().then(async (dbConnection)=>{
-              await ExecuteQuery(dbConnection, `Update answers set Answer='${Answer}' where ansId=${ansId}`)
+              await ExecuteQuery(dbConnection, `Update answer set Answer='${Answer}', answerkeywords = '${answerkeywords}' where ansId=${ansId}`)
               .then(async (result)=>{
                 if(result){
                   var status={

@@ -282,7 +282,7 @@ const profileUpload = (req, res) => {
                 }
 
                 console.log(candidateArray);
-               // const dbConnecton = await ConnectToDb();
+                const dbConnecton = await ConnectToDb();
                 try {
                   await dbConnecton.query("BEGIN");
                   for (let i = 0; i < candidateArray.length; i++) {

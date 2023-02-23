@@ -10,7 +10,8 @@ fileNanme(__filename).then((data)=>{
 const fetchQaFromAssessmentStaging = (req,res) => {
     try {
         logger.trace(`file: ${fname},postMethod getSingleQandAFromStaging is called`);
-
+        console.log('request')
+console.log(req.body)
         var canId = req.body.canId;
         var RowandQuestion_number = req.body.RowandQuestion_number;
         var assessmentId = req.body.assessmentId;
@@ -74,7 +75,7 @@ const fetchQaFromAssessmentStaging = (req,res) => {
          await ExecuteQuery(dbConnection, `select count(AssessmentStaging.RowandQuestion_number) as Qcount from AssessmentStaging where assessmentId=${assessmentId}`)
          .then((countOfQA)=>{
            if(countOfQA){
-             count = countOfQA[0].Qcount;
+             count = countOfQA[0].qcount;
            }
            else{
              console.log("count value not acquired!!");
@@ -95,7 +96,8 @@ const fetchQaFromAssessmentStaging = (req,res) => {
 const saveScoreNoteInAssessmentStaging = (req,res) => {
     try {
         logger.trace(`file: ${fname},postMethod saveScoreNote is called`);
-
+console.log('result savescore')
+console.log(req.body)
         var canId = req.body.canId;
         var RowandQuestion_number = req.body.RowandQuestion_number;
         var score = req.body.score;

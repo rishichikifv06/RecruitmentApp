@@ -112,9 +112,10 @@ const createCandidate = (req, res) => {
 };
 
 const fetchCandidateSkillAndAssessment = (req, res) => {
+  console.log("inside",req.body.emailId);
   try {
     logger.trace(`file: ${fname},postMethod getCandidateSkillsandAssessment is called`);
-
+  
     const emailId = req.body.emailId;
 
     async function getCandidateSkillsandAssessment() {

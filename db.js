@@ -1,119 +1,61 @@
-require('dotenv').config();
-var mysql = require('mysql');
-const  {Pool, Client}  = require('pg');
-var pg = require('pg');
+require("dotenv").config();
 
+var mysql = require("mysql");
 
-const config = {
-  max: process.env.DB_MAX_CONNECTION,
-  connectionTimeoutMillis: process.env.DB_TIMEOUT,
+var pool = mysql.createPool({
+  connectionLimit: process.env.DB_MAX_CONNECTION,
   host: process.env.SERVER,
-  port: process.env.DB_PORT,
   user: process.env.DB_USER,
   password: process.env.DB_PWD,
   database: process.env.DB_NAME,
-  ssl: true
-}
-
-
-const pool = new Pool(config);
-
-// const pool = new Pool({
-//   max: 10,
-//   // connectionTimeoutMillis: process.env.DB_TIMEOUT,
-//   host: 'suleiman.db.elephantsql.com',
-//   port: 5432,
-//   user: 'irbkkeaa',
-//   password: 'QGEPGmg71jHbcQ7u7zpjtI0KiOxQ_sIS',
-//   database: 'irbkkeaa',
-//   ssl: false
-// });
-
-// const client = new Client({
-//   // connectionTimeoutMillis: process.env.DB_TIMEOUT,
-//   host: 'suleiman.db.elephantsql.com',
-//   port: 5432,
-//   user: 'irbkkeaa',
-//   password: 'QGEPGmg71jHbcQ7u7zpjtI0KiOxQ_sIS',
-//   database: 'irbkkeaa',
-//   ssl: false
-// })
+  port: process.env.DB_PORT,
+});
 
 async function queryDatabase() {
-  
   try {
-
-    pool.connect().then((conn)=>{
-      conn.query(`select * from complexity`).then((result)=>{
-        console.log(result.rows);
-      }).catch((err)=>{
-        console.log(err);
-      })
-    }).catch((err)=>{
-      console.log(err);
-    })
+    pool.getConnection((err, connection) => {
+      if (err) throw err;
+      console.log("Database connected successfully");
+      connection.query("select * from complexity", (err, data) => {
+        if (err) throw err;
+        console.log(data);
+      });
+      connection.release();
+    });
   } catch (err) {
-    console.log("Error1",err.stack);
+    console.log("Error1", err.stack);
   }
 }
 
 queryDatabase();
-  // async function queryDatabase() {
-  
-  //   try {
-  
-  //     pool.connect().then((conn)=>{
-  //       conn.query(`SELECT NOW() AS "theTime"`).then((result)=>{
-  //         console.log(result.rows);
-  //       }).catch((err)=>{
-  //         console.log(err);
-  //       })
-  //     }).catch((err)=>{
-  //       console.log(err);
-  //     })
-  //   } catch (err) {
-  //     console.log("Error1",err.stack);
-  //   }
-  //   finally{
-  //     pool.end();
-  //   }
-  // }
-  // queryDatabase();
-
 
 const ConnectToDb = async () => {
-
-    return new Promise((resolve,reject)=>{
-
-      try {
-        
-        pool.connect(async (err,conn)=>{
-        err ? reject(err) : resolve(conn)
-  
-      })
-      } catch (error) {
-        console.log(error);
-      }
-    })
-  };
-  
-const ExecuteQuery = async (conn, queryString) => {
-   return new Promise((resolve,reject)=>{
-
+  return new Promise((resolve, reject) => {
     try {
-      
-      conn.query(queryString, (err, data) => {
-      err ? reject(err) : resolve(data.rows)
-  })
+      pool.getConnection(async (err, conn) => {
+        err ? reject(err) : resolve(conn);
+      });
     } catch (error) {
       console.log(error);
     }
-       
-});
-  
-}
+  });
+};
+
+const ExecuteQuery = async (conn, queryString) => {
+  return new Promise((resolve, reject) => {
+    try {
+      queryString = queryString.toLowerCase();
+      console.log(queryString);
+      conn.query(queryString, (err, data) => {
+        err ? reject(err) : resolve(data);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  });
+};
 
 module.exports = {
   ConnectToDb,
-  ExecuteQuery
-}
+  ExecuteQuery,
+};

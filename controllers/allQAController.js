@@ -28,7 +28,7 @@ const allQA = (req, res) => {
                   .then((result) => {
                     assessmentdetails = result[0];
                     assessmentdetails.totalscore =
-                      assessmentdetails.TotalQuestions * 10;
+                      assessmentdetails.totalquestions * 10;
                   })
                   .catch((err) => {
                     console.log(err);
@@ -70,7 +70,7 @@ const allQA = (req, res) => {
               })
               .catch((error) => {
                 console.log(error);
-                res.status(500).json(err);
+                res.status(500).json(error);
               });
         })
         .catch((err) => {

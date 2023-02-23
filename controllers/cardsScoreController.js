@@ -27,18 +27,17 @@ const fetchScoresForCandidate = (req,res) => {
                         group by Skill.skillName`)
                         .then(async (skillData)=>{
                             skillData.forEach(element => {
-                                element.skillScore = element.count*10;
-                                element.percentage = Math.round(element.candidateScore/element.skillScore*100);
+                                element.skillscore = element.count*10;
+                                element.percentage = Math.round(element.candidatescore/element.skillscore*100);
                             });
-        
                                 let totalCount = 0;
                                 let totalScore = 0;
                                 let totalPercentage = 1;
                                 let totalCandidateScore = 0;
                                 skillData.forEach(element => {
                                     totalCount = totalCount+element.count;
-                                    totalScore = totalScore+element.skillScore;
-                                    totalCandidateScore = totalCandidateScore+element.candidateScore;  
+                                    totalScore = totalScore+element.skillscore;
+                                    totalCandidateScore = totalCandidateScore+element.candidatescore;  
                                 })
                                 totalPercentage = Math.round(totalCandidateScore/totalScore*100);
         

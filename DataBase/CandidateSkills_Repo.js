@@ -14,7 +14,7 @@ exports.addCandidateskills = async (data, dbConnection) => {
 
 async function prepareaddCanSkillsQuery(data) {
   try {
-    const query = `INSERT into Candidateskills (cmpId,skillId,canId) values (${data.cmpId},${data.skillId}, ${data.canId})`;
+    const query = `INSERT into Candidateskills (cmpId,skillId,canId) values (${data.cmpId},${data.skillId}, ${data.canid})`;
     return query;
   } catch (err) {
     console.log("error in the CandidateSkills_Repo prepareCanSkillsQuery",err);
