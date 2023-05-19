@@ -1,5 +1,7 @@
 const { ConnectToDb, ExecuteQuery } = require("../db");
 const {fileNanme,logger} = require('../log4');
+const csv = require("csvtojson");
+const excelToJson = require('convert-excel-to-json');
 
 var fname;
 
@@ -17,14 +19,11 @@ const fetchAllQa = (req, res) => {
     async function getAllQandA() {
       await ConnectToDb()
         .then(async (dbConnection) => {
-          console.log( `select question,questions.queId,answer,answer.ansId,answer.answerkeywords from questions_and_answers 
-          left join answer on answer.ansId=questions_and_answers.ansId inner join questions on questions.queId=questions_and_answers.queId 
-          where questions.skillId=${skillId} and questions.cmpId=${cmpId}`);
           await ExecuteQuery(
             dbConnection,
-            `select question,questions.queId,answer,answer.ansId,answer.answerkeywords from questions_and_answers 
-          left join answer on answer.ansId=questions_and_answers.ansId inner join questions on questions.queId=questions_and_answers.queId 
-          where questions.skillId=${skillId} and questions.cmpId=${cmpId}`
+            `select question,questions.queid,answer,answer.ansId,answer.answerkeywords from questions_and_answers 
+          left join answer on answer.ansid=questions_and_answers.ansId inner join questions on questions.queid=questions_and_answers.queid 
+          where questions.skillid=${skillId} and questions.cmpid=${cmpId}`
           )
             .then(async (result) => {
                 logger.info(`file: ${fname} , statuscode : 200`)
@@ -80,7 +79,7 @@ const insertQaToDb = (req,res) => {
         .then(async (dbConnection) => {
             await ExecuteQuery(
               dbConnection,
-              `select question from questions where question='${Question}' and skillId=${skillId} and cmpId=${cmpId}`
+              `select question from questions where question='${Question}' and skillid=${skillId} and cmpid=${cmpId}`
             ).then(async (questionData) => {
               if (questionData.length != 0) {
                 var status = {
@@ -92,7 +91,7 @@ const insertQaToDb = (req,res) => {
               } else {
                 await ExecuteQuery(
                   dbConnection,
-                  `insert into questions(Question,skillId,cmpId) values('${Question}',${skillId},${cmpId})`
+                  `insert into questions(question,skillid,cmpid) values('${Question}',${skillId},${cmpId})`
                 )
                   .then(async (result) => {
                     if (result) {
@@ -118,12 +117,12 @@ const insertQaToDb = (req,res) => {
     async function getQueID(connection) {
       await ExecuteQuery(
         connection,
-        `select queId from questions where Question='${Question}'`
+        `select queid from questions where question='${Question}'`
       )
         .then(async (que) => {
           if (que) {
             console.log(que);
-            Qid = que[0].queId;
+            Qid = que[0].queid;
             console.log(Qid + "questions id");
             await InsertAnswer(connection);
           }
@@ -136,10 +135,10 @@ const insertQaToDb = (req,res) => {
     async function InsertAnswer(dbConnection) {
       await ExecuteQuery(
         dbConnection,
-        `select answers.Answer, questions.cmpId, questions.skillId from questions_and_answers
-      left join answers on questions_and_answers.ansId=answers.ansId
-      left join questions on questions_and_answers.queId=questions.queId
-      where questions.cmpId=${cmpId} and questions.skillId=${skillId} and answers.Answer='${Answer}'`
+        `select answer.answer, questions.cmpid, questions.skillid from questions_and_answers
+      left join answer on questions_and_answers.ansid=answer.ansid
+      left join questions on questions_and_answers.queid=questions.queid
+      where questions.cmpid=${cmpId} and questions.skillid=${skillId} and answer.answer='${Answer}'`
       ).then(async (answerData) => {
         if (answerData.length != 0) {
           var status = {
@@ -150,7 +149,7 @@ const insertQaToDb = (req,res) => {
         } else {
           await ExecuteQuery(
             dbConnection,
-            `insert into answers(Answer,Answerkeywords) values('${Answer}','${Answerkeywords}')`
+            `insert into answer(answer,answerkeywords) values('${Answer}','${Answerkeywords}')`
           )
             .then(async (record) => {
               if (record) {
@@ -170,12 +169,12 @@ const insertQaToDb = (req,res) => {
     async function getAnswerID(dbConnection) {
       await ExecuteQuery(
         dbConnection,
-        `select ansId from answers where Answer='${Answer}'`
+        `select ansid from answer where answer='${Answer}'`
       )
         .then(async (ans) => {
           if (ans) {
             console.log(ans);
-            Aid = ans[0].ansId;
+            Aid = ans[0].ansid;
             console.log(Aid + "answer id");
             await InsertIntoLinkTable();
           }
@@ -190,14 +189,14 @@ const insertQaToDb = (req,res) => {
         .then(async (dbConnection) => {
           await ExecuteQuery(
             dbConnection,
-            `insert into questions_and_answers(queId,ansId) values(${Qid},${Aid})`
+            `insert into questions_and_answers(queid,ansid) values(${Qid},${Aid})`
           )
             .then((result) => {
               console.log(result + "QandA");
               const status = {
                 StatusCode: 200,
                 StatusType: "success",
-                StatusMessage: "Question and Answer inserted successfully!!",
+                Message: "Question and Answer inserted successfully!!",
                 StatusSeverity: "Inserted into database",
               };
               res.status(200).json(status);
@@ -228,7 +227,7 @@ const updateQInDb = (req,res) => {
     async function EditQuestion()
     {
       await ConnectToDb().then(async (dbConnection)=>{
-          await ExecuteQuery(dbConnection, `Update questions set Question='${Question}' where queId=${queId}`)
+          await ExecuteQuery(dbConnection, `Update questions set question='${Question}' where queid=${queId}`)
           .then(async (result)=>{
             if(result){
               var status={
@@ -263,12 +262,12 @@ const updateAInDb = (req,res) => {
     try {
         logger.trace(`file: ${fname},postMethod EditAnswer is called`);
         const ansId = req.body.ansId;
-        const Answer= req.body.Answer;
-        const answerkeywords= req.body.answerkeywords;
+        const Answer= req.body.Answer
+        const answerkeywords = req.body.answerkeywords;
         async function EditAnswer()
         {
           await ConnectToDb().then(async (dbConnection)=>{
-              await ExecuteQuery(dbConnection, `Update answer set Answer='${Answer}', answerkeywords = '${answerkeywords}' where ansId=${ansId}`)
+              await ExecuteQuery(dbConnection, `Update answer set answer='${Answer}',answerkeywords='${answerkeywords}' where ansid=${ansId}`)
               .then(async (result)=>{
                 if(result){
                   var status={
@@ -298,10 +297,12 @@ const updateAInDb = (req,res) => {
     }
 }
 
+
+
+
 module.exports = {
   fetchAllQa,
   insertQaToDb,
   updateQInDb,
   updateAInDb
-
 };

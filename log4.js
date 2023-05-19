@@ -9,7 +9,7 @@ configure({
         compress: true,
         daysToKeep: 14,
         keepFileExt: true},
-        server:{type: 'tcp-server',host:'localhost',port:3000},
+        server:{type: 'tcp-server',host:'localhost',port:5000},
     },
     categories:{
         default:{

@@ -358,7 +358,7 @@ const qnaUpload = (req, res) => {
         .pipe(csv({}))
         .on("data", (data) => jsonArray.push(data))
         .on("headers", (headers) => {
-          if (headers.length !== 5) {
+          if (headers.length != 5) {
             res.status(500).json({ message: "Please upload QNA file" });
             readStream.destroy();
           }

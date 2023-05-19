@@ -38,7 +38,7 @@ const scheduleInterviewForCandidate = (req,res) => {
                   StatusSeverity: "Information already exists"
                 }
                 logger.info(`file: ${fname} , statuscode : 200`)
-                res.status(200).json({statusMessage});
+                res.status(200).json(statusMessage);
                 dbConnection.release();
               }
               else{

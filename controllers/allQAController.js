@@ -1,11 +1,13 @@
 const { ConnectToDb, ExecuteQuery } = require("../db");
+console.log("Inside QAC");
+
 
 const allQA = (req, res) => {
+
   if (req.body != undefined) {
     const interviewid = req.body.interviewid;
     var assessmentid;
     var assessmentdetails;
-    console.log(interviewid);
 
     //   logger.info(`file: ${fname},post allQA is called`);
 

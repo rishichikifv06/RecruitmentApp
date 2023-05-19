@@ -1,0 +1,3 @@
+question,answer,answerkeywords,skillid,cmpid
+What is Common Language Runtime (CLR)?,CLR handles program execution for various languages including C#.,garbage collection,1,1
+How is C# different from C?,You would always know C being the procedural language while C# is a more object-oriented language.,Common Language Runtime (CLR),1,2

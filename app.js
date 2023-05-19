@@ -16,6 +16,8 @@ const passport = require("passport");
 var fileUpload = require('express-fileupload'); 
 
 
+
+
 var qaManagerRouter = require('./routes/qaManager');
 var assessmentManagerRouter = require('./routes/assessmentManager');
 var skillsManagerRouter = require('./routes/skillsManager');
@@ -28,17 +30,19 @@ var cardsFilterManagerRouter = require('./routes/cardsFilterManager');
 var candidateInterviewManagerRouter = require('./routes/candidateInterviewManager');
 var interviewFilterManagerRouter = require('./routes/interviewFilterManager');
 var uploadFileManagerRouter = require('./routes/uploadFileManager');
+var updateManager = require('./routes/updateQA');
+var allqaManagerRouter = require('./routes/allqaManager');
+var scenariosManager = require('./routes/scenariosManager')
 const { bearerStrategy } = require('./authorize');
 
-var ListDataMasterManagerRouter = require('./routes/ListDataMasterManager');
-var ListDataDetailManagerRouter = require('./routes/ListDataDetailManager');
-var allQAManager = require('./routes/allqaManager')
 
 // initialize express
 var app = express();
 
 app.use(passport.initialize());
 passport.use(bearerStrategy);
+
+app.set('view engine', 'ejs');
 
 app.use(cors(
   origin="*"
@@ -96,14 +100,15 @@ app.use('/cardsFilterManager', cardsFilterManagerRouter);
 app.use('/candidateInterviewManager', candidateInterviewManagerRouter);
 app.use('/interviewFilterManager', interviewFilterManagerRouter);
 app.use('/uploadFileManager', uploadFileManagerRouter);
+app.use('/update',updateManager);
+app.use('/allqa',allqaManagerRouter);
+app.use('/explanation',scenariosManager)
 
-app.use('/listDataMasterManager', ListDataMasterManagerRouter);
-app.use('/listDataDetailManager', ListDataDetailManagerRouter);
-app.use('/allqa', allQAManager);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    next(createError(404));
+  next(createError(404));
 });
 
 // error handler
@@ -116,6 +121,5 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
 });
 
-app.disable('etag');
 
 module.exports = app;

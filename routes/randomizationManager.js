@@ -22,6 +22,7 @@ router.post("/", jsonParser, (req, res) => {
         const skills = req.body.skills;
         const InterviewId = req.body.InterviewId;
         const status = req.body.status;
+        
 
         console.log(skills);
         var count = skills.length
@@ -36,16 +37,12 @@ router.post("/", jsonParser, (req, res) => {
             await ConnectToDb().then(async (dbConnection) => {
                 if (dbConnection) {
                     await ExecuteQuery(dbConnection, `insert into Assessment(canId,date,startTime,assessmentstatus,InterviewID) 
-                    values(${canId},'${Date}','${starttime}','Open',${InterviewId})`)
+                    values(${canId},'${Date}','${starttime}','${status}',${InterviewId})`)
                         .then(async (data) => {
                             console.log(data + " inserted assessment");
-                            await ExecuteQuery(dbConnection, `update CandidateInterview set status = '${status}' where InterviewId = ${InterviewId} and canId=${canId}`)
-                            .then(async (updatedCandidateInterviewData)=>{
-                                if(updatedCandidateInterviewData){
-
-                                    await getAssessmentId(dbConnection);
-                                }
-                            })
+                            await ExecuteQuery(dbConnection, `update candidates set candidatestatus='open' where canid=${canId}`)
+                            .catch((e)=>{console.log("update error",e)})
+                            await getAssessmentId(dbConnection);
                         })
                         .catch((err) => {
                             console.log(err + 1);
@@ -62,12 +59,23 @@ router.post("/", jsonParser, (req, res) => {
         }
         async function getAssessmentId(dbConnection) {
             if (dbConnection) {
-                await ExecuteQuery(dbConnection, `select assessmentId from Assessment where canId=${canId} and date='${Date}' AND assessmentstatus='Open'`)
+                await ExecuteQuery(dbConnection, `select assessmentId from Assessment where canId=${canId} and interviewid=${InterviewId} AND assessmentstatus='open'`)
                     .then(async (assessmentDetails) => {
                         if (assessmentDetails.length != 0) {
                             assessmentId = assessmentDetails[0].assessmentid;
                             console.log(assessmentId + "-  assId");
-                            await getQuestionCount(dbConnection, assessmentId);
+                            await ExecuteQuery(dbConnection, `select count(assessmentstagingid) as count from assessmentstaging where assessmentid=${assessmentId}`)
+                            .then(async (count)=>{
+                                if(count[0].count>0)
+                                {
+                                    res.status(200).json({
+                                        message: "Assessment already exists",
+                                        assessmentId: assessmentId});
+                                }
+                                else{
+                                    await getQuestionCount(dbConnection, assessmentId);
+                                }
+                            }).catch((e)=>{console.log(e)});
                         }
                     })
                     .catch((err) => {
