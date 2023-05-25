@@ -44,7 +44,7 @@ const ConnectToDb = async () => {
 const ExecuteQuery = async (conn, queryString) => {
   return new Promise((resolve, reject) => {
     try {
-      queryString = queryString.toLowerCase();
+      queryString = queryString;
       console.log(queryString);
       conn.query(queryString, (err, data) => {
         err ? reject(err) : resolve(data);
